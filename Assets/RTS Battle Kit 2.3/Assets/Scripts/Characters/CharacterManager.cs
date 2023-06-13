@@ -140,6 +140,9 @@ public class CharacterManager : MonoBehaviour {
 				
 		//check if left mouse button gets pressed
         if(Input.GetMouseButtonDown(0)){
+
+			Debug.Log("can deploy" + hit.collider.gameObject.CompareTag("Battle ground") + " " + !selectionMode + " " + !isPlacingBomb + " " + !EventSystem.current.IsPointerOverGameObject() + " " +
+				(gold >= troops[selectedUnit].troopCosts) + " " + !GameObject.Find("Mobile") + " " + GameObject.Find("Mobile") + " " + Mobile.deployMode);
 			//if you didn't click on UI and you have not enought gold, display a warning
 			if(gold < troops[selectedUnit].troopCosts && !EventSystem.current.IsPointerOverGameObject()){
 			StartCoroutine(GoldWarning());	
@@ -147,7 +150,7 @@ public class CharacterManager : MonoBehaviour {
 			//check if you hit any collider when clicking (just to prevent errors)
 			if(hit.collider != null){
 			//if you click battle ground, if click doesn't hit any UI, if space is not down and if you have enough gold, deploy the selected troops and decrease gold amount
-			if(hit.collider.gameObject.CompareTag("Battle ground") && !selectionMode && !isPlacingBomb && !EventSystem.current.IsPointerOverGameObject() 
+			if(hit.collider.gameObject.CompareTag("Battle ground") && selectionMode && !isPlacingBomb && !EventSystem.current.IsPointerOverGameObject() 
 			&& gold >= troops[selectedUnit].troopCosts && (!GameObject.Find("Mobile") || (GameObject.Find("Mobile") && Mobile.deployMode))){
 				
 				CreateUnit(hit);
@@ -259,6 +262,7 @@ public class CharacterManager : MonoBehaviour {
     }
 	
 	void CreateUnit(RaycastHit hit){
+		Debug.Log("Create Unit");
 		GameObject newTroop = Instantiate(troops[selectedUnit].deployableTroops, hit.point, troops[selectedUnit].deployableTroops.transform.rotation) as GameObject;
 		Instantiate(newUnitEffect, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
 		newTroop.transform.parent = characterParent.transform;
@@ -337,6 +341,7 @@ public class CharacterManager : MonoBehaviour {
 	}
 	
 	public void selectCharacters(){
+		Debug.Log("select" + selectionMode);
 		//turn selection mode on/off
 		selectionMode = !selectionMode;
 		if(selectionMode){
@@ -344,7 +349,9 @@ public class CharacterManager : MonoBehaviour {
 		selectButton.GetComponent<Image>().color = Color.red;	
 		Cursor.SetCursor(cursorTexture1, Vector2.zero, CursorMode.Auto);
 		if(GameObject.Find("Mobile")){
-			if(Mobile.deployMode){
+				Debug.Log("deplymode" + Mobile.deployMode);
+			if(!Mobile.deployMode){
+					Debug.Log("I am inside");
 				GameObject.Find("Mobile").GetComponent<Mobile>().toggleDeployMode();
 			}
 			Mobile.camEnabled = false;

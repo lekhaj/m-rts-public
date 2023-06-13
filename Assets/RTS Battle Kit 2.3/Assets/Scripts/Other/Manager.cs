@@ -223,6 +223,7 @@ public class Manager : MonoBehaviour {
 	
 	//start the game
 	public void startGame(){
+		missionPanel.SetActive(false);
 		//set timescale to normal and start fading out
 		Time.timeScale = 1;
 		fading = true;
@@ -232,6 +233,7 @@ public class Manager : MonoBehaviour {
 	
 	//open mission panel to start game
 	public void openMissionPanel(){
+		StartMenu.SetActive(false);
 		missionPanel.SetActive(true);
 	}
 	
