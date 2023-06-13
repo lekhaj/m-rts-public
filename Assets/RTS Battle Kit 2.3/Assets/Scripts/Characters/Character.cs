@@ -11,6 +11,7 @@ public class Character : MonoBehaviour {
 	public float minAttackDistance;
 	public float castleStoppingDistance;
 	public int addGold;
+	public int addFood;
 	public string attackTag;
 	public string attackCastleTag;
 	public ParticleSystem dieParticles;
@@ -67,7 +68,7 @@ public class Character : MonoBehaviour {
 	
 		//find objects attached to this character
 		health = transform.Find("Health").gameObject;
-		healthbar = health.transform.Find("Healthbar").gameObject;
+		healthbar =	health.transform.Find("Healthbar").gameObject;
 		health.SetActive(false);	
 		selectedObject = transform.Find("selected object").gameObject;
 		selectedObject.SetActive(false);
@@ -77,9 +78,12 @@ public class Character : MonoBehaviour {
 		startLives = lives;
 		//get default stopping distance
 		defaultStoppingDistance = agent.stoppingDistance;
-		
-		//find the castle closest to this character
-		findClosestCastle();
+
+        //find the castle closest to this character
+        if (!gameObject.CompareTag("Tree"))
+        {
+			findClosestCastle();
+        }
 	
 		//if there's a dust effect (cavalry characters), find and assign it
 		if(transform.Find("dust"))
@@ -94,10 +98,13 @@ public class Character : MonoBehaviour {
 	
 	void Update(){
 		bool walkRandomly = true;
-		
+
+		Debug.Log(gameObject.tag);
+
 		//find closest castle
 		if(castle == null){
-			findClosestCastle();
+			if(!gameObject.CompareTag("Tree"))
+				findClosestCastle();
 		}
 		else{
 			walkRandomly = false;
@@ -283,21 +290,24 @@ public class Character : MonoBehaviour {
 	}
 	
 	public void findCurrentTarget(){
-	//find all potential targets (enemies of this character)
-	enemies = GameObject.FindGameObjectsWithTag(attackTag);
+        //find all potential targets (enemies of this character)
+        if (!gameObject.CompareTag("Tree"))
+        {
+			enemies = GameObject.FindGameObjectsWithTag(attackTag);
 		
-	//distance between character and its nearest enemy
-	float closestDistance = Mathf.Infinity;
+			//distance between character and its nearest enemy
+			float closestDistance = Mathf.Infinity;
 		
-    foreach(GameObject potentialTarget in enemies){
-		//check if there are enemies left to attack and check per enemy if its closest to this character
-        if(Vector3.Distance(transform.position, potentialTarget.transform.position) < closestDistance && potentialTarget != null){
-			//if this enemy is closest to character, set closest distance to distance between character and enemy
-			closestDistance = Vector3.Distance(transform.position, potentialTarget.transform.position);
-			//also set current target to closest target (this enemy)
-			if(!currentTarget || (currentTarget && Vector3.Distance(transform.position, currentTarget.position) > 2)){
-				currentTarget = potentialTarget.transform;
-			}
+			foreach(GameObject potentialTarget in enemies){
+				//check if there are enemies left to attack and check per enemy if its closest to this character
+				if(Vector3.Distance(transform.position, potentialTarget.transform.position) < closestDistance && potentialTarget != null){
+					//if this enemy is closest to character, set closest distance to distance between character and enemy
+					closestDistance = Vector3.Distance(transform.position, potentialTarget.transform.position);
+					//also set current target to closest target (this enemy)
+					if(!currentTarget || (currentTarget && Vector3.Distance(transform.position, currentTarget.position) > 2)){
+						currentTarget = potentialTarget.transform;
+					}
+				}
         }
     }	
 	}

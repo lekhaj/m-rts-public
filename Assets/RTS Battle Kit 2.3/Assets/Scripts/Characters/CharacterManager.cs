@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class Troop{
 	public GameObject deployableTroops;
 	public int troopCosts;
+	public int foodCosts;
 	public Sprite buttonImage;
 	[HideInInspector]
 	public GameObject button;
@@ -18,6 +19,7 @@ public class CharacterManager : MonoBehaviour {
 
 	//variables visible in the inspector	
 	public int startGold;
+	public int startFood;
 	public GUIStyle rectangleStyle;
 	public ParticleSystem newUnitEffect;
 	public Texture2D cursorTexture;
@@ -41,6 +43,7 @@ public class CharacterManager : MonoBehaviour {
 	//variables not visible in the inspector
 	public static Vector3 clickedPos;
 	public static int gold;
+	public static int food;
 	public static GameObject target;
 	
 	private Vector2 mouseDownPos;
@@ -49,9 +52,17 @@ public class CharacterManager : MonoBehaviour {
     private bool isDown;
 	private GameObject[] knights;
 	private int selectedUnit;
+
+	//Gold
 	private GameObject goldText;
 	private GameObject goldWarning;
 	private GameObject addedGoldText;
+
+	//Food
+	private GameObject foodText;
+	private GameObject foodWarning;
+	private GameObject addedfoodText;
+
 	private GameObject characterList;
 	private GameObject characterParent;
 	private GameObject selectButton;
@@ -84,19 +95,30 @@ public class CharacterManager : MonoBehaviour {
 		
 		//find text that displays your amount of gold
 		goldText = GameObject.Find("gold text");
+		//find text that displays your amount of food
+		foodText = GameObject.Find("food text");
 		//find text that appears when you get extra gold
 		addedGoldText = GameObject.Find("added gold text");
+		//find text that appears when you get extra food
+		addedfoodText = GameObject.Find("added food text");
 		
 		//find warning that appears when you don't have enough gold to deploy troops
 		goldWarning = GameObject.Find("gold warning");
+		//find warning that appears when you don't have enough gold to deploy troops
+		foodWarning = GameObject.Find("food warning");
 		
 		//find bomb gameobjects
 		bombLoadingBar = GameObject.Find("Loading bar");
 		bombButton = GameObject.Find("Bomb button");
 		bombRange = GameObject.Find("Bomb range");
 	}
-	
-	void Start(){
+
+    private void OnEnable()
+    {
+		FoodProvider.AddFoodCount += AddFood;
+	}
+
+    void Start(){
 		target.SetActive(false);
 		//set cursor and add the character buttons
 		Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
@@ -105,6 +127,11 @@ public class CharacterManager : MonoBehaviour {
 		gold = startGold;
 		addedGoldText.SetActive(false);	
 		goldWarning.SetActive(false);
+		
+		//set food amount to start food amount
+		food = startFood;
+		addedfoodText.SetActive(false);	
+		foodWarning.SetActive(false);
 		
 		//play function addGold every five seconds
 		InvokeRepeating("AddGold", 1.0f, 5.0f);
@@ -132,6 +159,7 @@ public class CharacterManager : MonoBehaviour {
 		
 		//set gold text to gold amount
 		goldText.GetComponent<UnityEngine.UI.Text>().text = "" + gold;
+		foodText.GetComponent<UnityEngine.UI.Text>().text = "" + food;
 		
 		//ray from main camera
 		RaycastHit hit;
@@ -436,10 +464,26 @@ public class CharacterManager : MonoBehaviour {
 	gold += 100;
 	StartCoroutine(AddedGoldText());
 	}
+
+	void AddFood()
+    {
+		food += 25;
+		StartCoroutine(AddedFoodText());
+	}
 	
 	IEnumerator AddedGoldText(){
 	addedGoldText.SetActive(true);	
 	yield return new WaitForSeconds(0.7f);
 	addedGoldText.SetActive(false);	
 	}
+	IEnumerator AddedFoodText(){
+	addedfoodText.SetActive(true);	
+	yield return new WaitForSeconds(0.7f);
+	addedfoodText.SetActive(false);	
+	}
+
+    private void OnDisable()
+    {
+		FoodProvider.AddFoodCount -= AddFood;
+    }
 }
