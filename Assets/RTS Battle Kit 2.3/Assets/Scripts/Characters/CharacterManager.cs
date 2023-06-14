@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -63,6 +64,11 @@ public class CharacterManager : MonoBehaviour {
 	private GameObject foodWarning;
 	private GameObject addedfoodText;
 
+	//Tree
+	private int maxTrees = 3;
+	private int treesCount = 0;
+	private GameObject treeWarning;
+
 	private GameObject characterList;
 	private GameObject characterParent;
 	private GameObject selectButton;
@@ -106,6 +112,8 @@ public class CharacterManager : MonoBehaviour {
 		goldWarning = GameObject.Find("gold warning");
 		//find warning that appears when you don't have enough gold to deploy troops
 		foodWarning = GameObject.Find("food warning");
+		//find warning that appears when max tree count reach
+		treeWarning = GameObject.Find("tree warning");
 		
 		//find bomb gameobjects
 		bombLoadingBar = GameObject.Find("Loading bar");
@@ -132,6 +140,9 @@ public class CharacterManager : MonoBehaviour {
 		food = startFood;
 		addedfoodText.SetActive(false);	
 		foodWarning.SetActive(false);
+
+		//set Tree
+		treeWarning.SetActive(false);
 		
 		//play function addGold every five seconds
 		InvokeRepeating("AddGold", 1.0f, 5.0f);
@@ -169,19 +180,33 @@ public class CharacterManager : MonoBehaviour {
 		//check if left mouse button gets pressed
         if(Input.GetMouseButtonDown(0)){
 
-			Debug.Log("can deploy" + hit.collider.gameObject.CompareTag("Battle ground") + " " + !selectionMode + " " + !isPlacingBomb + " " + !EventSystem.current.IsPointerOverGameObject() + " " +
-				(gold >= troops[selectedUnit].troopCosts) + " " + !GameObject.Find("Mobile") + " " + GameObject.Find("Mobile") + " " + Mobile.deployMode);
 			//if you didn't click on UI and you have not enought gold, display a warning
 			if(gold < troops[selectedUnit].troopCosts && !EventSystem.current.IsPointerOverGameObject()){
 			StartCoroutine(GoldWarning());	
+			}	
+			if(food < troops[selectedUnit].foodCosts && !EventSystem.current.IsPointerOverGameObject()){
+			StartCoroutine(FoodWarning());	
 			}
 			//check if you hit any collider when clicking (just to prevent errors)
 			if(hit.collider != null){
-			//if you click battle ground, if click doesn't hit any UI, if space is not down and if you have enough gold, deploy the selected troops and decrease gold amount
-			if(hit.collider.gameObject.CompareTag("Battle ground") && selectionMode && !isPlacingBomb && !EventSystem.current.IsPointerOverGameObject() 
-			&& gold >= troops[selectedUnit].troopCosts && (!GameObject.Find("Mobile") || (GameObject.Find("Mobile") && Mobile.deployMode))){
+				//if you click battle ground, if click doesn't hit any UI, if space is not down and if you have enough gold, deploy the selected troops and decrease gold amount
+				if (hit.collider.gameObject.CompareTag("Battle ground") && selectionMode && !isPlacingBomb && !EventSystem.current.IsPointerOverGameObject()
+				&& gold >= troops[selectedUnit].troopCosts && food >= troops[selectedUnit].foodCosts && (!GameObject.Find("Mobile") || (GameObject.Find("Mobile") && Mobile.deployMode))) {
+
+					if (troops[selectedUnit].deployableTroops.CompareTag("Tree") && treesCount < maxTrees)
+					{
+						CreateUnit(hit);
+					}
+					else if (troops[selectedUnit].deployableTroops.CompareTag("Tree") && treesCount > maxTrees)
+					{
+						treeWarning.SetActive(true);
+						DisappearTreeWarning();
+					}
+					else if (!troops[selectedUnit].deployableTroops.CompareTag("Tree"))
+                    {
+						CreateUnit(hit);
+					}
 				
-				CreateUnit(hit);
 			}
 			
 			//if you are placing a bomb and click...
@@ -260,7 +285,7 @@ public class CharacterManager : MonoBehaviour {
 		//for each button, check if we have enough gold to deploy the unit and color the button grey if it can not be deployed yet
 		for(int i = 0; i < troops.Count; i++){
 			if(troops[i].button != null){
-				if(troops[i].troopCosts <= gold){
+				if(troops[i].troopCosts <= gold && troops[i].troopCosts <= food){
 					troops[i].button.gameObject.GetComponent<Image>().color = Color.white;
 				}
 				else{
@@ -291,10 +316,19 @@ public class CharacterManager : MonoBehaviour {
 	
 	void CreateUnit(RaycastHit hit){
 		Debug.Log("Create Unit");
+
 		GameObject newTroop = Instantiate(troops[selectedUnit].deployableTroops, hit.point, troops[selectedUnit].deployableTroops.transform.rotation) as GameObject;
 		Instantiate(newUnitEffect, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
+
+		//checking tree count
+		if (newTroop.CompareTag("Tree"))
+        {
+			treesCount++;
+        }
+
 		newTroop.transform.parent = characterParent.transform;
 		gold -= troops[selectedUnit].troopCosts;
+		food -= troops[selectedUnit].foodCosts;
 				
 		foreach(Character character in GameObject.FindObjectsOfType<Character>()){
 			if(character != this)
@@ -352,7 +386,7 @@ public class CharacterManager : MonoBehaviour {
 		//selected unit is the pressed button
 		selectedUnit = unit;
 		
-		if(mobileDragInput && !isPlacingBomb && gold >= troops[selectedUnit].troopCosts){
+		if(mobileDragInput && !isPlacingBomb && gold >= troops[selectedUnit].troopCosts && food >= troops[selectedUnit].foodCosts){
 			dragPreview = Instantiate(troops[unit].button);
 			dragPreview.transform.SetParent(GameObject.FindObjectOfType<Settings>().gameObject.transform);
 			
@@ -414,6 +448,16 @@ public class CharacterManager : MonoBehaviour {
 	yield return new WaitForSeconds(2);
 	goldWarning.SetActive(false);
 	}
+	}	
+	//warning if you need more food
+	IEnumerator FoodWarning(){
+	if(!foodWarning.activeSelf){
+	foodWarning.SetActive(true);
+	
+	//wait for 2 seconds
+	yield return new WaitForSeconds(2);
+	foodWarning.SetActive(false);
+	}
 	}
 	
 	public void addCharacterButtons(){
@@ -467,7 +511,7 @@ public class CharacterManager : MonoBehaviour {
 
 	void AddFood()
     {
-		food += 25;
+		food += 50;
 		StartCoroutine(AddedFoodText());
 	}
 	
@@ -481,6 +525,12 @@ public class CharacterManager : MonoBehaviour {
 	yield return new WaitForSeconds(0.7f);
 	addedfoodText.SetActive(false);	
 	}
+
+	async void DisappearTreeWarning()
+    {
+		await Task.Delay(200);
+		treeWarning.SetActive(false);
+    }
 
     private void OnDisable()
     {

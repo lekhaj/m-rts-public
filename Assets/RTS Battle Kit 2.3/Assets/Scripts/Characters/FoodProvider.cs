@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class FoodProvider : MonoBehaviour
 {
-    [SerializeField]
     private Animator _bananFallAnimator;
 
     public static event Action AddFoodCount;
@@ -13,11 +12,19 @@ public class FoodProvider : MonoBehaviour
 
     private void Start()
     {
-        _bananFallAnimator.enabled = false;
+        _bananFallAnimator = GetComponent<Animator>();
     }
 
     private void Update()
     {
+        if (!_bananFallAnimator.GetBool("canFall")){
+            GetComponent<MeshRenderer>().enabled = false;
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().enabled = true;
+        }
+
         if (!calledOnce)
         {
             ActivateAnimator();
@@ -42,15 +49,21 @@ public class FoodProvider : MonoBehaviour
     async void StartAnimation()
     {
         await Task.Delay(2000);
-        _bananFallAnimator.enabled=true;
-        StopAnimation();
+        if (_bananFallAnimator != null)
+        {
+            _bananFallAnimator.SetBool("canFall", true);
+            StopAnimation();
+        }
 
     }
 
     async void StopAnimation()
     {
         await Task.Delay(1000);
-        _bananFallAnimator.enabled = false;
+        if(_bananFallAnimator != null)
+        {
+            _bananFallAnimator.SetBool("canFall", false);
+        }
         calledOnce = false;
     }
 
