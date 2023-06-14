@@ -66,7 +66,7 @@ public class CharacterManager : MonoBehaviour {
 
 	//Tree
 	private int maxTrees = 3;
-	private int treesCount = 0;
+	public static int treesCount = 0;
 	private GameObject treeWarning;
 
 	private GameObject characterList;
@@ -285,7 +285,7 @@ public class CharacterManager : MonoBehaviour {
 		//for each button, check if we have enough gold to deploy the unit and color the button grey if it can not be deployed yet
 		for(int i = 0; i < troops.Count; i++){
 			if(troops[i].button != null){
-				if(troops[i].troopCosts <= gold && troops[i].troopCosts <= food){
+				if(troops[i].troopCosts <= gold && troops[i].foodCosts <= food){
 					troops[i].button.gameObject.GetComponent<Image>().color = Color.white;
 				}
 				else{

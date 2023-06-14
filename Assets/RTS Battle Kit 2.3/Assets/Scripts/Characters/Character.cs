@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI; 
 using UnityEngine.AI;
 
@@ -12,7 +13,7 @@ public class Character : MonoBehaviour {
 	public float castleStoppingDistance;
 	public int addGold;
 	public int addFood;
-	public string attackTag;
+	public List<string> attackTag;
 	public string attackCastleTag;
 	public ParticleSystem dieParticles;
 	public GameObject ragdoll;
@@ -69,15 +70,22 @@ public class Character : MonoBehaviour {
 		//find objects attached to this character
 		health = transform.Find("Health").gameObject;
 		healthbar =	health.transform.Find("Healthbar").gameObject;
-		health.SetActive(false);	
-		selectedObject = transform.Find("selected object").gameObject;
-		selectedObject.SetActive(false);
+		health.SetActive(false);
+		Transform selectedTransform = transform.Find("selected object");
+		if (selectedTransform != null)
+		{
+			selectedObject = selectedTransform.gameObject;
+			selectedObject.SetActive(false);
+		}
 	
 		//set healtbar value
 		healthbar.GetComponent<Slider>().maxValue = lives;
 		startLives = lives;
 		//get default stopping distance
-		defaultStoppingDistance = agent.stoppingDistance;
+		if (agent != null) {
+			defaultStoppingDistance = agent.stoppingDistance;
+		}
+
 
         //find the castle closest to this character
         if (!gameObject.CompareTag("Tree"))
@@ -129,6 +137,7 @@ public class Character : MonoBehaviour {
 		
 		//if character ran out of lives add blood particles, add gold and destroy character
 		if(lives < 1){
+			Debug.Log("Dieeee");
 			StartCoroutine(die());
 		}
 		
@@ -144,7 +153,7 @@ public class Character : MonoBehaviour {
 		checkForClickedPosition();
 		
 		if(!goingToClickedPos && walkRandomly){
-			if(area != null){
+			if(area != null && agent != null){
 				if(agent.stoppingDistance > 2)
 					agent.stoppingDistance = 2;
 			
@@ -290,25 +299,39 @@ public class Character : MonoBehaviour {
 	}
 	
 	public void findCurrentTarget(){
-        //find all potential targets (enemies of this character)
-        if (!gameObject.CompareTag("Tree"))
-        {
-			enemies = GameObject.FindGameObjectsWithTag(attackTag);
+
+		List<GameObject> allEnemies = new List<GameObject>();
+		//find all potential targets (enemies of this character)
+		// Loop through each attack tag
+		for (int i = 0; i < attackTag.Count; i++)
+		{
+
+			string tag = attackTag[i];
+
+			// Find enemies with the current attack tag
+			if (string.IsNullOrEmpty(tag))
+				continue;
+
+			enemies = GameObject.FindGameObjectsWithTag(tag);
+
+			// Add the found enemies to the list of all enemies
+			allEnemies.AddRange(enemies);
+		}
+
+		//distance between character and its nearest enemy
+		float closestDistance = Mathf.Infinity;
 		
-			//distance between character and its nearest enemy
-			float closestDistance = Mathf.Infinity;
-		
-			foreach(GameObject potentialTarget in enemies){
-				//check if there are enemies left to attack and check per enemy if its closest to this character
-				if(Vector3.Distance(transform.position, potentialTarget.transform.position) < closestDistance && potentialTarget != null){
-					//if this enemy is closest to character, set closest distance to distance between character and enemy
-					closestDistance = Vector3.Distance(transform.position, potentialTarget.transform.position);
-					//also set current target to closest target (this enemy)
-					if(!currentTarget || (currentTarget && Vector3.Distance(transform.position, currentTarget.position) > 2)){
-						currentTarget = potentialTarget.transform;
-					}
+		foreach(GameObject potentialTarget in allEnemies)
+		{
+			//check if there are enemies left to attack and check per enemy if its closest to this character
+			if(Vector3.Distance(transform.position, potentialTarget.transform.position) < closestDistance && potentialTarget != null){
+				//if this enemy is closest to character, set closest distance to distance between character and enemy
+				closestDistance = Vector3.Distance(transform.position, potentialTarget.transform.position);
+				//also set current target to closest target (this enemy)
+				if(!currentTarget || (currentTarget && Vector3.Distance(transform.position, currentTarget.position) > 2)){
+					currentTarget = potentialTarget.transform;
 				}
-        }
+			}
     }	
 	}
 	
@@ -414,7 +437,14 @@ public class Character : MonoBehaviour {
 	}
 	
 	public IEnumerator die(){
-		if(ragdoll == null){
+
+		if (gameObject.CompareTag("Tree"))
+		{
+			CharacterManager.treesCount--;
+			Debug.Log("Count" + CharacterManager.treesCount);
+		}
+
+		if (ragdoll == null){
 			Vector3 position = new Vector3(transform.position.x, transform.position.y + 2, transform.position.z);
 			ParticleSystem particles = Instantiate(dieParticles, position, transform.rotation) as ParticleSystem;
 			

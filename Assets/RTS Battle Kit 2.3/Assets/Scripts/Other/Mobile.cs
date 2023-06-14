@@ -130,9 +130,13 @@ public class Mobile : MonoBehaviour {
 		public void toggleDeployMode() {
 			deployMode = !deployMode;
 			if (deployMode) {
-				//set button color to red
-				GameObject.Find("Deploy units button").GetComponent<Image>().color = Color.red;
-				if (CharacterManager.selectionMode) {
+			//set button color to red
+			GameObject deployButton = GameObject.Find("Deploy units button");
+			if (deployButton != null)
+			{
+				deployButton.GetComponent<Image>().color = Color.red;
+			}
+			if (CharacterManager.selectionMode) {
 					//switch selection mode off
 					GameObject.Find("Manager").GetComponent<CharacterManager>().selectCharacters();
 				}
