@@ -9,11 +9,14 @@ public class Character : MonoBehaviour {
 	//variables visible in the inspector
 	public float lives;
 	public float damage;
+	public float heal;
 	public float minAttackDistance;
+	public float minHealDistance;
 	public float castleStoppingDistance;
 	public int addGold;
 	public int addFood;
 	public List<string> attackTag;
+	public string healTag;
 	public string attackCastleTag;
 	public ParticleSystem dieParticles;
 	public GameObject ragdoll;
