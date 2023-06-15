@@ -40,6 +40,7 @@ public class Character : MonoBehaviour {
 	
 	private NavMeshAgent agent;
 	private GameObject[] enemies;
+	private GameObject[] allies;
 	private GameObject health;
 	private GameObject healthbar;
 	
@@ -53,7 +54,7 @@ public class Character : MonoBehaviour {
 	private Animator[] animators;
 	private Vector3 targetPosition;
 	private AudioSource source;
-	
+
 	private Vector3 randomTarget;
 	private WalkArea area;
 	
@@ -108,13 +109,17 @@ public class Character : MonoBehaviour {
 	}
 	
 	void Update(){
-		bool walkRandomly = true;
 
-		Debug.Log(gameObject.tag);
+		if(lives >= startLives)
+        {
+			lives = startLives;
+        }
+
+		bool walkRandomly = true;
 
 		//find closest castle
 		if(castle == null){
-			if(!gameObject.CompareTag("Tree"))
+			if(!gameObject.CompareTag("Tree") &&  !gameObject.CompareTag("Healer"))
 				findClosestCastle();
 		}
 		else{
@@ -140,7 +145,6 @@ public class Character : MonoBehaviour {
 		
 		//if character ran out of lives add blood particles, add gold and destroy character
 		if(lives < 1){
-			Debug.Log("Dieeee");
 			StartCoroutine(die());
 		}
 		
@@ -188,84 +192,171 @@ public class Character : MonoBehaviour {
 		
 		//first check if character is not selected and moving to a clicked position
 		if(!goingToClickedPos){
-			//If there's a currentTarget and its within the attack range, move agent to currenttarget
-			if(currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minAttackDistance){
-				if(!wizardSpawns)
-					agent.isStopped = false;
-					
-				agent.destination = currentTarget.position;	
-		
-				//check if character has reached its target and than rotate towards target and attack it
-				if(Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance){
-					Vector3 currentTargetPosition = currentTarget.position;
-					currentTargetPosition.y = transform.position.y;
-					transform.LookAt(currentTargetPosition);	
-					
-					foreach(Animator animator in animators){
-						animator.SetBool("Attacking", true);
-					}
-					
-					if(source.clip != attackAudio){
-						source.clip = attackAudio;
-						source.Play();
-					}
-					
-					currentTarget.gameObject.GetComponent<Character>().lives -= Time.deltaTime * damage;
-				}
-				
-				//if its still traveling to the target, play running animation
-				if(animators[0].GetBool("Attacking") && Vector3.Distance(currentTarget.position, transform.position) > agent.stoppingDistance && !wizardSpawns){	
-					foreach(Animator animator in animators){
-						animator.SetBool("Attacking", false);
-					}
-					
-					if(source.clip != runAudio){
-						source.clip = runAudio;
-						source.Play();
-					}
-				}
-			}
-			//if currentTarget is out of range...
-			else{
-				//if character is not moving to clicked position attack the castle
-				if(!goingToClickedPos){
-					if(!wizardSpawns)
+
+			if(gameObject.CompareTag("Healer"))
+            {
+				if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minHealDistance)
+                {
+					if (!wizardSpawns)
 						agent.isStopped = false;
-					
-					agent.destination = castleAttackPosition;	
-				}
-				
-				//if character is close enough to castle, attack castle
-				if(castle != null && Vector3.Distance(transform.position, castleAttackPosition) <= castleStoppingDistance + castle.GetComponent<Castle>().size){
-					agent.isStopped = true;
-					
-					foreach(Animator animator in animators){
-						animator.SetBool("Attacking", true);
-					}	
-					if(castle != null){
-						castle.GetComponent<Castle>().lives -= Time.deltaTime * damage;
+
+					agent.destination = currentTarget.position;
+					if (Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance)
+					{
+						Vector3 currentTargetPosition = currentTarget.position;
+						currentTargetPosition.y = transform.position.y;
+						transform.LookAt(currentTargetPosition);
+
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Heal", true);
+						}
+
+						Debug.Log("Current Target Health" + currentTarget.gameObject.GetComponent<Character>().lives + "Intial Health" + currentTarget.gameObject.GetComponent<Character>().startLives);
+
+						if (currentTarget.gameObject.GetComponent<Character>().lives < currentTarget.gameObject.GetComponent<Character>().startLives)
+						{
+							currentTarget.gameObject.GetComponent<Character>().lives += Time.deltaTime * heal;
+							Debug.Log("Current Target Health After Heal" + currentTarget.gameObject.GetComponent<Character>().lives);
+						}
+                        else
+                        {
+							findCurrentTarget();
+							foreach (Animator animator in animators)
+							{
+								animator.SetBool("Heal", false);
+							}
+						}
 					}
-					
-					if(source.clip != attackAudio){
-						source.clip = attackAudio;
-						source.Play();
+
+					//if its still traveling to the target, play running animation
+					if (animators[0].GetBool("Heal") && Vector3.Distance(currentTarget.position, transform.position) > agent.stoppingDistance && !wizardSpawns)
+					{
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Heal", false);
+						}
+
+						if (source.clip != runAudio)
+						{
+							source.clip = runAudio;
+							source.Play();
+						}
 					}
 				}
-				
-				//if character is traveling to castle play running animation
-				else if(!wizardSpawns){
-					agent.isStopped = false;
-					
-					foreach(Animator animator in animators){
-						animator.SetBool("Attacking", false);
-					}	
-					
-					if(source.clip != runAudio){
-						source.clip = runAudio;
-						source.Play();
+				//if currentTarget is out of range...
+				else
+				{
+					//if character is not moving to clicked position attack the castle
+					if (!goingToClickedPos)
+					{
+						if (!wizardSpawns)
+							agent.isStopped = false;
+
+						agent.destination = transform.position;
+					}
+				}
+
+
+			}
+            else
+            {
+				//If there's a currentTarget and its within the attack range, move agent to currenttarget
+				if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minAttackDistance)
+				{
+					if (!wizardSpawns)
+						agent.isStopped = false;
+
+					agent.destination = currentTarget.position;
+
+					//check if character has reached its target and than rotate towards target and attack it
+					if (Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance)
+					{
+						Vector3 currentTargetPosition = currentTarget.position;
+						currentTargetPosition.y = transform.position.y;
+						transform.LookAt(currentTargetPosition);
+
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Attacking", true);
+						}
+
+						if (source.clip != attackAudio)
+						{
+							source.clip = attackAudio;
+							source.Play();
+						}
+
+						currentTarget.gameObject.GetComponent<Character>().lives -= Time.deltaTime * damage;
+					}
+
+					//if its still traveling to the target, play running animation
+					if (animators[0].GetBool("Attacking") && Vector3.Distance(currentTarget.position, transform.position) > agent.stoppingDistance && !wizardSpawns)
+					{
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Attacking", false);
+						}
+
+						if (source.clip != runAudio)
+						{
+							source.clip = runAudio;
+							source.Play();
+						}
+					}
+				}
+				//if currentTarget is out of range...
+				else
+				{
+					//if character is not moving to clicked position attack the castle
+					if (!goingToClickedPos)
+					{
+						if (!wizardSpawns)
+							agent.isStopped = false;
+
+						agent.destination = castleAttackPosition;
+					}
+
+					//if character is close enough to castle, attack castle
+					if (castle != null && Vector3.Distance(transform.position, castleAttackPosition) <= castleStoppingDistance + castle.GetComponent<Castle>().size)
+					{
+						agent.isStopped = true;
+
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Attacking", true);
+						}
+						if (castle != null)
+						{
+							castle.GetComponent<Castle>().lives -= Time.deltaTime * damage;
+						}
+
+						if (source.clip != attackAudio)
+						{
+							source.clip = attackAudio;
+							source.Play();
+						}
+					}
+
+					//if character is traveling to castle play running animation
+					else if (!wizardSpawns)
+					{
+						agent.isStopped = false;
+
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Attacking", false);
+						}
+
+						if (source.clip != runAudio)
+						{
+							source.clip = runAudio;
+							source.Play();
+						}
 					}
 				}
 			}
+			
 		}
 		//if character is going to clicked position...
 		else{
@@ -303,39 +394,65 @@ public class Character : MonoBehaviour {
 	
 	public void findCurrentTarget(){
 
-		List<GameObject> allEnemies = new List<GameObject>();
-		//find all potential targets (enemies of this character)
-		// Loop through each attack tag
-		for (int i = 0; i < attackTag.Count; i++)
-		{
+        if (gameObject.CompareTag("Healer"))
+        {
+			allies = GameObject.FindGameObjectsWithTag("Knight");
+			Debug.Log("allies" + allies[0]);
 
-			string tag = attackTag[i];
+			GameObject targetAlly = null; 
 
-			// Find enemies with the current attack tag
-			if (string.IsNullOrEmpty(tag))
-				continue;
+			foreach (GameObject potentialTarget in allies) {
 
-			enemies = GameObject.FindGameObjectsWithTag(tag);
-
-			// Add the found enemies to the list of all enemies
-			allEnemies.AddRange(enemies);
-		}
-
-		//distance between character and its nearest enemy
-		float closestDistance = Mathf.Infinity;
-		
-		foreach(GameObject potentialTarget in allEnemies)
-		{
-			//check if there are enemies left to attack and check per enemy if its closest to this character
-			if(Vector3.Distance(transform.position, potentialTarget.transform.position) < closestDistance && potentialTarget != null){
-				//if this enemy is closest to character, set closest distance to distance between character and enemy
-				closestDistance = Vector3.Distance(transform.position, potentialTarget.transform.position);
-				//also set current target to closest target (this enemy)
-				if(!currentTarget || (currentTarget && Vector3.Distance(transform.position, currentTarget.position) > 2)){
-					currentTarget = potentialTarget.transform;
+				Character character = potentialTarget.GetComponent<Character>();
+				if (character != null && character.lives < character.startLives)
+				{
+					targetAlly = potentialTarget;
 				}
 			}
-    }	
+			// Set the targetAlly as the current target if it is different from the current target
+			if (targetAlly != null && targetAlly.transform != currentTarget)
+			{
+				currentTarget = targetAlly.transform;
+			}
+		}
+        else
+        {
+			List<GameObject> allEnemies = new List<GameObject>();
+			//find all potential targets (enemies of this character)
+			// Loop through each attack tag
+			for (int i = 0; i < attackTag.Count; i++)
+			{
+
+				string tag = attackTag[i];
+
+				// Find enemies with the current attack tag
+				if (string.IsNullOrEmpty(tag))
+					continue;
+
+				enemies = GameObject.FindGameObjectsWithTag(tag);
+
+				// Add the found enemies to the list of all enemies
+				allEnemies.AddRange(enemies);
+			}
+
+			//distance between character and its nearest enemy
+			float closestDistance = Mathf.Infinity;
+
+			foreach (GameObject potentialTarget in allEnemies)
+			{
+				//check if there are enemies left to attack and check per enemy if its closest to this character
+				if (Vector3.Distance(transform.position, potentialTarget.transform.position) < closestDistance && potentialTarget != null)
+				{
+					//if this enemy is closest to character, set closest distance to distance between character and enemy
+					closestDistance = Vector3.Distance(transform.position, potentialTarget.transform.position);
+					//also set current target to closest target (this enemy)
+					if (!currentTarget || (currentTarget && Vector3.Distance(transform.position, currentTarget.position) > 2))
+					{
+						currentTarget = potentialTarget.transform;
+					}
+				}
+			}
+		}
 	}
 	
 	public Vector3 getRandomPosition(WalkArea area){
@@ -371,6 +488,8 @@ public class Character : MonoBehaviour {
 
 			foreach(Animator animator in animators){
 				animator.SetBool("Attacking", false);
+				animator.SetBool("Heal", false);
+
 			}
 			
 			if(source.clip != runAudio){
