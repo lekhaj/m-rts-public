@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -51,7 +51,11 @@ public class Manager : MonoBehaviour {
 	public static bool gameOver;
 	public static bool victory;
 	public static GameObject StartMenu;
-	
+
+	public static event Action RetreatTroops;
+	public static event Action FightTroops;
+	public AudioSource source;
+
 	void Awake(){
 		characterButtons = GameObject.Find("Character panel");
 		showHideUnitsButton = GameObject.Find("Show/hide units");
@@ -278,5 +282,22 @@ public class Manager : MonoBehaviour {
 	
 	public void restart(){
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	}
+
+	public void Retreat()
+    {
+		RetreatTroops?.Invoke();
+		if(source != null)
+        {
+			source.Play();
+		}
+	}	
+	public void Fight()
+    {
+		FightTroops?.Invoke();
+		//if(source != null)
+  //      {
+		//	source.Play();
+		//}
 	}
 }

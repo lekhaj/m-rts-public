@@ -47,6 +47,7 @@ public class Character : MonoBehaviour {
 	[HideInInspector]
 	public GameObject selectedObject;
 	private bool goingToClickedPos;
+	private bool goingToDefensePos;
 	private float startLives;
 	private float defaultStoppingDistance;
 	private GameObject castle;
@@ -57,10 +58,18 @@ public class Character : MonoBehaviour {
 
 	private Vector3 randomTarget;
 	private WalkArea area;
-	
+	private DefenseArea defenseArea;
+	private Vector3 defensePosition;
+
 	private ParticleSystem dustEffect;
-	
-	void Start(){
+
+    private void OnEnable()
+    {
+		Manager.RetreatTroops += DefendCastle;
+		Manager.FightTroops += Fight;
+    }
+
+    void Start(){
 		source = GetComponent<AudioSource>();
 		
 		//character is not selected
@@ -106,6 +115,7 @@ public class Character : MonoBehaviour {
 			StartCoroutine(spawnSkeletons());
 		
 		area = GameObject.FindObjectOfType<WalkArea>();
+		defenseArea = GameObject.FindObjectOfType<DefenseArea>();
 	}
 	
 	void Update(){
@@ -159,7 +169,7 @@ public class Character : MonoBehaviour {
 		//check if character must go to a clicked position
 		checkForClickedPosition();
 		
-		if(!goingToClickedPos && walkRandomly){
+		if(!goingToDefensePos && !goingToClickedPos && walkRandomly){
 			if(area != null && agent != null){
 				if(agent.stoppingDistance > 2)
 					agent.stoppingDistance = 2;
@@ -191,7 +201,8 @@ public class Character : MonoBehaviour {
 		}
 		
 		//first check if character is not selected and moving to a clicked position
-		if(!goingToClickedPos){
+		if(!goingToClickedPos && !goingToDefensePos)
+		{
 
 			if(gameObject.CompareTag("Healer"))
             {
@@ -212,12 +223,9 @@ public class Character : MonoBehaviour {
 							animator.SetBool("Heal", true);
 						}
 
-						Debug.Log("Current Target Health" + currentTarget.gameObject.GetComponent<Character>().lives + "Intial Health" + currentTarget.gameObject.GetComponent<Character>().startLives);
-
 						if (currentTarget.gameObject.GetComponent<Character>().lives < currentTarget.gameObject.GetComponent<Character>().startLives)
 						{
 							currentTarget.gameObject.GetComponent<Character>().lives += Time.deltaTime * heal;
-							Debug.Log("Current Target Health After Heal" + currentTarget.gameObject.GetComponent<Character>().lives);
 						}
                         else
                         {
@@ -248,7 +256,7 @@ public class Character : MonoBehaviour {
 				else
 				{
 					//if character is not moving to clicked position attack the castle
-					if (!goingToClickedPos)
+					if (!goingToClickedPos && !goingToDefensePos)
 					{
 						if (!wizardSpawns)
 							agent.isStopped = false;
@@ -309,7 +317,7 @@ public class Character : MonoBehaviour {
 				else
 				{
 					//if character is not moving to clicked position attack the castle
-					if (!goingToClickedPos)
+					if (!goingToClickedPos && !goingToDefensePos)
 					{
 						if (!wizardSpawns)
 							agent.isStopped = false;
@@ -359,13 +367,36 @@ public class Character : MonoBehaviour {
 			
 		}
 		//if character is going to clicked position...
-		else{
+		else if(goingToClickedPos)
+		{
 			//if character is close enough to clicked position, let it attack enemies again
 			if(Vector3.Distance(transform.position, targetPosition) < agent.stoppingDistance + 1){
 				goingToClickedPos = false;	
 				
 				if(!wizardSpawns)
 					agent.isStopped = false;
+			}
+		}
+		// if character is going to defense position...
+		else if (goingToDefensePos)
+		{
+			// check if character has reached the defense position
+			if (Vector3.Distance(transform.position, defensePosition) < agent.stoppingDistance + 1)
+			{
+				// Set the agent's destination to the current position to make it stay in the defense position
+				agent.destination = transform.position;
+
+				if (!wizardSpawns)
+				{
+					agent.isStopped = true;
+					// Set the character's position to the defense position to ensure it stays in place
+					transform.position = defensePosition;
+					transform.rotation = Quaternion.Euler(transform.rotation.x, 90f, transform.rotation.z);
+					foreach (Animator animator in animators)
+					{
+						animator.SetBool("Defend", true);
+					}
+				}
 			}
 		}
 	}
@@ -397,7 +428,6 @@ public class Character : MonoBehaviour {
         if (gameObject.CompareTag("Healer"))
         {
 			allies = GameObject.FindGameObjectsWithTag("Knight");
-			Debug.Log("allies" + allies[0]);
 
 			GameObject targetAlly = null; 
 
@@ -456,6 +486,19 @@ public class Character : MonoBehaviour {
 	}
 	
 	public Vector3 getRandomPosition(WalkArea area){
+		Vector3 center = area.center;
+		Vector3 bounds = area.area;
+		float yRay = center.y + bounds.y/2f;
+		
+		Vector3 rayStart = new Vector3(center.x + Random.Range(-bounds.x/2f, bounds.x/2f), yRay, center.z + Random.Range(-bounds.z/2f, bounds.z/2f));
+		RaycastHit hit;
+		
+		if(Physics.Raycast(rayStart, -Vector3.up, out hit, bounds.y))
+			return hit.point;
+		
+		return Vector3.zero;
+	}	
+	public Vector3 getRandomPositionInDefenseArea(DefenseArea area){
 		Vector3 center = area.center;
 		Vector3 bounds = area.area;
 		float yRay = center.y + bounds.y/2f;
@@ -589,5 +632,62 @@ public class Character : MonoBehaviour {
 		
 		yield return new WaitForEndOfFrame();
 		Destroy(gameObject);
+	}
+
+	private void DefendCastle()
+	{
+		goingToDefensePos = true;
+		if (!goingToClickedPos && goingToDefensePos && (gameObject.CompareTag("Knight") || gameObject.CompareTag("Healer")))
+		{
+			if (defenseArea != null && agent != null)
+			{
+				if (agent.stoppingDistance > 2)
+					agent.stoppingDistance = 2;
+
+				if (randomTarget == Vector3.zero || Vector3.Distance(transform.position, randomTarget) < 3f)
+					randomTarget = getRandomPositionInDefenseArea(defenseArea);
+
+				// Set the defense position as the new destination
+				defensePosition = randomTarget;
+
+				if (randomTarget != Vector3.zero)
+				{
+					if (animators[0].GetBool("Attacking"))
+					{
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Attacking", false);
+						}
+
+						if (source.clip != runAudio)
+						{
+							source.clip = runAudio;
+							source.Play();
+						}
+					}
+
+					agent.isStopped = false;
+					agent.destination = defensePosition;
+				}
+			}
+		}
+	}
+
+	private void Fight()
+    {
+		goingToDefensePos = false;
+
+		currentTarget = null;
+		foreach (Animator animator in animators)
+		{
+			animator.SetBool("Defend", false);
+		}
+	}
+
+	private void OnDisable()
+    {
+		Manager.RetreatTroops -= DefendCastle;
+		Manager.FightTroops -= Fight;
+
 	}
 }
