@@ -54,7 +54,8 @@ public class Manager : MonoBehaviour {
 
 	public static event Action RetreatTroops;
 	public static event Action FightTroops;
-	public AudioSource source;
+	public AudioSource retreatAudio;
+	public AudioSource fightAudio;
 
 	void Awake(){
 		characterButtons = GameObject.Find("Character panel");
@@ -287,17 +288,18 @@ public class Manager : MonoBehaviour {
 	public void Retreat()
     {
 		RetreatTroops?.Invoke();
-		if(source != null)
+		if(retreatAudio != null)
         {
-			source.Play();
+			retreatAudio.Play();
 		}
 	}	
 	public void Fight()
     {
 		FightTroops?.Invoke();
-		//if(source != null)
-  //      {
-		//	source.Play();
-		//}
-	}
+        if (fightAudio != null)
+        {
+			Debug.Log("Fight");
+			fightAudio.Play();
+        }
+    }
 }

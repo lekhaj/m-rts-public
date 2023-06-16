@@ -23,6 +23,7 @@ public class Character : MonoBehaviour {
 	public AudioClip attackAudio;
 	public AudioClip runAudio;
 	
+	
 	//variables not visible in the inspector
 	[HideInInspector]
 	public bool selected;
@@ -47,7 +48,17 @@ public class Character : MonoBehaviour {
 	[HideInInspector]
 	public GameObject selectedObject;
 	private bool goingToClickedPos;
+	public bool GoingToClickedPos
+	{
+		get { return goingToClickedPos; }
+	}
 	private bool goingToDefensePos;
+	public bool GoingToDefensePos
+	{
+		get { return goingToDefensePos; }
+	}
+
+	private bool canAttackAndHealInsideDefend;
 	private float startLives;
 	private float defaultStoppingDistance;
 	private GameObject castle;
@@ -55,10 +66,15 @@ public class Character : MonoBehaviour {
 	private Animator[] animators;
 	private Vector3 targetPosition;
 	private AudioSource source;
+	public AudioSource Source
+	{
+		get { return Source; }
+	}
 
 	private Vector3 randomTarget;
 	private WalkArea area;
 	private DefenseArea defenseArea;
+	private GameObject defenseAreaEnd;
 	private Vector3 defensePosition;
 
 	private ParticleSystem dustEffect;
@@ -79,6 +95,7 @@ public class Character : MonoBehaviour {
 		//find navmesh agent component
 		agent = gameObject.GetComponent<NavMeshAgent>();
 		animators = gameObject.GetComponentsInChildren<Animator>();
+		defenseAreaEnd = GameObject.Find("DefendAreaEnd");
 	
 		//find objects attached to this character
 		health = transform.Find("Health").gameObject;
@@ -168,46 +185,16 @@ public class Character : MonoBehaviour {
 		
 		//check if character must go to a clicked position
 		checkForClickedPosition();
-		
-		if(!goingToDefensePos && !goingToClickedPos && walkRandomly){
-			if(area != null && agent != null){
-				if(agent.stoppingDistance > 2)
-					agent.stoppingDistance = 2;
-			
-				if(randomTarget == Vector3.zero || Vector3.Distance(transform.position, randomTarget) < 3f)
-					randomTarget = getRandomPosition(area);
-				
-				if(randomTarget != Vector3.zero){
-					if(animators[0].GetBool("Attacking")){
-						foreach(Animator animator in animators){
-							animator.SetBool("Attacking", false);
-						}
-						
-						if(source.clip != runAudio){
-							source.clip = runAudio;
-							source.Play();
-						}
-					}
-					
-					agent.isStopped = false;
-					agent.destination = randomTarget;
-				}
-			}
-			
-			return;
-		}
-		else if(agent.stoppingDistance != defaultStoppingDistance){
-			agent.stoppingDistance = defaultStoppingDistance;
-		}
-		
-		//first check if character is not selected and moving to a clicked position
-		if(!goingToClickedPos && !goingToDefensePos)
-		{
 
-			if(gameObject.CompareTag("Healer"))
-            {
+		if (canAttackAndHealInsideDefend && currentTarget.transform.position.x < defenseAreaEnd.transform.position.x && transform != null)
+		{
+			agent.isStopped = false;
+			Debug.Log("camattack");
+			findCurrentTarget();
+			if (gameObject.CompareTag("Healer"))
+			{
 				if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minHealDistance)
-                {
+				{
 					if (!wizardSpawns)
 						agent.isStopped = false;
 
@@ -227,8 +214,8 @@ public class Character : MonoBehaviour {
 						{
 							currentTarget.gameObject.GetComponent<Character>().lives += Time.deltaTime * heal;
 						}
-                        else
-                        {
+						else
+						{
 							findCurrentTarget();
 							foreach (Animator animator in animators)
 							{
@@ -252,34 +239,24 @@ public class Character : MonoBehaviour {
 						}
 					}
 				}
-				//if currentTarget is out of range...
-				else
-				{
-					//if character is not moving to clicked position attack the castle
-					if (!goingToClickedPos && !goingToDefensePos)
-					{
-						if (!wizardSpawns)
-							agent.isStopped = false;
-
-						agent.destination = transform.position;
-					}
-				}
-
-
 			}
-            else
-            {
+			else
+			{
+				Debug.Log("I am not healer" + currentTarget.transform.position);
 				//If there's a currentTarget and its within the attack range, move agent to currenttarget
 				if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minAttackDistance)
 				{
+					Debug.Log("Disttttttt" + (Vector3.Distance(currentTarget.position, transform.position)) + " agent" + agent.stoppingDistance);
 					if (!wizardSpawns)
 						agent.isStopped = false;
 
 					agent.destination = currentTarget.position;
 
 					//check if character has reached its target and than rotate towards target and attack it
-					if (Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance)
+					if (Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance + 1)
 					{
+						
+						Debug.Log("I ammmmmmmmmmmmmmmm");
 						Vector3 currentTargetPosition = currentTarget.position;
 						currentTargetPosition.y = transform.position.y;
 						transform.LookAt(currentTargetPosition);
@@ -313,92 +290,41 @@ public class Character : MonoBehaviour {
 						}
 					}
 				}
-				//if currentTarget is out of range...
-				else
-				{
-					//if character is not moving to clicked position attack the castle
-					if (!goingToClickedPos && !goingToDefensePos)
-					{
-						if (!wizardSpawns)
-							agent.isStopped = false;
+			}
+		}
 
-						agent.destination = castleAttackPosition;
-					}
-
-					//if character is close enough to castle, attack castle
-					if (castle != null && Vector3.Distance(transform.position, castleAttackPosition) <= castleStoppingDistance + castle.GetComponent<Castle>().size)
-					{
-						agent.isStopped = true;
-
-						foreach (Animator animator in animators)
-						{
-							animator.SetBool("Attacking", true);
-						}
-						if (castle != null)
-						{
-							castle.GetComponent<Castle>().lives -= Time.deltaTime * damage;
-						}
-
-						if (source.clip != attackAudio)
-						{
-							source.clip = attackAudio;
-							source.Play();
-						}
-					}
-
-					//if character is traveling to castle play running animation
-					else if (!wizardSpawns)
-					{
-						agent.isStopped = false;
-
-						foreach (Animator animator in animators)
-						{
+		if(!goingToDefensePos && !goingToClickedPos && walkRandomly){
+			if(area != null && agent != null){
+				if(agent.stoppingDistance > 2)
+					agent.stoppingDistance = 2;
+			
+				if(randomTarget == Vector3.zero || Vector3.Distance(transform.position, randomTarget) < 3f)
+					randomTarget = getRandomPosition(area);
+				
+				if(randomTarget != Vector3.zero){
+					if(animators[0].GetBool("Attacking")){
+						foreach(Animator animator in animators){
 							animator.SetBool("Attacking", false);
 						}
-
-						if (source.clip != runAudio)
-						{
+						
+						if(source.clip != runAudio){
 							source.clip = runAudio;
 							source.Play();
 						}
 					}
+					
+					agent.isStopped = false;
+					agent.destination = randomTarget;
 				}
 			}
 			
+			return;
 		}
-		//if character is going to clicked position...
-		else if(goingToClickedPos)
-		{
-			//if character is close enough to clicked position, let it attack enemies again
-			if(Vector3.Distance(transform.position, targetPosition) < agent.stoppingDistance + 1){
-				goingToClickedPos = false;	
-				
-				if(!wizardSpawns)
-					agent.isStopped = false;
-			}
+		else if(agent != null && agent.stoppingDistance != defaultStoppingDistance){
+			agent.stoppingDistance = defaultStoppingDistance;
 		}
-		// if character is going to defense position...
-		else if (goingToDefensePos)
-		{
-			// check if character has reached the defense position
-			if (Vector3.Distance(transform.position, defensePosition) < agent.stoppingDistance + 1)
-			{
-				// Set the agent's destination to the current position to make it stay in the defense position
-				agent.destination = transform.position;
 
-				if (!wizardSpawns)
-				{
-					agent.isStopped = true;
-					// Set the character's position to the defense position to ensure it stays in place
-					transform.position = defensePosition;
-					transform.rotation = Quaternion.Euler(transform.rotation.x, 90f, transform.rotation.z);
-					foreach (Animator animator in animators)
-					{
-						animator.SetBool("Defend", true);
-					}
-				}
-			}
-		}
+		Fightlogics();
 	}
 	
 	public void findClosestCastle(){
@@ -641,15 +567,12 @@ public class Character : MonoBehaviour {
 		{
 			if (defenseArea != null && agent != null)
 			{
-				if (agent.stoppingDistance > 2)
-					agent.stoppingDistance = 2;
-
 				if (randomTarget == Vector3.zero || Vector3.Distance(transform.position, randomTarget) < 3f)
 					randomTarget = getRandomPositionInDefenseArea(defenseArea);
 
 				// Set the defense position as the new destination
 				defensePosition = randomTarget;
-
+				Debug.Log("Defense eee" + defensePosition);
 				if (randomTarget != Vector3.zero)
 				{
 					if (animators[0].GetBool("Attacking"))
@@ -673,15 +596,234 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	private void Fightlogics()
+    {
+		//first check if character is not selected and moving to a clicked position
+		if (!goingToClickedPos && !goingToDefensePos)
+		{
+			TroopAttack();
+
+		}
+		//if character is going to clicked position...
+		else if (goingToClickedPos)
+		{
+			//if character is close enough to clicked position, let it attack enemies again
+			if (Vector3.Distance(transform.position, targetPosition) < agent.stoppingDistance + 1)
+			{
+				goingToClickedPos = false;
+
+				if (!wizardSpawns)
+					agent.isStopped = false;
+			}
+		}
+		// if character is going to defense position...
+		else if (goingToDefensePos && !gameObject.CompareTag("Enemy") && !canAttackAndHealInsideDefend && !gameObject.CompareTag("Tree"))
+		{
+			// check if character has reached the defense position
+			if (Vector3.Distance(transform.position, defensePosition) < agent.stoppingDistance + 1)
+			{
+				// Set the agent's destination to the current position to make it stay in the defense position
+				agent.destination = transform.position;
+
+				if (!wizardSpawns)
+				{
+					agent.isStopped = true;
+					// Set the character's position to the defense position to ensure it stays in place
+					canAttackAndHealInsideDefend = true;
+
+					//transform.position = defensePosition;
+					transform.rotation = Quaternion.Euler(transform.rotation.x, 90f, transform.rotation.z);
+					//foreach (Animator animator in animators)
+					//{
+					//	animator.SetBool("Defend", true);
+					//}
+				}
+			}
+		}
+	}
+
+    private void TroopAttack()
+    {
+		if (gameObject.CompareTag("Healer"))
+		{
+			if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minHealDistance)
+			{
+				if (!wizardSpawns)
+					agent.isStopped = false;
+
+				agent.destination = currentTarget.position;
+				if (Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance)
+				{
+					Vector3 currentTargetPosition = currentTarget.position;
+					currentTargetPosition.y = transform.position.y;
+					transform.LookAt(currentTargetPosition);
+
+					foreach (Animator animator in animators)
+					{
+						animator.SetBool("Heal", true);
+					}
+
+					if (currentTarget.gameObject.GetComponent<Character>().lives < currentTarget.gameObject.GetComponent<Character>().startLives)
+					{
+						currentTarget.gameObject.GetComponent<Character>().lives += Time.deltaTime * heal;
+					}
+					else
+					{
+						findCurrentTarget();
+						foreach (Animator animator in animators)
+						{
+							animator.SetBool("Heal", false);
+						}
+					}
+				}
+
+				//if its still traveling to the target, play running animation
+				if (animators[0].GetBool("Heal") && Vector3.Distance(currentTarget.position, transform.position) > agent.stoppingDistance && !wizardSpawns)
+				{
+					foreach (Animator animator in animators)
+					{
+						animator.SetBool("Heal", false);
+					}
+
+					if (source.clip != runAudio)
+					{
+						source.clip = runAudio;
+						source.Play();
+					}
+				}
+			}
+			//if currentTarget is out of range...
+			else
+			{
+				//if character is not moving to clicked position attack the castle
+				if (!goingToClickedPos && !goingToDefensePos)
+				{
+					if (!wizardSpawns)
+						agent.isStopped = false;
+
+					agent.destination = transform.position;
+				}
+			}
+
+
+		}
+		else
+		{
+			//If there's a currentTarget and its within the attack range, move agent to currenttarget
+			if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) < minAttackDistance)
+			{
+				if (!wizardSpawns)
+					agent.isStopped = false;
+
+				agent.destination = currentTarget.position;
+				//Debug.Log("Disssss" + (Vector3.Distance(currentTarget.position, transform.position)) + " agent" + agent.stoppingDistance);
+				//check if character has reached its target and than rotate towards target and attack it
+				if (Vector3.Distance(currentTarget.position, transform.position) <= agent.stoppingDistance)
+				{
+					Vector3 currentTargetPosition = currentTarget.position;
+					currentTargetPosition.y = transform.position.y;
+					transform.LookAt(currentTargetPosition);
+
+					foreach (Animator animator in animators)
+					{
+						animator.SetBool("Attacking", true);
+					}
+
+					if (source.clip != attackAudio)
+					{
+						source.clip = attackAudio;
+						source.Play();
+					}
+
+					currentTarget.gameObject.GetComponent<Character>().lives -= Time.deltaTime * damage;
+				}
+
+				//if its still traveling to the target, play running animation
+				if (animators[0].GetBool("Attacking") && Vector3.Distance(currentTarget.position, transform.position) > agent.stoppingDistance && !wizardSpawns)
+				{
+					foreach (Animator animator in animators)
+					{
+						animator.SetBool("Attacking", false);
+					}
+
+					if (source.clip != runAudio)
+					{
+						source.clip = runAudio;
+						source.Play();
+					}
+				}
+			}
+			//if currentTarget is out of range...
+			else
+			{
+				CastleAttack();
+			}
+		}
+	}
+
+	private void CastleAttack()
+    {
+		//if character is not moving to clicked position attack the castle
+		if (!goingToClickedPos && !goingToDefensePos)
+		{
+			if (!wizardSpawns)
+				agent.isStopped = false;
+
+			agent.destination = castleAttackPosition;
+		}
+
+		//if character is close enough to castle, attack castle
+		if (castle != null && Vector3.Distance(transform.position, castleAttackPosition) <= castleStoppingDistance + castle.GetComponent<Castle>().size)
+		{
+			agent.isStopped = true;
+
+			foreach (Animator animator in animators)
+			{
+				animator.SetBool("Attacking", true);
+			}
+			if (castle != null)
+			{
+				castle.GetComponent<Castle>().lives -= Time.deltaTime * damage;
+			}
+
+			if (source.clip != attackAudio)
+			{
+				source.clip = attackAudio;
+				source.Play();
+			}
+		}
+
+		//if character is traveling to castle play running animation
+		else if (!wizardSpawns)
+		{
+			agent.isStopped = false;
+
+			foreach (Animator animator in animators)
+			{
+				animator.SetBool("Attacking", false);
+			}
+
+			if (source.clip != runAudio)
+			{
+				source.clip = runAudio;
+				source.Play();
+			}
+		}
+	}
+
 	private void Fight()
     {
-		goingToDefensePos = false;
-
-		currentTarget = null;
-		foreach (Animator animator in animators)
-		{
-			animator.SetBool("Defend", false);
-		}
+        if (!gameObject.CompareTag("Tree"))
+        {
+			goingToDefensePos = false;
+			agent.isStopped = false;
+			canAttackAndHealInsideDefend = false;
+			currentTarget = null;
+        }
+		//foreach (Animator animator in animators)
+		//{
+		//	animator.SetBool("Defend", false);
+		//}
 	}
 
 	private void OnDisable()
