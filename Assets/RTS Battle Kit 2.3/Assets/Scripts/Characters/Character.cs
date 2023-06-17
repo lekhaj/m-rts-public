@@ -22,8 +22,9 @@ public class Character : MonoBehaviour {
 	public GameObject ragdoll;
 	public AudioClip attackAudio;
 	public AudioClip runAudio;
-	
-	
+	public Hero HeroSO;
+	public LayerMask allyLayerMask;
+
 	//variables not visible in the inspector
 	[HideInInspector]
 	public bool selected;
@@ -76,8 +77,13 @@ public class Character : MonoBehaviour {
 	private DefenseArea defenseArea;
 	private GameObject defenseAreaEnd;
 	private Vector3 defensePosition;
-
+	private float _allyMergeDistance = 20f;
+	private Collider selfCollider;
 	private ParticleSystem dustEffect;
+	private int scaleCount;
+	private bool hasReachedMaxScale;
+	private Vector3 intialScale;
+	private Vector3 maxScale;
 
     private void OnEnable()
     {
@@ -86,7 +92,11 @@ public class Character : MonoBehaviour {
     }
 
     void Start(){
+
+		intialScale = transform.localScale;
+		selfCollider = GetComponent<Collider>();
 		source = GetComponent<AudioSource>();
+		maxScale = intialScale * 3f;
 		
 		//character is not selected
 		selected = false;
@@ -324,10 +334,66 @@ public class Character : MonoBehaviour {
 			agent.stoppingDistance = defaultStoppingDistance;
 		}
 
+		if(transform.localScale.x < maxScale.x && transform.localScale.y < maxScale.y && transform.localScale.z < maxScale.z)
+        {
+			hasReachedMaxScale = true;
+        }
+
 		Fightlogics();
 	}
-	
-	public void findClosestCastle(){
+
+    private void LateUpdate()
+    {
+		Collider[] colliders = Physics.OverlapSphere(transform.position, _allyMergeDistance, allyLayerMask);
+
+
+		foreach (Collider collider in colliders)
+		{
+			if (collider != selfCollider)
+			{
+				Vector3 newSize = intialScale + Vector3.one;
+				Debug.Log("Self" + HeroSO.HeroType + "ally" + collider.gameObject.GetComponent<Character>().HeroSO.HeroType);
+				if (HeroSO != null && HeroSO.HeroType == collider.gameObject.GetComponent<Character>().HeroSO.HeroType)
+				{
+					Debug.Log("scaleCount" + scaleCount);
+					int selfIndex = System.Array.IndexOf(colliders, selfCollider);
+					int otherIndex = System.Array.IndexOf(colliders, collider);
+					collider.GetComponent<NavMeshAgent>().destination = agent.destination;
+					//collider.transform.SetParent(transform);
+					transform.localScale = newSize;
+
+					//if (selfIndex < otherIndex)
+					//{
+					//	//selfCollider.enabled = false;
+					//	//collider.transform.rotation = Quaternion.Euler(Vector3.zero);
+					//	//collider.transform.position = transform.position;
+					//}
+				}
+				//else
+				//{
+				//	//collider.gameObject.GetComponent<Collider>().enabled = false;
+				//	//transform.rotation = Quaternion.Euler(Vector3.zero);
+				//	//transform.position = collider.transform.position;
+				//	agent.destination = collider.GetComponent<NavMeshAgent>().destination;
+				//	//transform.SetParent(collider.transform);
+				//	transform.localScale = newSize;
+				//	// Set parent, position, scale, or perform other desired operations on collider's game object
+				//}
+
+					//collider.gameObject.GetComponent<Collider>().enabled = false;
+					//collider.transform.SetParent(transform, true);
+					//collider.transform.position = transform.position;
+
+					//collider.gameObject.transform.position = transform.position;
+
+					//Vector3 newSize = intialScale + new Vector3(2f, 2f, 2f);
+					//transform.localScale = newSize;
+				
+			}
+		}
+	}
+
+    public void findClosestCastle(){
 		//find the castles that should be attacked by this character
 		GameObject[] castles = GameObject.FindGameObjectsWithTag(attackCastleTag);
 		
@@ -633,10 +699,6 @@ public class Character : MonoBehaviour {
 
 					//transform.position = defensePosition;
 					transform.rotation = Quaternion.Euler(transform.rotation.x, 90f, transform.rotation.z);
-					//foreach (Animator animator in animators)
-					//{
-					//	animator.SetBool("Defend", true);
-					//}
 				}
 			}
 		}
@@ -820,10 +882,6 @@ public class Character : MonoBehaviour {
 			canAttackAndHealInsideDefend = false;
 			currentTarget = null;
         }
-		//foreach (Animator animator in animators)
-		//{
-		//	animator.SetBool("Defend", false);
-		//}
 	}
 
 	private void OnDisable()

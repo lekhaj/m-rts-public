@@ -35,7 +35,7 @@ public class Mobile : MonoBehaviour {
 
 			if (SceneManager.GetActiveScene().name == "Single player Clash Royal")
 			{
-				Debug.Log("Clash Royal");
+				//Debug.Log("Clash Royal");
 				if (moveLeft)
 				{
 					Camera.main.transform.Translate(Vector3.right * Time.deltaTime * -CamController.movespeed);
@@ -55,7 +55,7 @@ public class Mobile : MonoBehaviour {
 			}
 			else if (SceneManager.GetActiveScene().name == "Single player Castle Crush")
 			{
-				Debug.Log("Castle Crush");
+				//Debug.Log("Castle Crush");
 				if (moveLeft)
 				{
 					Camera.main.transform.Translate(Vector3.right * Time.deltaTime * -CamController.movespeed);
