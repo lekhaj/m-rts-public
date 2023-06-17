@@ -7,10 +7,6 @@ public class Hero : ScriptableObject
 {
     public Heroes HeroType;
 
-    [HideInInspector]
-    public int MaxMergeCount = 3;
-
-
     public enum Heroes
     {
         Archer,

@@ -77,12 +77,14 @@ public class Character : MonoBehaviour {
 	private DefenseArea defenseArea;
 	private GameObject defenseAreaEnd;
 	private Vector3 defensePosition;
-	private float _allyMergeDistance = 20f;
+	private float _allyMergeDistance = 7f;
 	private Collider selfCollider;
 	private ParticleSystem dustEffect;
 	private int scaleCount;
 	private bool hasReachedMaxScale;
 	private Vector3 intialScale;
+	private float intialDamage;
+	private float intialHeal;
 	private Vector3 maxScale;
 
     private void OnEnable()
@@ -97,6 +99,8 @@ public class Character : MonoBehaviour {
 		selfCollider = GetComponent<Collider>();
 		source = GetComponent<AudioSource>();
 		maxScale = intialScale * 3f;
+		intialDamage = damage;
+		intialHeal = heal;
 		
 		//character is not selected
 		selected = false;
@@ -352,6 +356,8 @@ public class Character : MonoBehaviour {
 			if (collider != selfCollider)
 			{
 				Vector3 newSize = intialScale + Vector3.one;
+				float newDamage = intialDamage + 5f;
+				float newHeal = intialHeal + 5f;
 				Debug.Log("Self" + HeroSO.HeroType + "ally" + collider.gameObject.GetComponent<Character>().HeroSO.HeroType);
 				if (HeroSO != null && HeroSO.HeroType == collider.gameObject.GetComponent<Character>().HeroSO.HeroType)
 				{
@@ -359,36 +365,17 @@ public class Character : MonoBehaviour {
 					int selfIndex = System.Array.IndexOf(colliders, selfCollider);
 					int otherIndex = System.Array.IndexOf(colliders, collider);
 					collider.GetComponent<NavMeshAgent>().destination = agent.destination;
-					//collider.transform.SetParent(transform);
 					transform.localScale = newSize;
 
-					//if (selfIndex < otherIndex)
-					//{
-					//	//selfCollider.enabled = false;
-					//	//collider.transform.rotation = Quaternion.Euler(Vector3.zero);
-					//	//collider.transform.position = transform.position;
-					//}
+                    if (gameObject.CompareTag("Knight"))
+                    {
+						damage = newDamage;
+                    }
+					else if (gameObject.CompareTag("Healer"))
+                    {
+						heal = newHeal;
+                    }
 				}
-				//else
-				//{
-				//	//collider.gameObject.GetComponent<Collider>().enabled = false;
-				//	//transform.rotation = Quaternion.Euler(Vector3.zero);
-				//	//transform.position = collider.transform.position;
-				//	agent.destination = collider.GetComponent<NavMeshAgent>().destination;
-				//	//transform.SetParent(collider.transform);
-				//	transform.localScale = newSize;
-				//	// Set parent, position, scale, or perform other desired operations on collider's game object
-				//}
-
-					//collider.gameObject.GetComponent<Collider>().enabled = false;
-					//collider.transform.SetParent(transform, true);
-					//collider.transform.position = transform.position;
-
-					//collider.gameObject.transform.position = transform.position;
-
-					//Vector3 newSize = intialScale + new Vector3(2f, 2f, 2f);
-					//transform.localScale = newSize;
-				
 			}
 		}
 	}
