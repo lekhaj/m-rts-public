@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ using UnityEngine.UI;
 public class Troop{
 	public GameObject deployableTroops;
 	public int troopCosts;
+	public int foodCosts;
 	public Sprite buttonImage;
 	[HideInInspector]
 	public GameObject button;
@@ -18,6 +20,7 @@ public class CharacterManager : MonoBehaviour {
 
 	//variables visible in the inspector	
 	public int startGold;
+	public int startFood;
 	public GUIStyle rectangleStyle;
 	public ParticleSystem newUnitEffect;
 	public Texture2D cursorTexture;
@@ -41,6 +44,7 @@ public class CharacterManager : MonoBehaviour {
 	//variables not visible in the inspector
 	public static Vector3 clickedPos;
 	public static int gold;
+	public static int food;
 	public static GameObject target;
 	
 	private Vector2 mouseDownPos;
@@ -49,9 +53,22 @@ public class CharacterManager : MonoBehaviour {
     private bool isDown;
 	private GameObject[] knights;
 	private int selectedUnit;
+
+	//Gold
 	private GameObject goldText;
 	private GameObject goldWarning;
 	private GameObject addedGoldText;
+
+	//Food
+	private GameObject foodText;
+	private GameObject foodWarning;
+	private GameObject addedfoodText;
+
+	//Tree
+	private int maxTrees = 3;
+	public static int treesCount = 0;
+	private GameObject treeWarning;
+
 	private GameObject characterList;
 	private GameObject characterParent;
 	private GameObject selectButton;
@@ -84,19 +101,32 @@ public class CharacterManager : MonoBehaviour {
 		
 		//find text that displays your amount of gold
 		goldText = GameObject.Find("gold text");
+		//find text that displays your amount of food
+		foodText = GameObject.Find("food text");
 		//find text that appears when you get extra gold
 		addedGoldText = GameObject.Find("added gold text");
+		//find text that appears when you get extra food
+		addedfoodText = GameObject.Find("added food text");
 		
 		//find warning that appears when you don't have enough gold to deploy troops
 		goldWarning = GameObject.Find("gold warning");
+		//find warning that appears when you don't have enough gold to deploy troops
+		foodWarning = GameObject.Find("food warning");
+		//find warning that appears when max tree count reach
+		treeWarning = GameObject.Find("tree warning");
 		
 		//find bomb gameobjects
 		bombLoadingBar = GameObject.Find("Loading bar");
 		bombButton = GameObject.Find("Bomb button");
 		bombRange = GameObject.Find("Bomb range");
 	}
-	
-	void Start(){
+
+    private void OnEnable()
+    {
+		FoodProvider.AddFoodCount += AddFood;
+	}
+
+    void Start(){
 		target.SetActive(false);
 		//set cursor and add the character buttons
 		Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
@@ -105,6 +135,14 @@ public class CharacterManager : MonoBehaviour {
 		gold = startGold;
 		addedGoldText.SetActive(false);	
 		goldWarning.SetActive(false);
+		
+		//set food amount to start food amount
+		food = startFood;
+		addedfoodText.SetActive(false);	
+		foodWarning.SetActive(false);
+
+		//set Tree
+		treeWarning.SetActive(false);
 		
 		//play function addGold every five seconds
 		InvokeRepeating("AddGold", 1.0f, 5.0f);
@@ -132,6 +170,7 @@ public class CharacterManager : MonoBehaviour {
 		
 		//set gold text to gold amount
 		goldText.GetComponent<UnityEngine.UI.Text>().text = "" + gold;
+		foodText.GetComponent<UnityEngine.UI.Text>().text = "" + food;
 		
 		//ray from main camera
 		RaycastHit hit;
@@ -140,17 +179,34 @@ public class CharacterManager : MonoBehaviour {
 				
 		//check if left mouse button gets pressed
         if(Input.GetMouseButtonDown(0)){
+
 			//if you didn't click on UI and you have not enought gold, display a warning
 			if(gold < troops[selectedUnit].troopCosts && !EventSystem.current.IsPointerOverGameObject()){
 			StartCoroutine(GoldWarning());	
+			}	
+			if(food < troops[selectedUnit].foodCosts && !EventSystem.current.IsPointerOverGameObject()){
+			StartCoroutine(FoodWarning());	
 			}
 			//check if you hit any collider when clicking (just to prevent errors)
 			if(hit.collider != null){
-			//if you click battle ground, if click doesn't hit any UI, if space is not down and if you have enough gold, deploy the selected troops and decrease gold amount
-			if(hit.collider.gameObject.CompareTag("Battle ground") && !selectionMode && !isPlacingBomb && !EventSystem.current.IsPointerOverGameObject() 
-			&& gold >= troops[selectedUnit].troopCosts && (!GameObject.Find("Mobile") || (GameObject.Find("Mobile") && Mobile.deployMode))){
+				//if you click battle ground, if click doesn't hit any UI, if space is not down and if you have enough gold, deploy the selected troops and decrease gold amount
+				if (hit.collider.gameObject.CompareTag("Battle ground") && selectionMode && !isPlacingBomb && !EventSystem.current.IsPointerOverGameObject()
+				&& gold >= troops[selectedUnit].troopCosts && food >= troops[selectedUnit].foodCosts && (!GameObject.Find("Mobile") || (GameObject.Find("Mobile") && Mobile.deployMode))) {
+
+					if (troops[selectedUnit].deployableTroops.CompareTag("Tree") && treesCount < maxTrees)
+					{
+						CreateUnit(hit);
+					}
+					else if (troops[selectedUnit].deployableTroops.CompareTag("Tree") && treesCount > maxTrees)
+					{
+						treeWarning.SetActive(true);
+						DisappearTreeWarning();
+					}
+					else if (!troops[selectedUnit].deployableTroops.CompareTag("Tree"))
+                    {
+						CreateUnit(hit);
+					}
 				
-				CreateUnit(hit);
 			}
 			
 			//if you are placing a bomb and click...
@@ -229,7 +285,7 @@ public class CharacterManager : MonoBehaviour {
 		//for each button, check if we have enough gold to deploy the unit and color the button grey if it can not be deployed yet
 		for(int i = 0; i < troops.Count; i++){
 			if(troops[i].button != null){
-				if(troops[i].troopCosts <= gold){
+				if(troops[i].troopCosts <= gold && troops[i].foodCosts <= food){
 					troops[i].button.gameObject.GetComponent<Image>().color = Color.white;
 				}
 				else{
@@ -259,10 +315,20 @@ public class CharacterManager : MonoBehaviour {
     }
 	
 	void CreateUnit(RaycastHit hit){
+		Debug.Log("Create Unit");
+
 		GameObject newTroop = Instantiate(troops[selectedUnit].deployableTroops, hit.point, troops[selectedUnit].deployableTroops.transform.rotation) as GameObject;
 		Instantiate(newUnitEffect, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
+
+		//checking tree count
+		if (newTroop.CompareTag("Tree"))
+        {
+			treesCount++;
+        }
+
 		newTroop.transform.parent = characterParent.transform;
 		gold -= troops[selectedUnit].troopCosts;
+		food -= troops[selectedUnit].foodCosts;
 				
 		foreach(Character character in GameObject.FindObjectsOfType<Character>()){
 			if(character != this)
@@ -320,7 +386,7 @@ public class CharacterManager : MonoBehaviour {
 		//selected unit is the pressed button
 		selectedUnit = unit;
 		
-		if(mobileDragInput && !isPlacingBomb && gold >= troops[selectedUnit].troopCosts){
+		if(mobileDragInput && !isPlacingBomb && gold >= troops[selectedUnit].troopCosts && food >= troops[selectedUnit].foodCosts){
 			dragPreview = Instantiate(troops[unit].button);
 			dragPreview.transform.SetParent(GameObject.FindObjectOfType<Settings>().gameObject.transform);
 			
@@ -337,6 +403,7 @@ public class CharacterManager : MonoBehaviour {
 	}
 	
 	public void selectCharacters(){
+		Debug.Log("select" + selectionMode);
 		//turn selection mode on/off
 		selectionMode = !selectionMode;
 		if(selectionMode){
@@ -344,7 +411,9 @@ public class CharacterManager : MonoBehaviour {
 		selectButton.GetComponent<Image>().color = Color.red;	
 		Cursor.SetCursor(cursorTexture1, Vector2.zero, CursorMode.Auto);
 		if(GameObject.Find("Mobile")){
-			if(Mobile.deployMode){
+				Debug.Log("deplymode" + Mobile.deployMode);
+			if(!Mobile.deployMode){
+					Debug.Log("I am inside");
 				GameObject.Find("Mobile").GetComponent<Mobile>().toggleDeployMode();
 			}
 			Mobile.camEnabled = false;
@@ -378,6 +447,16 @@ public class CharacterManager : MonoBehaviour {
 	//wait for 2 seconds
 	yield return new WaitForSeconds(2);
 	goldWarning.SetActive(false);
+	}
+	}	
+	//warning if you need more food
+	IEnumerator FoodWarning(){
+	if(!foodWarning.activeSelf){
+	foodWarning.SetActive(true);
+	
+	//wait for 2 seconds
+	yield return new WaitForSeconds(2);
+	foodWarning.SetActive(false);
 	}
 	}
 	
@@ -429,10 +508,32 @@ public class CharacterManager : MonoBehaviour {
 	gold += 100;
 	StartCoroutine(AddedGoldText());
 	}
+
+	void AddFood()
+    {
+		food += 50;
+		StartCoroutine(AddedFoodText());
+	}
 	
 	IEnumerator AddedGoldText(){
 	addedGoldText.SetActive(true);	
 	yield return new WaitForSeconds(0.7f);
 	addedGoldText.SetActive(false);	
 	}
+	IEnumerator AddedFoodText(){
+	addedfoodText.SetActive(true);	
+	yield return new WaitForSeconds(0.7f);
+	addedfoodText.SetActive(false);	
+	}
+
+	async void DisappearTreeWarning()
+    {
+		await Task.Delay(200);
+		treeWarning.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+		FoodProvider.AddFoodCount -= AddFood;
+    }
 }

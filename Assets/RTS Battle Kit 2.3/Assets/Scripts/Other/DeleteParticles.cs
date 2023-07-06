@@ -7,6 +7,7 @@ public class DeleteParticles : MonoBehaviour {
 	public float lifetime = 1f;
 	
 	void Start(){
+		Debug.Log("Destroy");
 	//Destroy gameobject (or particles) after lifetime
 	Destroy(gameObject, lifetime);
 	}

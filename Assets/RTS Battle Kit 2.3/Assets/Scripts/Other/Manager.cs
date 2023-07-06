@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -51,7 +51,12 @@ public class Manager : MonoBehaviour {
 	public static bool gameOver;
 	public static bool victory;
 	public static GameObject StartMenu;
-	
+
+	public static event Action RetreatTroops;
+	public static event Action FightTroops;
+	public AudioSource retreatAudio;
+	public AudioSource fightAudio;
+
 	void Awake(){
 		characterButtons = GameObject.Find("Character panel");
 		showHideUnitsButton = GameObject.Find("Show/hide units");
@@ -223,6 +228,7 @@ public class Manager : MonoBehaviour {
 	
 	//start the game
 	public void startGame(){
+		missionPanel.SetActive(false);
 		//set timescale to normal and start fading out
 		Time.timeScale = 1;
 		fading = true;
@@ -232,6 +238,7 @@ public class Manager : MonoBehaviour {
 	
 	//open mission panel to start game
 	public void openMissionPanel(){
+		StartMenu.SetActive(false);
 		missionPanel.SetActive(true);
 	}
 	
@@ -277,4 +284,22 @@ public class Manager : MonoBehaviour {
 	public void restart(){
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
+
+	public void Retreat()
+    {
+		RetreatTroops?.Invoke();
+		if(retreatAudio != null)
+        {
+			retreatAudio.Play();
+		}
+	}	
+	public void Fight()
+    {
+		FightTroops?.Invoke();
+        if (fightAudio != null)
+        {
+			Debug.Log("Fight");
+			fightAudio.Play();
+        }
+    }
 }
