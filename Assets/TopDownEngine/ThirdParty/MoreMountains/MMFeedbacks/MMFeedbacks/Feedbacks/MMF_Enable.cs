@@ -59,6 +59,8 @@ namespace MoreMountains.Feedbacks
 		[MMFCondition("SetStateOnReset", true)]
 		public PossibleStates StateOnReset = PossibleStates.Disabled;
 
+		protected bool _initialState;
+		
 		/// <summary>
 		/// On init we change the state of our Behaviour if needed
 		/// </summary>
@@ -140,6 +142,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="state"></param>
 		protected virtual void SetStatus(PossibleStates state)
 		{
+			_initialState = TargetBehaviour.enabled;
 			switch (state)
 			{
 				case PossibleStates.Enabled:
@@ -152,6 +155,19 @@ namespace MoreMountains.Feedbacks
 					TargetBehaviour.enabled = !TargetBehaviour.enabled;
 					break;
 			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			TargetBehaviour.enabled = _initialState;
 		}
 	}
 }

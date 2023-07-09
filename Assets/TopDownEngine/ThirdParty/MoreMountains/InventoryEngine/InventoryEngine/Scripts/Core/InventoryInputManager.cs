@@ -3,7 +3,7 @@ using MoreMountains.Tools;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine.UI;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 	using UnityEngine.InputSystem;
 #endif
 
@@ -34,7 +34,7 @@ namespace MoreMountains.InventoryEngine
 		/// if this is true, the inventory container will be hidden automatically on start
 		public bool InputOnlyWhenOpen = true;
 
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			[Header("Input System Key Mapping")]
 			[MMInformation("Here you need to set the various key bindings you prefer. There are some by default but feel free to change them.", MMInformationAttribute.InformationType.Info, false)]
 			/// the key used to open/close the inventory
@@ -157,6 +157,7 @@ namespace MoreMountains.InventoryEngine
 		protected bool _equipKeyPressed;
 		protected bool _useKeyPressed;
 		protected bool _dropKeyPressed;
+		protected bool _hotbarInputPressed = false;
 
 		/// <summary>
 		/// On start, we grab references and prepare our hotbar list
@@ -363,7 +364,7 @@ namespace MoreMountains.InventoryEngine
 				return;
 			}
 			
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				_toggleInventoryKeyPressed = Keyboard.current[ToggleInventoryKey].wasPressedThisFrame;
 				_cancelKeyPressed = Keyboard.current[CancelKey].wasPressedThisFrame;
 				_prevInvKeyPressed = Keyboard.current[PrevInvKey].wasPressedThisFrame;
@@ -486,7 +487,13 @@ namespace MoreMountains.InventoryEngine
 				{
 					if (hotbar != null)
 					{
-						if (Input.GetKeyDown(hotbar.HotbarKey) || Input.GetKeyDown(hotbar.HotbarAltKey))
+						#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+						_hotbarInputPressed = Keyboard.current[hotbar.HotbarKey].wasPressedThisFrame;
+						#else
+						_hotbarInputPressed = Input.GetKeyDown(hotbar.HotbarKey) || Input.GetKeyDown(hotbar.HotbarAltKey);
+						#endif
+						
+						if (_hotbarInputPressed)
 						{
 							hotbar.Action();
 						}

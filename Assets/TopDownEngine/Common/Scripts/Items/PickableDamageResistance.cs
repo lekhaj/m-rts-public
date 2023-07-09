@@ -73,7 +73,7 @@ namespace MoreMountains.TopDownEngine
 					newResistance.transform.SetParent(processor.transform);
 					newResistance.name = NewResistanceNodeName;
 					DamageResistance newResistanceComponent = MMHelpers.CopyComponent<DamageResistance>(DamageResistanceToGive, newResistance);
-					processor.DamageResitanceList.Add(newResistanceComponent);
+					processor.DamageResistanceList.Add(newResistanceComponent);
 					break;
 			}
 		}

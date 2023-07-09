@@ -21,6 +21,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
 		#endif
+		public override bool HasRandomness => true;
 
 		#if MM_CINEMACHINE
 		[MMFInspectorGroup("Cinemachine Impulse", true, 28)]
@@ -46,8 +47,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
 
 			#if MM_CINEMACHINE
-			CinemachineImpulseManager.Instance.IgnoreTimeScale = (Timing.TimescaleMode == TimescaleModes.Unscaled);
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			CinemachineImpulseManager.Instance.IgnoreTimeScale = !InScaledTimescaleMode;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			m_ImpulseDefinition.CreateEvent(position, Velocity * intensityMultiplier);
 			#endif
 		}

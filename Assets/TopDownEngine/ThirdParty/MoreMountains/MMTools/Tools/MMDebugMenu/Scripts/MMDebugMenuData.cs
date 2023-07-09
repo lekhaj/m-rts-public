@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -159,7 +159,7 @@ namespace MoreMountains.Tools
 		public float ToggleDuration = 0.2f;
 		public MMTween.MMTweenCurve ToggleCurve = MMTween.MMTweenCurve.EaseInCubic;
         
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			public Key ToggleKey = Key.Backquote;
 		#else
 		public KeyCode ToggleShortcut = KeyCode.Quote;

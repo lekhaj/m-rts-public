@@ -33,6 +33,8 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the selected destruction mode")]
 		public Modes Mode;
 
+		protected bool _initialActiveState;
+
 		/// <summary>
 		/// On Play we change the state of our Behaviour if needed
 		/// </summary>
@@ -62,8 +64,25 @@ namespace MoreMountains.Feedbacks
 					Owner.ProxyDestroyImmediate(go);
 					break;
 				case Modes.Disable:
+					_initialActiveState = go.activeInHierarchy;
 					go.SetActive(false);
 					break;
+			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			if (Mode == Modes.Disable)
+			{
+				TargetGameObject.SetActive(_initialActiveState);
 			}
 		}
 	}

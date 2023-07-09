@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this component to an object and it will cause damage to objects that collide with it. 
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Character/Damage/KillZone")]
-	public class KillZone : MonoBehaviour
+	public class KillZone : TopDownMonoBehaviour
 	{
 		[Header("Targets")]
 		[MMInformation("This component will make your object kill objects that collide with it. Here you can define what layers will be killed.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]

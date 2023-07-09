@@ -33,6 +33,8 @@ namespace MoreMountains.Feedbacks
 		/// the effect the feedback will have on the target collider's status 
 		public Modes Mode = Modes.Disable;
 
+		protected bool _initialState;
+
 		/// <summary>
 		/// On Play we change the state of our collider if needed
 		/// </summary>
@@ -56,25 +58,64 @@ namespace MoreMountains.Feedbacks
 			switch (mode)
 			{
 				case Modes.Enable:
+					_initialState = TargetCollider2D.enabled;
 					TargetCollider2D.enabled = true;
 					break;
 				case Modes.Disable:
+					_initialState = TargetCollider2D.enabled;
 					TargetCollider2D.enabled = false;
 					break;
 				case Modes.ToggleActive:
+					_initialState = TargetCollider2D.enabled;
 					TargetCollider2D.enabled = !TargetCollider2D.enabled;
 					break;
 				case Modes.Trigger:
+					_initialState = TargetCollider2D.isTrigger;
 					TargetCollider2D.isTrigger = true;
 					break;
 				case Modes.NonTrigger:
+					_initialState = TargetCollider2D.isTrigger;
 					TargetCollider2D.isTrigger = false;
 					break;
 				case Modes.ToggleTrigger:
+					_initialState = TargetCollider2D.isTrigger;
 					TargetCollider2D.isTrigger = !TargetCollider2D.isTrigger;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			switch (Mode)
+			{
+				case Modes.Enable:
+					TargetCollider2D.enabled = _initialState;
+					break;
+				case Modes.Disable:
+					TargetCollider2D.enabled = _initialState;
+					break;
+				case Modes.ToggleActive:
+					TargetCollider2D.enabled = _initialState;
+					break;
+				case Modes.Trigger:
+					TargetCollider2D.isTrigger = _initialState;
+					break;
+				case Modes.NonTrigger:
+					TargetCollider2D.isTrigger = _initialState;
+					break;
+				case Modes.ToggleTrigger:
+					TargetCollider2D.isTrigger = _initialState;
+					break;
 			}
 		}
 	}

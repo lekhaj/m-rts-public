@@ -149,10 +149,15 @@ namespace MoreMountains.Tools
 
 			if ((_levelLastFrame != Level) && (OnValueChange != null))
 			{
-				OnValueChange.Invoke(Level);
+				ApplyLevel(Level);
 			}
 
 			_levelLastFrame = Level;
+		}
+
+		public virtual void ApplyLevel(float level)
+		{
+			OnValueChange.Invoke(level);
 		}
 
 		/// <summary>

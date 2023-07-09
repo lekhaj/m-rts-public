@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using MoreMountains.Tools;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -14,11 +14,6 @@ namespace MoreMountains.TopDownEngine
 	[AddComponentMenu("TopDown Engine/Weapons/Weapon Aim 2D")]
 	public class WeaponAim2D : WeaponAim
 	{
-		#if ENABLE_INPUT_SYSTEM
-		[Header("Input System")]
-		public InputAction MousePositionAction;
-		#endif
-		
 		protected Vector2 _inputMovement;
 		protected bool _hasOrientation2D = false;
 		protected bool _facingRightLastFrame;
@@ -53,12 +48,6 @@ namespace MoreMountains.TopDownEngine
 						break;
 				}
 			}
-			
-			#if ENABLE_INPUT_SYSTEM
-			MousePositionAction.Enable();
-			MousePositionAction.performed += context => _mousePosition = context.ReadValue<Vector2>();
-			MousePositionAction.canceled += context => _mousePosition = Vector2.zero;
-			#endif
 		}
 
 		/// <summary>
@@ -316,9 +305,8 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		public virtual void GetMouseAim()
 		{
-			#if !ENABLE_INPUT_SYSTEM
-			_mousePosition = Input.mousePosition;
-			#endif
+			_mousePosition = InputManager.Instance.MousePosition;
+			
 			_mousePosition.z = 10;
 
 			_direction = _mainCamera.ScreenToWorldPoint(_mousePosition);

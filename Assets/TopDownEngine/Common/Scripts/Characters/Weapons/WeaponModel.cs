@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// A class used to force a model to aim at a Weapon's target
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Weapons/Weapon Model")]
-	public class WeaponModel : MonoBehaviour
+	public class WeaponModel : TopDownMonoBehaviour
 	{
 		[Header("Model")]
 		/// a unique ID that will be used to hide / show this model when the corresponding weapon gets equipped

@@ -17,11 +17,12 @@ namespace MoreMountains.Feedbacks
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
-		public override string RequiredTargetText { get { return "Channel "+Channel;  } }
+		public override string RequiredTargetText => RequiredChannelText;
 		#endif
 		/// the duration of this feedback is the duration of the flash
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(FlashDuration); } set { FlashDuration = value; } }
 		public override bool HasChannel => true;
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Flash", true, 37)]
 		/// the color of the flash
@@ -48,8 +49,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
-			MMFlashEvent.Trigger(FlashColor, FeedbackDuration * intensityMultiplier, FlashAlpha, FlashID, Channel, Timing.TimescaleMode);
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
+			MMFlashEvent.Trigger(FlashColor, FeedbackDuration * intensityMultiplier, FlashAlpha, FlashID, ChannelData, ComputedTimescaleMode);
 		}
 
 		/// <summary>
@@ -64,7 +65,19 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMFlashEvent.Trigger(FlashColor, FeedbackDuration, FlashAlpha, FlashID, Channel, Timing.TimescaleMode, stop:true);
+			MMFlashEvent.Trigger(FlashColor, FeedbackDuration, FlashAlpha, FlashID, ChannelData, ComputedTimescaleMode, stop:true);
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			MMFlashEvent.Trigger(FlashColor, FeedbackDuration, FlashAlpha, FlashID, ChannelData, ComputedTimescaleMode, stop:true);
 		}
 	}
 }

@@ -198,5 +198,19 @@ namespace MoreMountains.Feedbacks
 			}
 			#endif
 		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.color = _initialColor;
+			#endif
+		}
 	}
 }

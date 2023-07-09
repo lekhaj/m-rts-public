@@ -237,6 +237,33 @@ namespace MoreMountains.Feedbacks
 			ApplyBlink(Active, newValue);
 		}
 
+		/// <summary>
+		/// The duration of the blink is the sum of its phases' durations, plus the time it takes to repeat them all
+		/// </summary>
+		public virtual float Duration
+		{
+			get
+			{
+				if ((RepeatCount < 0)
+				    || (Phases.Count == 0))
+				{
+					return 0f;
+				}
+
+				float totalDuration = 0f;
+				foreach (BlinkPhase phase in Phases)
+				{
+					totalDuration += phase.PhaseDuration;
+				}
+				return totalDuration + totalDuration * RepeatCount;
+			}
+		}
+
+		/// <summary>
+		/// Applies the blink to the object based on its type
+		/// </summary>
+		/// <param name="active"></param>
+		/// <param name="value"></param>
 		protected virtual void ApplyBlink(bool active, float value)
 		{
 			switch (Method)

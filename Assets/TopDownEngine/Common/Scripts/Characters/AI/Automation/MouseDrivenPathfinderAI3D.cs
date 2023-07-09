@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// It will allow you to click anywhere on screen, which will determine a new target and the character will pathfind its way to it
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Character/AI/Automation/MouseDrivenPathfinderAI3D")]
-	public class MouseDrivenPathfinderAI3D : MonoBehaviour 
+	public class MouseDrivenPathfinderAI3D : TopDownMonoBehaviour 
 	{
 		[Header("Testing")]
 		/// the camera we'll use to determine the destination from
@@ -49,7 +49,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			if (Input.GetMouseButtonDown(0))
 			{
-				Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+				Ray ray = _mainCamera.ScreenPointToRay(InputManager.Instance.MousePosition);
 				Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
 				float distance;
 				if (_playerPlane.Raycast(ray, out distance))

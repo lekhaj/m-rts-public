@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// Automatically grabs a Cinemachine camera group and assigns LevelManager's players on load and makes a Cinemachine Virtual Camera follow that target
 	/// </summary>
-	public class MultiplayerCameraGroupTarget : MonoBehaviour, MMEventListener<MMGameEvent>, MMEventListener<TopDownEngineEvent>
+	public class MultiplayerCameraGroupTarget : TopDownMonoBehaviour, MMEventListener<MMGameEvent>, MMEventListener<TopDownEngineEvent>
 	{
 		#if MM_CINEMACHINE
 		[Header("Multiplayer Camera Group Target")]

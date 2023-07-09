@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 	using UnityEngine.InputSystem;
 #endif
 
@@ -85,7 +85,7 @@ namespace MoreMountains.Tools
 					_referencePosition = MMGyroscope.CalibratedInputAcceleration; 
 					break;
 				case Modes.Mouse:
-					#if ENABLE_INPUT_SYSTEM
+					#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 						_mousePosition = Mouse.current.position.ReadValue();
 					#else
 					_mousePosition = Input.mousePosition;

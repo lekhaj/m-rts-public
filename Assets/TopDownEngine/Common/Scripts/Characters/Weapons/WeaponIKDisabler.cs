@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// You can add this class next to a WeaponIK component (so usually on a Character's Animator), and it'll let you
 	/// disable IK and optionally reparent the WeaponAttachment during certain animations 
 	/// </summary>
-	public class WeaponIKDisabler : MonoBehaviour
+	public class WeaponIKDisabler : TopDownMonoBehaviour
 	{
 		[Header("Animation Parameter Names")] 
 		/// a list of animation parameter names which, if true, should cause IK to be disabled 

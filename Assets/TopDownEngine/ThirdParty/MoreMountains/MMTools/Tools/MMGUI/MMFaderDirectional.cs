@@ -341,6 +341,10 @@ namespace MoreMountains.Tools
 			if (fadeStopEvent.ID == ID)
 			{
 				_fading = false;
+				if (fadeStopEvent.Restore)
+				{
+					_rectTransform.anchoredPosition = _initialPosition;
+				}
 			}
 		}
 

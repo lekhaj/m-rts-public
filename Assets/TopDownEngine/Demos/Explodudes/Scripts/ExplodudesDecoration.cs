@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A decorative class used to make background elements jump
 	/// </summary>
-	public class ExplodudesDecoration : MonoBehaviour, MMEventListener<MMGameEvent>
+	public class ExplodudesDecoration : TopDownMonoBehaviour, MMEventListener<MMGameEvent>
 	{
 		/// the minimum force to apply to the background elements
 		[Tooltip("the minimum force to apply to the background elements")]

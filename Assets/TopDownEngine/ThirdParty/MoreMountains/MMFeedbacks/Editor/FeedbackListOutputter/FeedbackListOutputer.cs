@@ -50,6 +50,11 @@ namespace MoreMountains.Feedbacks
 			int counter = 1;
 			foreach (string typeName in typeNames)
 			{
+				if (typeName == null)
+				{
+					continue;
+				}
+				
 				string[] splitArray =  typeName.Split(char.Parse("/"));
                 
 				if ((previousType != splitArray[0]) && (counter > 1))
@@ -104,6 +109,10 @@ namespace MoreMountains.Feedbacks
 			int counter = 1;
 			foreach (string typeName in typeNames)
 			{
+				if (typeName == null)
+				{
+					continue;
+				}
 				string[] splitArray =  typeName.Split(char.Parse("/"));
                 
 				if ((previousType != splitArray[0]) && (counter > 1))

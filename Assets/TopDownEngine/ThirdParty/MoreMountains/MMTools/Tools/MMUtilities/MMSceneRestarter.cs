@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -26,7 +26,7 @@ namespace MoreMountains.Tools
 
 		[Header("Input")]
         
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			/// the key to press to restart manually
 			public Key RestarterKey = Key.Backspace;
 		#else
@@ -50,7 +50,7 @@ namespace MoreMountains.Tools
 		protected virtual void HandleInput()
 		{
 			bool keyPressed = false;
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				keyPressed = Keyboard.current[RestarterKey].wasPressedThisFrame;
 			#else
 			keyPressed = Input.GetKeyDown(RestarterKeyCode);

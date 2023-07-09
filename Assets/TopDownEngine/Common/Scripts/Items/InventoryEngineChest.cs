@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this component to an object in your scene to have it act like a chest. You'll need a key operated zone to open it, and item picker(s) on it to fill its contents
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Items/InventoryEngineChest")]
-	public class InventoryEngineChest : MonoBehaviour 
+	public class InventoryEngineChest : TopDownMonoBehaviour 
 	{
 		protected Animator _animator;
 		protected ItemPicker[] _itemPickerList;

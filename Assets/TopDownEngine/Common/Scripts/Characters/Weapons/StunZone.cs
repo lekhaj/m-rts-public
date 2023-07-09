@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A stun zone will stun any character with a CharacterStun ability entering it
 	/// </summary>
-	public class StunZone : MonoBehaviour
+	public class StunZone : TopDownMonoBehaviour
 	{
 		/// the possible stun modes : Forever : stuns until StunExit is called on the CharacterStun component, ForDuration : stuns for a duration, and then the character will exit stun on its own
 		public enum StunModes { Forever, ForDuration }

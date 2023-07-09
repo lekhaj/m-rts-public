@@ -37,6 +37,9 @@ namespace MoreMountains.TopDownEngine
 		/// if this is true, this decision will force the weapon to aim in the detection direction
 		[Tooltip("if this is true, this decision will force the weapon to aim in the detection direction")]
 		public bool ForceAimToDetectionDirection = false;
+		/// if this is true, this decision will set the AI Brain's Target to null if no target is found
+		[Tooltip("if this is true, this decision will set the AI Brain's Target to null if no target is found")]
+		public bool SetTargetToNullIfNoneIsFound = true;
 
 		protected Vector3 _direction;
 		protected float _distanceToTarget;
@@ -113,7 +116,7 @@ namespace MoreMountains.TopDownEngine
                 
 				if ((raycastObstacle.collider != null) && (_distanceToTarget > raycastObstacle.distance))
 				{
-					_brain.Target = null;
+					if (SetTargetToNullIfNoneIsFound) { _brain.Target = null; }
 					return false;
 				}
 				else
@@ -126,7 +129,7 @@ namespace MoreMountains.TopDownEngine
 
 			ForceDirection();
             
-			_brain.Target = null;
+			if (SetTargetToNullIfNoneIsFound) { _brain.Target = null; }
 			return false;           
 		}
 

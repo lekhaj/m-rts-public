@@ -175,7 +175,8 @@ namespace MoreMountains.Feedbacks
 		/// Draw a header similar to the one used for the post-process stack
 		/// </summary>
 		static public Rect DrawHeader(ref bool expanded, ref bool activeField, string title, Color feedbackColor, System.Action<GenericMenu> fillGenericMenu, 
-			float startedAt, float duration, float totalDuration, MMFeedbackTiming timing, bool pause, bool requiresSetup, string requiredTarget, Color displayColor, MMF_Player host)
+			float startedAt, float duration, float totalDuration, MMFeedbackTiming timing, bool pause, bool requiresSetup, string requiredTarget, Color displayColor, 
+			bool displayFullHeaderColor, MMF_Player host)
 		{
 			float thisTime = timing.TimescaleMode == TimescaleModes.Scaled ? Time.time : Time.unscaledTime;
 			float thisDeltaTime = timing.TimescaleMode == TimescaleModes.Scaled ? Time.deltaTime : Time.unscaledDeltaTime;
@@ -236,7 +237,7 @@ namespace MoreMountains.Feedbacks
 
 			_headerBackgroundColor = Color.white;
 			// Background - if color is white we draw the default color
-			if (!pause)
+			if (!displayFullHeaderColor)
 			{
 				_headerBackgroundColor = HeaderBackground;
 			}
@@ -283,28 +284,31 @@ namespace MoreMountains.Feedbacks
 				EditorGUI.LabelField(_directionRect, _directionDownIcon);
 			}
 
-			if (requiresSetup)
+			if (!host.DisplayFullDurationDetails)
 			{
-				float setupRectWidth = 90f;
-				_setupRect.x = _labelRect.xMax - setupRectWidth;
-				_setupRect.y = _labelRect.yMin;
-				_setupRect.width = setupRectWidth;
-				_setupRect.height = 17f;
-				_setupRect.xMin = _labelRect.xMax - setupRectWidth;
-				_setupRect.xMax = _labelRect.xMax;
+				if (requiresSetup)
+				{
+					float setupRectWidth = 90f;
+					_setupRect.x = _labelRect.xMax - setupRectWidth;
+					_setupRect.y = _labelRect.yMin;
+					_setupRect.width = setupRectWidth;
+					_setupRect.height = 17f;
+					_setupRect.xMin = _labelRect.xMax - setupRectWidth;
+					_setupRect.xMax = _labelRect.xMax;
                 
-				EditorGUI.LabelField(_setupRect, _setupRequiredIcon);
-			}
-			else
-			{
-				// otherwise we draw the name of our target
-				float setupRectWidth = _labelRect.width / 2f;
-				_setupRect.x = _labelRect.xMax - setupRectWidth - 73f;
-				_setupRect.y = _labelRect.yMin;
-				_setupRect.width = setupRectWidth;
-				_setupRect.height = 17f;
+					EditorGUI.LabelField(_setupRect, _setupRequiredIcon);
+				}
+				else
+				{
+					// otherwise we draw the name of our target
+					float setupRectWidth = _labelRect.width / 2f;
+					_setupRect.x = _labelRect.xMax - setupRectWidth - 73f;
+					_setupRect.y = _labelRect.yMin;
+					_setupRect.width = setupRectWidth;
+					_setupRect.height = 17f;
                 
-				EditorGUI.LabelField(_setupRect, requiredTarget, _targetLabelStyle);
+					EditorGUI.LabelField(_setupRect, requiredTarget, _targetLabelStyle);
+				}
 			}
 
 			// Time -----------------------------------------------------------------------------------------------------
@@ -326,15 +330,7 @@ namespace MoreMountains.Feedbacks
 					float delayBetweenRepeats = host.ApplyTimeMultiplier(timing.DelayBetweenRepeats); 
                     
 					timingInfo += " + "+ timing.NumberOfRepeats.ToString() + " x ";
-					if (timing.DelayBetweenRepeats > 0)
-					{
-						timingInfo += "(";
-					}
-					timingInfo += duration + "s";
-					if (timing.DelayBetweenRepeats > 0)
-					{
-						timingInfo += " + " + host.ApplyTimeMultiplier(timing.DelayBetweenRepeats) + "s )";
-					}
+					timingInfo += host.ApplyTimeMultiplier(timing.DelayBetweenRepeats) + "s";
 					displayTotal = true;
 				}
 

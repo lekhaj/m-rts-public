@@ -11,7 +11,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	[RequireComponent(typeof(WeaponAim2D))]
 	[AddComponentMenu("TopDown Engine/Weapons/Weapon Sprite Sorting Order Threshold")]
-	public class WeaponSpriteSortingOrderThreshold : MonoBehaviour
+	public class WeaponSpriteSortingOrderThreshold : TopDownMonoBehaviour
 	{
 		/// the angle threshold at which to switch the sorting order
 		[Tooltip("the angle threshold at which to switch the sorting order")]

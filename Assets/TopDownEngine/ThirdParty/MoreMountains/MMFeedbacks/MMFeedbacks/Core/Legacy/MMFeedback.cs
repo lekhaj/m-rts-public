@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -134,6 +135,8 @@ namespace MoreMountains.Feedbacks
 		/// whether or not this feedback is playing right now
 		public virtual bool FeedbackPlaying { get { return ((FeedbackStartedAt > 0f) && (Time.time - FeedbackStartedAt < FeedbackDuration)); } }
 
+		public virtual MMChannelData ChannelData(int channel) => _channelData.Set(MMChannelModes.Int, channel, null);
+
 		protected float _lastPlayTimestamp = -1f;
 		protected int _playsLeft;
 		protected bool _initialized = false;
@@ -150,6 +153,7 @@ namespace MoreMountains.Feedbacks
 		protected int CurrentSequenceIndex = 0;
 		protected float LastBeatTimestamp = 0f;
 		protected bool _isHostMMFeedbacksNotNull;
+		protected MMChannelData _channelData;
 
 		protected virtual void OnEnable()
 		{
@@ -167,6 +171,7 @@ namespace MoreMountains.Feedbacks
 			Owner = owner;
 			_playsLeft = Timing.NumberOfRepeats + 1;
 			_hostMMFeedbacks = this.gameObject.GetComponent<MMFeedbacks>();
+			_channelData = new MMChannelData(MMChannelModes.Int, 0, null);
             
 			SetInitialDelay(Timing.InitialDelay);
 			SetDelayBetweenRepeats(Timing.DelayBetweenRepeats);

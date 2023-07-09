@@ -71,5 +71,20 @@ namespace MoreMountains.FeedbacksForThirdParty
 			CinemachineImpulseManager.Instance.Clear();
 			#endif
 		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+            
+			#if MM_CINEMACHINE
+			CinemachineImpulseManager.Instance.Clear();
+			#endif
+		}
 	}
 }

@@ -15,7 +15,7 @@ namespace MoreMountains.Tools
 	public class MMHealthBar : MonoBehaviour 
 	{
 		/// the possible health bar types
-		public enum HealthBarTypes { Prefab, Drawn }
+		public enum HealthBarTypes { Prefab, Drawn, Existing }
 		/// the possible timescales the bar can work on
 		public enum TimeScales { UnscaledTime, Time }
 
@@ -32,6 +32,11 @@ namespace MoreMountains.Tools
 		/// the prefab to use as the health bar
 		[Tooltip("the prefab to use as the health bar")]
 		public MMProgressBar HealthBarPrefab;
+
+		[Header("Existing MMProgressBar")]
+		/// the MMProgressBar this health bar should update 
+		[Tooltip("the MMProgressBar this health bar should update")]
+		public MMProgressBar TargetProgressBar;
 
 		[Header("Drawn Healthbar Settings ")]
 		[MMInformation("Set the size (in world units), padding, back and front colors of the healthbar.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
@@ -110,6 +115,8 @@ namespace MoreMountains.Tools
 		/// the animation curve to map the bump animation on
 		[Tooltip("the animation curve to map the bump animation on")]
 		public AnimationCurve BumpAnimationCurve = AnimationCurve.Constant(0,1,1);
+		
+		
 		/// the mode the bar should follow the target in
 		[Tooltip("the mode the bar should follow the target in")]
 		public MMFollowTarget.UpdateModes FollowTargetMode = MMFollowTarget.UpdateModes.LateUpdate;
@@ -187,23 +194,26 @@ namespace MoreMountains.Tools
 				return;
 			}
 
-			if (HealthBarType == HealthBarTypes.Prefab)
+			switch (HealthBarType)
 			{
-				if (HealthBarPrefab == null)
-				{
-					Debug.LogWarning(this.name + " : the HealthBar has no prefab associated to it, nothing will be displayed.");
-					return;
-				}
-				_progressBar = Instantiate(HealthBarPrefab, transform.position + HealthBarOffset, transform.rotation) as MMProgressBar;
-				SceneManager.MoveGameObjectToScene(_progressBar.gameObject, this.gameObject.scene);
-				_progressBar.transform.SetParent(this.transform);
-				_progressBar.gameObject.name = "HealthBar";
-			}
-
-			if (HealthBarType == HealthBarTypes.Drawn)
-			{
-				DrawHealthBar();
-				UpdateDrawnColors();
+				case HealthBarTypes.Prefab:
+					if (HealthBarPrefab == null)
+					{
+						Debug.LogWarning(this.name + " : the HealthBar has no prefab associated to it, nothing will be displayed.");
+						return;
+					}
+					_progressBar = Instantiate(HealthBarPrefab, transform.position + HealthBarOffset, transform.rotation) as MMProgressBar;
+					SceneManager.MoveGameObjectToScene(_progressBar.gameObject, this.gameObject.scene);
+					_progressBar.transform.SetParent(this.transform);
+					_progressBar.gameObject.name = "HealthBar";
+					break;
+				case HealthBarTypes.Drawn:
+					DrawHealthBar();
+					UpdateDrawnColors();
+					break;
+				case HealthBarTypes.Existing:
+					_progressBar = TargetProgressBar;
+					break;
 			}
 
 			if (!AlwaysVisible)

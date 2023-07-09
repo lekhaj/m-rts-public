@@ -2,6 +2,7 @@
 using System.Linq;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MoreMountains.TopDownEngine
 {
@@ -9,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// Link this component to a Health component, and it'll be able to process incoming damage through resistances, handling damage reduction/increase, condition changes, movement multipliers, feedbacks and more.
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Character/Health/DamageResistanceProcessor")]
-	public class DamageResistanceProcessor : MonoBehaviour
+	public class DamageResistanceProcessor : TopDownMonoBehaviour
 	{
 		[Header("Damage Resistance List")]
 		
@@ -19,10 +20,14 @@ namespace MoreMountains.TopDownEngine
 		/// If this is true, disabled resistances will be ignored by the auto fill 
 		[Tooltip("If this is true, disabled resistances will be ignored by the auto fill")]
 		public bool IgnoreDisabledResistances = true;
+		/// If this is true, damage from damage types that this processor has no resistance for will be ignored
+		[Tooltip("If this is true, damage from damage types that this processor has no resistance for will be ignored")]
+		public bool IgnoreUnknownDamageTypes = false;
 		
 		/// the list of damage resistances this processor will handle. Auto filled if AutoFillDamageResistanceList is true
+		[FormerlySerializedAs("DamageResitanceList")] 
 		[Tooltip("the list of damage resistances this processor will handle. Auto filled if AutoFillDamageResistanceList is true")]
-		public List<DamageResistance> DamageResitanceList;
+		public List<DamageResistance> DamageResistanceList;
 
 		/// <summary>
 		/// On awake we initialize our processor
@@ -44,7 +49,7 @@ namespace MoreMountains.TopDownEngine
 						includeInactive: !IgnoreDisabledResistances);
 				if (foundResistances.Length > 0)
 				{
-					DamageResitanceList = foundResistances.ToList();	
+					DamageResistanceList = foundResistances.ToList();	
 				}
 			}
 			SortDamageResistanceList();
@@ -57,7 +62,7 @@ namespace MoreMountains.TopDownEngine
 		public virtual void SortDamageResistanceList()
 		{
 			// we sort the list by priority
-			DamageResitanceList.Sort((p1,p2)=>p1.Priority.CompareTo(p2.Priority));
+			DamageResistanceList.Sort((p1,p2)=>p1.Priority.CompareTo(p2.Priority));
 		}
 		
 		/// <summary>
@@ -70,7 +75,7 @@ namespace MoreMountains.TopDownEngine
 		public virtual float ProcessDamage(float damage, List<TypedDamage> typedDamages, bool damageApplied)
 		{
 			float totalDamage = 0f;
-			if (DamageResitanceList.Count == 0) // if we don't have resistances, we output raw damage
+			if (DamageResistanceList.Count == 0) // if we don't have resistances, we output raw damage
 			{
 				totalDamage = damage;
 				if (typedDamages != null)
@@ -80,37 +85,55 @@ namespace MoreMountains.TopDownEngine
 						totalDamage += typedDamage.DamageCaused;
 					}
 				}
+				if (IgnoreUnknownDamageTypes)
+				{
+					totalDamage = damage;
+				}
 				return totalDamage;
 			}
 			else // if we do have resistances
 			{
 				totalDamage = damage;
 				
-				foreach (DamageResistance resistance in DamageResitanceList)
+				foreach (DamageResistance resistance in DamageResistanceList)
 				{
 					totalDamage = resistance.ProcessDamage(totalDamage, null, damageApplied);
 				}
-				
-				if (typedDamages != null) 
+
+				if (typedDamages != null)
 				{
 					foreach (TypedDamage typedDamage in typedDamages)
 					{
 						float currentDamage = typedDamage.DamageCaused;
 						
-						foreach (DamageResistance resistance in DamageResitanceList)
+						bool atLeastOneResistanceFound = false;
+						foreach (DamageResistance resistance in DamageResistanceList)
 						{
+							if (resistance.TypeResistance == typedDamage.AssociatedDamageType)
+							{
+								atLeastOneResistanceFound = true;
+							}
 							currentDamage = resistance.ProcessDamage(currentDamage, typedDamage.AssociatedDamageType, damageApplied);
 						}
-						totalDamage += currentDamage;
+						if (IgnoreUnknownDamageTypes && !atLeastOneResistanceFound)
+						{
+							// we don't add to the total
+						}
+						else
+						{
+							totalDamage += currentDamage;	
+						}
+						
 					}
 				}
+				
 				return totalDamage;
 			}
 		}
 
 		public virtual void SetResistanceByLabel(string searchedLabel, bool active)
 		{
-			foreach (DamageResistance resistance in DamageResitanceList)
+			foreach (DamageResistance resistance in DamageResistanceList)
 			{
 				if (resistance.Label == searchedLabel)
 				{
@@ -125,7 +148,7 @@ namespace MoreMountains.TopDownEngine
 		/// <param name="damageType"></param>
 		public virtual void InterruptDamageOverTime(DamageType damageType)
 		{
-			foreach (DamageResistance resistance in DamageResitanceList)
+			foreach (DamageResistance resistance in DamageResistanceList)
 			{
 				if ( resistance.gameObject.activeInHierarchy &&
 					((resistance.DamageTypeMode == DamageTypeModes.BaseDamage) ||
@@ -144,7 +167,7 @@ namespace MoreMountains.TopDownEngine
 		/// <returns></returns>
 		public virtual bool CheckPreventCharacterConditionChange(DamageType typedDamage)
 		{
-			foreach (DamageResistance resistance in DamageResitanceList)
+			foreach (DamageResistance resistance in DamageResistanceList)
 			{
 				if (!resistance.gameObject.activeInHierarchy)
 				{
@@ -178,7 +201,7 @@ namespace MoreMountains.TopDownEngine
 		/// <returns></returns>
 		public virtual bool CheckPreventMovementModifier(DamageType typedDamage)
 		{
-			foreach (DamageResistance resistance in DamageResitanceList)
+			foreach (DamageResistance resistance in DamageResistanceList)
 			{
 				if (!resistance.gameObject.activeInHierarchy)
 				{

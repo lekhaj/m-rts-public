@@ -50,6 +50,7 @@ namespace MoreMountains.Feedbacks
 
 		/// the duration of this feedback is the duration of the clip being played
 		public override float FeedbackDuration { get { return GetDuration(); } }
+		public override bool HasRandomness => true;
         
 		[MMFInspectorGroup("Sound", true, 14, true)]
 		/// the sound clip to play
@@ -72,14 +73,6 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("if we're in sequential order hold last mode, index will reset to 0 automatically after this duration, unless it's 0, in which case it'll be ignored")]
 		[MMFCondition("SequentialOrderHoldLast", true)]
 		public float SequentialOrderHoldCooldownDuration = 2f;
-        
-		[MMFInspectorGroup("Debug", true, 31)]
-		/// a test button used to play the sound in inspector
-		public MMF_Button TestPlayButton;
-		/// a test button used to stop the sound in inspector
-		public MMF_Button TestStopButton;
-		/// a test button used to stop the sound in inspector
-		public MMF_Button ResetSequentialIndexButton;
         
 		[MMFInspectorGroup("Sound Properties", true, 24)]
 		[Header("Volume")]
@@ -170,6 +163,9 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("Sets how much this AudioSource is affected by 3D spatialisation calculations (attenuation, doppler etc). 0.0 makes the sound full 2D, 1.0 makes it full 3D.")]
 		[Range(0f,1f)]
 		public float SpatialBlend;
+		/// a Transform this sound can 'attach' to and follow it along as it plays
+		[Tooltip("a Transform this sound can 'attach' to and follow it along as it plays")]
+		public Transform AttachToTransform;
         
 		[MMFInspectorGroup("Effects", true, 36)]
 		/// Bypass effects (Applied from filter components or global listener filters).
@@ -208,6 +204,57 @@ namespace MoreMountains.Feedbacks
 		/// (Logarithmic rolloff) MaxDistance is the distance a sound stops attenuating at.
 		[Tooltip("(Logarithmic rolloff) MaxDistance is the distance a sound stops attenuating at.")]
 		public float MaxDistance = 500f;
+		/// whether or not to use a custom curve for custom volume rolloff
+		[Tooltip("whether or not to use a custom curve for custom volume rolloff")]
+		public bool UseCustomRolloffCurve = false;
+		/// the curve to use for custom volume rolloff if UseCustomRolloffCurve is true
+		[Tooltip("the curve to use for custom volume rolloff if UseCustomRolloffCurve is true")]
+		[MMFCondition("UseCustomRolloffCurve", true)]
+		public AnimationCurve CustomRolloffCurve;
+		/// whether or not to use a custom curve for spatial blend
+		[Tooltip("whether or not to use a custom curve for spatial blend")]
+		public bool UseSpatialBlendCurve = false;
+		/// the curve to use for custom spatial blend if UseSpatialBlendCurve is true
+		[Tooltip("the curve to use for custom spatial blend if UseSpatialBlendCurve is true")]
+		[MMFCondition("UseSpatialBlendCurve", true)]
+		public AnimationCurve SpatialBlendCurve;
+		/// whether or not to use a custom curve for reverb zone mix
+		[Tooltip("whether or not to use a custom curve for reverb zone mix")]
+		public bool UseReverbZoneMixCurve = false;
+		/// the curve to use for custom reverb zone mix if UseReverbZoneMixCurve is true
+		[Tooltip("the curve to use for custom reverb zone mix if UseReverbZoneMixCurve is true")]
+		[MMFCondition("UseReverbZoneMixCurve", true)]
+		public AnimationCurve ReverbZoneMixCurve;
+		/// whether or not to use a custom curve for spread
+		[Tooltip("whether or not to use a custom curve for spread")]
+		public bool UseSpreadCurve = false;
+		/// the curve to use for custom spread if UseSpreadCurve is true
+		[Tooltip("the curve to use for custom spread if UseSpreadCurve is true")]
+		[MMFCondition("UseSpreadCurve", true)]
+		public AnimationCurve SpreadCurve;
+        
+		[MMFInspectorGroup("Debug", true, 31)]
+		/// whether or not to draw sound falloff gizmos when this MMF Player is selected
+		[Tooltip("whether or not to draw sound falloff gizmos when this MMF Player is selected")]
+		public bool DrawGizmos = false;
+		/// an object to use as the center of the gizmos. If left empty, this MMF Player's position will be used.
+		[Tooltip("an object to use as the center of the gizmos. If left empty, this MMF Player's position will be used.")]
+		[MMFCondition("DrawGizmos", true)]
+		public Transform GizmosCenter;
+		/// the color to use to draw the min distance sphere of the sound falloff gizmos
+		[Tooltip("the color to use to draw the min distance sphere of the sound falloff gizmos")]
+		[MMFCondition("DrawGizmos", true)]
+		public Color MinDistanceColor = MMColors.CadetBlue;
+		/// the color to use to draw the max distance sphere of the sound falloff gizmos
+		[Tooltip("the color to use to draw the max distance sphere of the sound falloff gizmos")]
+		[MMFCondition("DrawGizmos", true)]
+		public Color MaxDistanceColor = MMColors.Orangered;
+		/// a test button used to play the sound in inspector
+		public MMF_Button TestPlayButton;
+		/// a test button used to stop the sound in inspector
+		public MMF_Button TestStopButton;
+		/// a test button used to stop the sound in inspector
+		public MMF_Button ResetSequentialIndexButton;
         
 		protected AudioClip _randomClip;
 		protected AudioSource _editorAudioSource;
@@ -215,6 +262,7 @@ namespace MoreMountains.Feedbacks
 		protected AudioSource _playedAudioSource;
 		protected float _randomPlaybackTime;
 		protected int _currentIndex = 0;
+		protected Vector3 _gizmoCenter;
 
 		/// <summary>
 		/// Initializes the debug buttons
@@ -238,7 +286,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
 			if (Sfx != null)
 			{
@@ -290,6 +338,11 @@ namespace MoreMountains.Feedbacks
 				{
 					return;    
 				}
+
+				if (MMSoundManager.Instance.FindByClip(sfx) != null)
+				{
+					return;
+				}
 			}
             
 			float volume = Random.Range(MinVolume, MaxVolume);
@@ -333,6 +386,17 @@ namespace MoreMountains.Feedbacks
 			_options.RolloffMode = RolloffMode;
 			_options.MinDistance = MinDistance;
 			_options.MaxDistance = MaxDistance;
+			_options.AttachToTransform = AttachToTransform;
+			
+			
+			_options.UseSpreadCurve = UseSpreadCurve;
+			_options.SpreadCurve = SpreadCurve;
+			_options.UseCustomRolloffCurve = UseCustomRolloffCurve;
+			_options.CustomRolloffCurve = CustomRolloffCurve;
+			_options.UseSpatialBlendCurve = UseSpatialBlendCurve;
+			_options.SpatialBlendCurve = SpatialBlendCurve;
+			_options.UseReverbZoneMixCurve = UseReverbZoneMixCurve;
+			_options.ReverbZoneMixCurve = ReverbZoneMixCurve;
 
 			_playedAudioSource = MMSoundManagerSoundPlayEvent.Trigger(sfx, _options);
 
@@ -365,6 +429,20 @@ namespace MoreMountains.Feedbacks
 			}
 
 			return 0f;
+		}
+
+		public override void OnDrawGizmosSelected()
+		{
+			if (!DrawGizmos)
+			{
+				return;
+			}
+
+			_gizmoCenter = GizmosCenter != null ? GizmosCenter.position : Owner.transform.position;
+			Gizmos.color = MinDistanceColor;
+			Gizmos.DrawWireSphere(_gizmoCenter, MinDistance);
+			Gizmos.color = MaxDistanceColor;
+			Gizmos.DrawWireSphere(_gizmoCenter, MaxDistance);
 		}
 
 		#region TestMethods
@@ -401,7 +479,6 @@ namespace MoreMountains.Feedbacks
 			_editorAudioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource;
 			PlayAudioSource(_editorAudioSource, tmpAudioClip, volume, pitch, _randomPlaybackTime);
 			_lastPlayTimestamp = FeedbackTime;
-			Debug.Log("time : "+_lastPlayTimestamp);
 			float length = 1000 * tmpAudioClip.length;
 			length = length / Mathf.Abs(pitch);
 			await Task.Delay((int)length);

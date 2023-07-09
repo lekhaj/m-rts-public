@@ -36,6 +36,8 @@ namespace MoreMountains.Feedbacks
 		[TextArea]
 		public string NewText = "Hello World";
 		#endif
+
+		protected string _initialText;
         
 		/// <summary>
 		/// On play we change the text of our target TMPText
@@ -53,7 +55,23 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+
+			_initialText = TargetTMPText.text;
 			TargetTMPText.text = NewText;
+			#endif
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.text = _initialText;
 			#endif
 		}
 	}

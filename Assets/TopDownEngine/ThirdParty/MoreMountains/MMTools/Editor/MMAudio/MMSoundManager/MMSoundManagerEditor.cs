@@ -121,10 +121,10 @@ namespace MoreMountains.Tools
 
 			if ( ((_settingsSO != null) && _mmSoundManager.gameObject.activeInHierarchy))
 			{
-				DrawTrack("Master Track", MMSoundManager.Instance.settingsSo.Settings.MasterOn, MMSoundManager.MMSoundManagerTracks.Master, _masterColorMute, _masterColorUnmute, _masterColorPause, _masterColorStop, _masterColorPlay, _masterColorFree);
-				DrawTrack("Music Track", MMSoundManager.Instance.settingsSo.Settings.MusicOn, MMSoundManager.MMSoundManagerTracks.Music, _musicColorMute, _musicColorUnmute, _musicColorPause, _musicColorStop, _musicColorPlay, _musicColorFree);
-				DrawTrack("SFX Track", MMSoundManager.Instance.settingsSo.Settings.SfxOn, MMSoundManager.MMSoundManagerTracks.Sfx, _sfxColorMute, _sfxColorUnmute, _sfxColorPause, _sfxColorStop, _sfxColorPlay, _sfxColorFree);
-				DrawTrack("UI Track", MMSoundManager.Instance.settingsSo.Settings.UIOn, MMSoundManager.MMSoundManagerTracks.UI, _uiColorMute, _uiColorUnmute, _uiColorPause, _uiColorStop, _uiColorPlay, _uiColorFree);
+				DrawTrack("Master Track", _mmSoundManager.settingsSo.Settings.MasterOn, MMSoundManager.MMSoundManagerTracks.Master, _masterColorMute, _masterColorUnmute, _masterColorPause, _masterColorStop, _masterColorPlay, _masterColorFree);
+				DrawTrack("Music Track", _mmSoundManager.settingsSo.Settings.MusicOn, MMSoundManager.MMSoundManagerTracks.Music, _musicColorMute, _musicColorUnmute, _musicColorPause, _musicColorStop, _musicColorPlay, _musicColorFree);
+				DrawTrack("SFX Track", _mmSoundManager.settingsSo.Settings.SfxOn, MMSoundManager.MMSoundManagerTracks.Sfx, _sfxColorMute, _sfxColorUnmute, _sfxColorPause, _sfxColorStop, _sfxColorPlay, _sfxColorFree);
+				DrawTrack("UI Track", _mmSoundManager.settingsSo.Settings.UIOn, MMSoundManager.MMSoundManagerTracks.UI, _uiColorMute, _uiColorUnmute, _uiColorPause, _uiColorStop, _uiColorPlay, _uiColorFree);
 				DrawSaveLoadButtons();
 			}
 		}
@@ -158,19 +158,19 @@ namespace MoreMountains.Tools
 			{
 				case MMSoundManager.MMSoundManagerTracks.Master:
 					newVolume = EditorGUILayout.Slider(_masterVolume, MMSoundManagerSettings._minimalVolume, MMSoundManagerSettings._maxVolume);
-					if (newVolume != _masterVolume) { MMSoundManager.Instance.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.Master, newVolume); }
+					if (newVolume != _masterVolume) { _mmSoundManager.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.Master, newVolume); }
 					break;
 				case MMSoundManager.MMSoundManagerTracks.Music:
 					newVolume = EditorGUILayout.Slider(_musicVolume, MMSoundManagerSettings._minimalVolume, MMSoundManagerSettings._maxVolume);
-					if (newVolume != _musicVolume) { MMSoundManager.Instance.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.Music, newVolume); }
+					if (newVolume != _musicVolume) { _mmSoundManager.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.Music, newVolume); }
 					break;
 				case MMSoundManager.MMSoundManagerTracks.Sfx:
 					newVolume = EditorGUILayout.Slider(_sfxVolume, MMSoundManagerSettings._minimalVolume, MMSoundManagerSettings._maxVolume);
-					if (newVolume != _sfxVolume) { MMSoundManager.Instance.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.Sfx, newVolume); }
+					if (newVolume != _sfxVolume) { _mmSoundManager.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.Sfx, newVolume); }
 					break;
 				case MMSoundManager.MMSoundManagerTracks.UI:
 					newVolume = EditorGUILayout.Slider(_uiVolume, MMSoundManagerSettings._minimalVolume, MMSoundManagerSettings._maxVolume);
-					if (newVolume != _uiVolume) { MMSoundManager.Instance.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.UI, newVolume); }
+					if (newVolume != _uiVolume) { _mmSoundManager.settingsSo.SetTrackVolume(MMSoundManager.MMSoundManagerTracks.UI, newVolume); }
 					break;
 			}
 			EditorGUILayout.EndHorizontal();

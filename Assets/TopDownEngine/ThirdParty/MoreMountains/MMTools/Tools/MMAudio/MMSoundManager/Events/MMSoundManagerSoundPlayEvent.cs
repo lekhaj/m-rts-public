@@ -13,6 +13,8 @@ namespace MoreMountains.Tools
 	/// </summary>
 	public struct MMSoundManagerSoundPlayEvent
 	{
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		
 		public delegate AudioSource Delegate(AudioClip clip, MMSoundManagerPlayOptions options); 
 		static private event Delegate OnEvent;
 

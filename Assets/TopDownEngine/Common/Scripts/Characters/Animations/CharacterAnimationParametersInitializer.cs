@@ -28,7 +28,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// 
 	/// </summary>
-	public class CharacterAnimationParametersInitializer : MonoBehaviour
+	public class CharacterAnimationParametersInitializer : TopDownMonoBehaviour
 	{
 		[Header("Initialization")]
 		/// if this is true, this component will remove itself after adding the character parameters
@@ -49,15 +49,18 @@ namespace MoreMountains.TopDownEngine
 			new TopDownCharacterAnimationParameter("Crawling", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("Damage", AnimatorControllerParameterType.Trigger),
 			new TopDownCharacterAnimationParameter("Dashing", AnimatorControllerParameterType.Bool),
+			new TopDownCharacterAnimationParameter("DamageDashing", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("DashingDirectionX", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("DashingDirectionY", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("DashingDirectionZ", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("DashStarted", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("Death", AnimatorControllerParameterType.Trigger),
+			new TopDownCharacterAnimationParameter("FacingDirection2D", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("FallingDownHole", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("WeaponEquipped", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("WeaponEquippedID", AnimatorControllerParameterType.Int),
 			new TopDownCharacterAnimationParameter("Jumping", AnimatorControllerParameterType.Bool),
+			new TopDownCharacterAnimationParameter("DoubleJumping", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("HitTheGround", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("Random", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("RandomConstant", AnimatorControllerParameterType.Int),
@@ -75,7 +78,10 @@ namespace MoreMountains.TopDownEngine
 			new TopDownCharacterAnimationParameter("RemappedForwardSpeedNormalized", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("RemappedLateralSpeedNormalized", AnimatorControllerParameterType.Float),
 			new TopDownCharacterAnimationParameter("RemappedSpeedNormalized", AnimatorControllerParameterType.Float),
+			new TopDownCharacterAnimationParameter("Stunned", AnimatorControllerParameterType.Bool),
+			new TopDownCharacterAnimationParameter("Pushing", AnimatorControllerParameterType.Bool),
 			new TopDownCharacterAnimationParameter("YRotationSpeed", AnimatorControllerParameterType.Float),
+			new TopDownCharacterAnimationParameter("YRotationOffset", AnimatorControllerParameterType.Float),
 		};
 
 		protected Animator _animator;

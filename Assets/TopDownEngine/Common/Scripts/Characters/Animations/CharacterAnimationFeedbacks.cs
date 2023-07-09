@@ -1,14 +1,12 @@
 ﻿using MoreMountains.Feedbacks;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace MoreMountains.Tools
+namespace MoreMountains.TopDownEngine
 {
 	/// <summary>
 	/// This class can be used to trigger feedbacks from an animator, typically used to trigger footstep particles and/or sounds
 	/// </summary>
-	public class CharacterAnimationFeedbacks : MonoBehaviour
+	public class CharacterAnimationFeedbacks : TopDownMonoBehaviour
 	{
 		/// a feedback that will play every time a foot touches the ground while walking
 		[Tooltip("a feedback that will play every time a foot touches the ground while walking")]

@@ -64,6 +64,7 @@ namespace MoreMountains.Feedbacks
 		public Color InstantColor;
 
 		protected Coroutine _coroutine;
+		protected Color _initialColor;
 
 		/// <summary>
 		/// On init we turn the Graphic off if needed
@@ -93,7 +94,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-        
+
+			_initialColor = TargetGraphic.color;
 			Turn(true);
 			switch (Mode)
 			{
@@ -180,6 +182,18 @@ namespace MoreMountains.Feedbacks
 		{
 			TargetGraphic.gameObject.SetActive(status);
 			TargetGraphic.enabled = status;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetGraphic.color = _initialColor;
 		}
 	}
 }

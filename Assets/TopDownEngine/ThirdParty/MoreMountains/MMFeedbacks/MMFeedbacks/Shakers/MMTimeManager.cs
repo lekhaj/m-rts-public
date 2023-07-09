@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
-using MoreMountains.Feedbacks;
+using MoreMountains.Tools;
 
 namespace MoreMountains.Feedbacks
 {
@@ -15,55 +13,58 @@ namespace MoreMountains.Feedbacks
 		Reset,
 		Unfreeze
 	}
+	
+	/// <summary>
+	/// The possible modes with which to interpolate time scale. Speed is a legacy mode, the recommended mode if you want to lerp timescale would be Duration, which offers the most options and accuracy
+	/// </summary>
+	public enum MMTimeScaleLerpModes { Speed, Duration, NoInterpolation } 
 
 	/// <summary>
-	/// The different settings you can play with on a timescale event
+	/// The different settings you can play with on a time scale event
 	/// </summary>
 	public struct TimeScaleProperties
 	{
 		public float TimeScale;
 		public float Duration;
-		public bool Lerp;
+		public bool TimeScaleLerp;
 		public float LerpSpeed;
 		public bool Infinite;
-		public override string ToString() => $"REQUESTED ts={TimeScale} time={Duration} lerp={Lerp} speed={LerpSpeed} keep={Infinite}";
+		public MMTimeScaleLerpModes TimeScaleLerpMode;
+		public MMTweenType TimeScaleLerpCurve;
+		public float TimeScaleLerpDuration;
+		public bool TimeScaleLerpOnReset;
+		public MMTweenType TimeScaleLerpCurveOnReset;
+		public float TimeScaleLerpDurationOnReset;
+		public override string ToString() => $"REQUESTED ts={TimeScale} time={Duration} lerp={TimeScaleLerp} speed={LerpSpeed} keep={Infinite}";
 	}
 
 	public struct MMTimeScaleEvent
 	{
-		public delegate void Delegate(MMTimeScaleMethods timeScaleMethod, float timeScale, float duration, bool lerp, float lerpSpeed, bool infinite);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
+		public delegate void Delegate(MMTimeScaleMethods timeScaleMethod, float timeScale, float duration, bool lerp, float lerpSpeed, bool infinite,
+			MMTimeScaleLerpModes timeScaleLerpMode = MMTimeScaleLerpModes.Speed, MMTweenType timeScaleLerpCurve = null, float timeScaleLerpDuration = 0.2f, 
+			bool timeScaleLerpOnReset = false, MMTweenType timeScaleLerpCurveOnReset = null, float timeScaleLerpDurationOnReset = 0.2f);
 
-		static public void Unregister(Delegate callback)
+		static public void Trigger(MMTimeScaleMethods timeScaleMethod, float timeScale, float duration, bool lerp, float lerpSpeed, bool infinite,
+			MMTimeScaleLerpModes timeScaleLerpMode = MMTimeScaleLerpModes.Speed, MMTweenType timeScaleLerpCurve = null, float timeScaleLerpDuration = 0.2f, 
+			bool timeScaleLerpOnReset = false, MMTweenType timeScaleLerpCurveOnReset = null, float timeScaleLerpDurationOnReset = 0.2f)
 		{
-			OnEvent -= callback;
-		}
-
-		static public void Trigger(MMTimeScaleMethods timeScaleMethod, float timeScale, float duration, bool lerp, float lerpSpeed, bool infinite)
-		{
-			OnEvent?.Invoke(timeScaleMethod, timeScale, duration, lerp, lerpSpeed, infinite);
+			OnEvent?.Invoke(timeScaleMethod, timeScale, duration, lerp, lerpSpeed, infinite, timeScaleLerpMode, timeScaleLerpCurve, timeScaleLerpDuration, timeScaleLerpOnReset, timeScaleLerpCurveOnReset, timeScaleLerpDurationOnReset);
 		}
 	}
     
 	public struct MMFreezeFrameEvent
 	{
-		public delegate void Delegate(float duration);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
+		public delegate void Delegate(float duration);
 
 		static public void Trigger(float duration)
 		{
@@ -75,19 +76,13 @@ namespace MoreMountains.Feedbacks
 	/// Put this component in your scene and it'll catch MMFreezeFrameEvents and MMTimeScaleEvents, allowing you to control the flow of time.
 	/// </summary>
 	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Various/MMTimeManager")]
-	public class MMTimeManager : MonoBehaviour
+	public class MMTimeManager : MMSingleton<MMTimeManager>
 	{	
 		[Header("Default Values")]
 		[MMFInformationAttribute("Put this component in your scene and it'll catch MMFreezeFrameEvents and MMTimeScaleEvents, allowing you to control the flow of time.", MMFInformationAttribute.InformationType.Info, false)]
-		/// The reference timescale, to which the system will go back to after all time is changed
-		[Tooltip("The reference timescale, to which the system will go back to after all time is changed")]
-		public float NormalTimescale = 1f;
-		/// The reference timescale, to which the system will go back to after all time is changed
-		[Tooltip("The reference timescale, to which the system will go back to after all time is changed")]
-		public float DefaultLerpSpeed = 1f;
-		/// The reference timescale, to which the system will go back to after all time is changed
-		[Tooltip("The reference timescale, to which the system will go back to after all time is changed")]
-		public bool DefaultLerpTimescale = false;
+		/// The reference time scale, to which the system will go back to after all time is changed
+		[Tooltip("The reference time scale, to which the system will go back to after all time is changed")]
+		public float NormalTimeScale = 1f;
 		
 		[Header("Debug")]
 		/// the current, real time, time scale
@@ -98,24 +93,18 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the time scale the system is lerping towards")]
 		[MMFReadOnly]
 		public float TargetTimeScale = 1f;
-		/// whether or not the timescale should be lerping
-		[Tooltip("whether or not the timescale should be lerping")]
-		[MMFReadOnly]
-		public bool LerpTimescale = true;
-		/// the speed at which the timescale should lerp towards its target
-		[Tooltip("the speed at which the timescale should lerp towards its target")]
-		[MMFReadOnly]
-		public float LerpSpeed;
-
+		
 		[MMFInspectorButtonAttribute("TestButtonToSlowDownTime")]
 		/// a test button for the inspector
 		public bool TestButton;
 
 		protected Stack<TimeScaleProperties> _timeScaleProperties;
-		protected float _frozenTimeLeft = -1f;
 		protected TimeScaleProperties _currentProperty;
+		protected TimeScaleProperties _resetProperty;
 		protected float _initialFixedDeltaTime = 0f;
 		protected float _initialMaximumDeltaTime = 0f;
+		protected float _startedAt;
+		protected bool _lerpingBackToNormal = false;
 
 		/// <summary>
 		/// A method used from the inspector to test the system
@@ -128,33 +117,31 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// On start we initialize our stack and store our initial time scale
 		/// </summary>
-		protected virtual void Start()
+		protected override void Awake()
 		{
+			base.Awake();
 			Initialization();
 		}
 
 		public virtual void Initialization()
 		{
-			TargetTimeScale = NormalTimescale;
+			TargetTimeScale = NormalTimeScale;
 			_timeScaleProperties = new Stack<TimeScaleProperties>();
 			_initialFixedDeltaTime = Time.fixedDeltaTime;
 			_initialMaximumDeltaTime = Time.maximumDeltaTime;
-			ApplyTimeScale(NormalTimescale);
-			if (LerpSpeed <= 0) { LerpSpeed = 1; }
+			ApplyTimeScale(NormalTimeScale);
 		}
 
 		/// <summary>
-		/// On Update, applies the timescale and resets it if needed
+		/// On Update, applies the time scale and resets it if needed
 		/// </summary>
 		protected virtual void Update()
-		{      
-			// if we have things in our stack, we handle them, otherwise we reset to the normal timescale
+		{
+			// if we have things in our stack, we handle them, otherwise we reset to the normal time scale
 			while (_timeScaleProperties.Count > 0)
 			{
 				_currentProperty = _timeScaleProperties.Peek();
 				TargetTimeScale = _currentProperty.TimeScale;
-				LerpSpeed = _currentProperty.LerpSpeed;
-				LerpTimescale = _currentProperty.Lerp;
 				_currentProperty.Duration -= Time.unscaledDeltaTime;
 
 				_timeScaleProperties.Pop();
@@ -172,43 +159,57 @@ namespace MoreMountains.Feedbacks
 
 			if (_timeScaleProperties.Count == 0)
 			{
-				TargetTimeScale = NormalTimescale;
-				LerpTimescale = DefaultLerpTimescale;
-				LerpSpeed = DefaultLerpSpeed;
+				TargetTimeScale = NormalTimeScale;
 			}
 
-			// we apply our timescale
-			if (LerpTimescale)
+			// we apply our time scale
+			if (_currentProperty.TimeScaleLerp)
 			{
-				if (LerpSpeed <= 0) { LerpSpeed = 1; }
-				ApplyTimeScale(Mathf.Lerp(Time.timeScale, TargetTimeScale, Time.unscaledDeltaTime * LerpSpeed));
+				if (_currentProperty.TimeScaleLerpMode == MMTimeScaleLerpModes.Speed)
+				{
+					if (_currentProperty.LerpSpeed <= 0) { _currentProperty.LerpSpeed = 1; }
+					ApplyTimeScale(Mathf.Lerp(Time.timeScale, TargetTimeScale, Time.unscaledDeltaTime * _currentProperty.LerpSpeed));	
+				}
+				else if (_currentProperty.TimeScaleLerpMode == MMTimeScaleLerpModes.Duration)
+				{
+					float timeSinceStart = Time.unscaledTime - _startedAt;
+					float progress = MMMaths.Remap(timeSinceStart, 0f, _currentProperty.TimeScaleLerpDuration, 0f, 1f);
+					float delta = _currentProperty.TimeScaleLerpCurve.Evaluate(progress);
+					ApplyTimeScale(Mathf.Lerp(Time.timeScale, TargetTimeScale, delta));
+					if (timeSinceStart > _currentProperty.TimeScaleLerpDuration)
+					{
+						ApplyTimeScale(TargetTimeScale);
+						if (_lerpingBackToNormal)
+						{
+							_lerpingBackToNormal = false;
+							_timeScaleProperties.Pop();
+						}	
+					}
+				}
 			}
 			else
 			{
 				ApplyTimeScale(TargetTimeScale);
 			}
-
 		}
 
 		/// <summary>
-		/// Modifies the timescale and time attributes to match the new timescale
+		/// Modifies the time scale and time attributes to match the new time scale
 		/// </summary>
 		/// <param name="newValue"></param>
 		protected virtual void ApplyTimeScale(float newValue)
 		{
 			Time.timeScale = newValue;
-
 			if (newValue != 0)
 			{
 				Time.fixedDeltaTime = _initialFixedDeltaTime * newValue;            
 			}
 			Time.maximumDeltaTime = _initialMaximumDeltaTime * newValue;
-
 			CurrentTimeScale = Time.timeScale;
 		}
 
 		/// <summary>
-		/// Resets all stacked timescale changes and simply sets the timescale, until further changes
+		/// Resets all stacked time scale changes and simply sets the time scale, until further changes
 		/// </summary>
 		/// <param name="newTimeScale">New time scale.</param>
 		protected virtual void SetTimeScale(float newTimeScale)
@@ -223,15 +224,22 @@ namespace MoreMountains.Feedbacks
 		/// <param name="timeScaleProperties">Time scale properties.</param>
 		protected virtual void SetTimeScale(TimeScaleProperties timeScaleProperties)
 		{
+			if (timeScaleProperties.TimeScaleLerp &&
+			    timeScaleProperties.TimeScaleLerpMode == MMTimeScaleLerpModes.Duration)
+			{
+				timeScaleProperties.Duration = Mathf.Max(timeScaleProperties.Duration, timeScaleProperties.TimeScaleLerpDuration);
+				timeScaleProperties.Duration = Mathf.Max(timeScaleProperties.Duration, timeScaleProperties.TimeScaleLerpDurationOnReset);
+			}
+			_startedAt = Time.unscaledTime;
 			_timeScaleProperties.Push(timeScaleProperties);
 		}
 
 		/// <summary>
-		/// Resets the time scale to the stored normal timescale
+		/// Resets the time scale to the stored normal time scale
 		/// </summary>
 		protected virtual void ResetTimeScale()
 		{
-			SetTimeScale(NormalTimescale);
+			SetTimeScale(NormalTimeScale);
 		}
 
 		/// <summary>
@@ -241,11 +249,22 @@ namespace MoreMountains.Feedbacks
 		{
 			if (_timeScaleProperties.Count > 0)
 			{
+				_resetProperty = _timeScaleProperties.Peek();
 				_timeScaleProperties.Pop();
 			}
-			else
+			
+			if (_timeScaleProperties.Count == 0)
 			{
-				ResetTimeScale();
+				if (_resetProperty.TimeScaleLerp && _resetProperty.TimeScaleLerpMode == MMTimeScaleLerpModes.Duration && _resetProperty.TimeScaleLerpOnReset)
+				{
+					_lerpingBackToNormal = true;
+					MMTimeScaleEvent.Trigger(MMTimeScaleMethods.For, NormalTimeScale, _resetProperty.TimeScaleLerpDuration, _resetProperty.TimeScaleLerp, 
+						_resetProperty.LerpSpeed, true, MMTimeScaleLerpModes.Duration, _resetProperty.TimeScaleLerpCurveOnReset, _resetProperty.TimeScaleLerpDurationOnReset);	
+				}
+				else
+				{
+					ResetTimeScale();	
+				}
 			}
 		}
 
@@ -253,7 +272,7 @@ namespace MoreMountains.Feedbacks
 		/// Sets the time scale to the specified value, instantly
 		/// </summary>
 		/// <param name="newNormalTimeScale">New normal time scale.</param>
-		public virtual void SetTimescaleTo(float newNormalTimeScale)
+		public virtual void SetTimeScaleTo(float newNormalTimeScale)
 		{
 			MMTimeScaleEvent.Trigger(MMTimeScaleMethods.For, newNormalTimeScale, 0f, false, 0f, true);
 		}
@@ -262,15 +281,23 @@ namespace MoreMountains.Feedbacks
 		/// Catches TimeScaleEvents and acts on them
 		/// </summary>
 		/// <param name="timeScaleEvent">MMTimeScaleEvent event.</param>
-		public virtual void OnTimeScaleEvent(MMTimeScaleMethods timeScaleMethod, float timeScale, float duration, bool lerp, float lerpSpeed, bool infinite)
+		public virtual void OnTimeScaleEvent(MMTimeScaleMethods timeScaleMethod, float timeScale, float duration, bool lerp, float lerpSpeed, bool infinite,
+			MMTimeScaleLerpModes timeScaleLerpMode = MMTimeScaleLerpModes.Speed, MMTweenType timeScaleLerpCurve = null, float timeScaleLerpDuration = 0.2f, 
+			bool timeScaleLerpOnReset = false, MMTweenType timeScaleLerpCurveOnReset = null, float timeScaleLerpDurationOnReset = 0.2f)
 		{
 			TimeScaleProperties timeScaleProperty = new TimeScaleProperties();
 			timeScaleProperty.TimeScale = timeScale;
 			timeScaleProperty.Duration = duration;
-			timeScaleProperty.Lerp = lerp;
+			timeScaleProperty.TimeScaleLerp = lerp;
 			timeScaleProperty.LerpSpeed = lerpSpeed;
 			timeScaleProperty.Infinite = infinite;
-
+			timeScaleProperty.TimeScaleLerpOnReset = timeScaleLerpOnReset;
+			timeScaleProperty.TimeScaleLerpCurveOnReset = timeScaleLerpCurveOnReset;
+			timeScaleProperty.TimeScaleLerpDurationOnReset = timeScaleLerpDurationOnReset;
+			timeScaleProperty.TimeScaleLerpMode = timeScaleLerpMode;
+			timeScaleProperty.TimeScaleLerpCurve = timeScaleLerpCurve;
+			timeScaleProperty.TimeScaleLerpDuration = timeScaleLerpDuration;
+			
 			switch (timeScaleMethod)
 			{
 				case MMTimeScaleMethods.Reset:
@@ -293,14 +320,11 @@ namespace MoreMountains.Feedbacks
 		/// <param name="freezeFrameEvent">Freeze frame event.</param>
 		public virtual void OnMMFreezeFrameEvent(float duration)
 		{
-			_frozenTimeLeft = duration;
-
 			TimeScaleProperties properties = new TimeScaleProperties();
 			properties.Duration = duration;
-			properties.Lerp = false;
+			properties.TimeScaleLerp = false;
 			properties.LerpSpeed = 0f;
 			properties.TimeScale = 0f;
-
 			SetTimeScale(properties);
 		} 
 

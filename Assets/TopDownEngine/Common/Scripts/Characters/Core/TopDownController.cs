@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// Do not use this class directly, use TopDownController2D for 2D characters, or TopDownController3D for 3D characters
 	/// Both of these classes inherit from this one
 	/// </summary>
-	public class TopDownController : MonoBehaviour 
+	public class TopDownController : TopDownMonoBehaviour 
 	{
 		[Header("Gravity")]
 		/// the current gravity to apply to our character (positive goes down, negative goes up, higher value, higher acceleration)
@@ -231,7 +231,7 @@ namespace MoreMountains.TopDownEngine
 		/// Resizes the controller's collider
 		/// </summary>
 		/// <param name="newHeight"></param>
-		public virtual void ResizeColliderHeight(float newHeight)
+		public virtual void ResizeColliderHeight(float newHeight, bool translateCenter = false)
 		{
 
 		}

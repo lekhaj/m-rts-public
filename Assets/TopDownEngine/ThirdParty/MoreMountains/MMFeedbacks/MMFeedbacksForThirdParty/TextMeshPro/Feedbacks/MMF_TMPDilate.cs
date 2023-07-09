@@ -17,6 +17,9 @@ namespace MoreMountains.Feedbacks
 	#endif
 	public class MMF_TMPDilate : MMF_Feedback
 	{
+		/// a static bool used to disable all feedbacks of this type at once
+		public static bool FeedbackTypeAuthorized = true;
+		
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TMPColor; } }
@@ -26,6 +29,7 @@ namespace MoreMountains.Feedbacks
 		public override bool EvaluateRequiresSetup() { return (TargetTMPText == null); }
 		public override string RequiredTargetText { get { return TargetTMPText != null ? TargetTMPText.name : "";  } }
 		#endif
+		public override bool HasCustomInspectors => true;
         
 		/// the duration of this feedback is the duration of the transition, or 0 if instant
 		public override float FeedbackDuration { get { return (Mode == MMFeedbackBase.Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
@@ -95,6 +99,11 @@ namespace MoreMountains.Feedbacks
 		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
 		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
 			#if MM_TEXTMESHPRO
 			if (TargetTMPText == null)
 			{
@@ -158,6 +167,21 @@ namespace MoreMountains.Feedbacks
 				newValue += _initialDilate;
 			}
 			TargetTMPText.fontMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, newValue);
+			TargetTMPText.UpdateMeshPadding();
+			#endif
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.fontMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, _initialDilate);
 			TargetTMPText.UpdateMeshPadding();
 			#endif
 		}

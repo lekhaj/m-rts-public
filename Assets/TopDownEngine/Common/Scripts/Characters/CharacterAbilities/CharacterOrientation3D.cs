@@ -372,11 +372,12 @@ namespace MoreMountains.TopDownEngine
 				maxSpeed = _characterRun.RunSpeed;
 			}
             
-			_relativeMaximum = _model.transform.TransformVector(Vector3.one);
+			_relativeMaximum = _character.transform.TransformVector(Vector3.one);
+			
 			_remappedSpeed.x = MMMaths.Remap(_relativeSpeed.x, 0f, maxSpeed, 0f, _relativeMaximum.x);
 			_remappedSpeed.y = MMMaths.Remap(_relativeSpeed.y, 0f, maxSpeed, 0f, _relativeMaximum.y);
 			_remappedSpeed.z = MMMaths.Remap(_relativeSpeed.z, 0f, maxSpeed, 0f, _relativeMaximum.z);
-            
+			
 			// relative speed normalized
 			_relativeSpeedNormalized = _relativeSpeed.normalized;
 			_yRotationOffset = _modelAnglesYLastFrame - ModelAngles.y;
@@ -422,6 +423,15 @@ namespace MoreMountains.TopDownEngine
 					_newMovementQuaternion = Quaternion.LookRotation(Vector3.left);
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Forces the character's model to face the specified angles
+		/// </summary>
+		/// <param name="angles"></param>
+		public virtual void Face(Vector3 angles)
+		{
+			_newMovementQuaternion = Quaternion.LookRotation(Quaternion.Euler(angles) * Vector3.forward);
 		}
 
 		/// <summary>

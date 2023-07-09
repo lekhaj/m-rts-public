@@ -18,6 +18,21 @@ namespace MoreMountains.TopDownEngine
 		protected CharacterPathfinder3D _characterPathfinder3D;
 		protected Transform _backToPatrolTransform;
 		protected AIActionMovePatrol3D _aiActionMovePatrol3D;
+		
+		static Transform _BackToPatrolBeacons;
+		public static Transform BackToPatrolBeaconsRoot
+		{
+			get
+			{
+				if (_BackToPatrolBeacons != null)
+				{
+					return _BackToPatrolBeacons;
+				}
+				GameObject newRoot = new GameObject(nameof(AIActionPathfinderToPatrol3D)+"_BackToPatrolBeacons");
+				_BackToPatrolBeacons = newRoot.transform;
+				return _BackToPatrolBeacons;
+			}
+		}
 
 		/// <summary>
 		/// On init we grab our CharacterMovement ability
@@ -32,7 +47,8 @@ namespace MoreMountains.TopDownEngine
 
 			GameObject backToPatrolBeacon = new GameObject();
 			backToPatrolBeacon.name = this.gameObject.name + "BackToPatrolBeacon";
-			_backToPatrolTransform = backToPatrolBeacon.transform;
+			_backToPatrolTransform = backToPatrolBeacon.transform;			
+			_backToPatrolTransform.parent = BackToPatrolBeaconsRoot;
 		}
 
 		/// <summary>

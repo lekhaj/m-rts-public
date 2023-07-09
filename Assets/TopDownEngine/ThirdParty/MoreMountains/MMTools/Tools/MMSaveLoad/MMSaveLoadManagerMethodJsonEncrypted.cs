@@ -20,13 +20,13 @@ namespace MoreMountains.Tools
 			// if you prefer using NewtonSoft's JSON lib uncomment the line below and commment the line above
 			//string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSave);
 			using (MemoryStream memoryStream = new MemoryStream())
-			using (StreamWriter streamWriter = new StreamWriter(memoryStream))
-			{
-				streamWriter.Write(json);
-				streamWriter.Flush();
-				memoryStream.Position = 0;
-				Encrypt(memoryStream, saveFile, Key);
-			}
+				using (StreamWriter streamWriter = new StreamWriter(memoryStream))
+				{
+					streamWriter.Write(json);
+					streamWriter.Flush();
+					memoryStream.Position = 0;
+					Encrypt(memoryStream, saveFile, Key);
+				}
 			saveFile.Close();
 		}
 
@@ -40,22 +40,22 @@ namespace MoreMountains.Tools
 		{
 			object savedObject = null;
 			using (MemoryStream memoryStream = new MemoryStream())
-			using (StreamReader streamReader = new StreamReader(memoryStream))
-			{
-				try
+				using (StreamReader streamReader = new StreamReader(memoryStream))
 				{
-					Decrypt(saveFile, memoryStream, Key);
+					try
+					{
+						Decrypt(saveFile, memoryStream, Key);
+					}
+					catch (CryptographicException ce)
+					{
+						Debug.LogError("[MMSaveLoadManager] Encryption key error: " + ce.Message);
+						return null;
+					}
+					memoryStream.Position = 0;
+					savedObject = JsonUtility.FromJson(streamReader.ReadToEnd(), objectType);
+					// if you prefer using NewtonSoft's JSON lib uncomment the line below and commment the line above
+					//savedObject = Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), objectType); 
 				}
-				catch (CryptographicException ce)
-				{
-					Debug.LogError("[MMSaveLoadManager] Encryption key error: " + ce.Message);
-					return null;
-				}
-				memoryStream.Position = 0;
-				savedObject = JsonUtility.FromJson(streamReader.ReadToEnd(), objectType);
-				// if you prefer using NewtonSoft's JSON lib uncomment the line below and commment the line above
-				//savedObject = Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), objectType); 
-			}
 			saveFile.Close();
 			return savedObject;
 		}

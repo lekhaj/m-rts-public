@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using MoreMountains.Tools;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -35,11 +35,6 @@ namespace MoreMountains.TopDownEngine
 		/// if this is true, the aim system will try to compensate when aim direction is null (for example when you haven't set any primary input yet)
 		[Tooltip("if this is true, the aim system will try to compensate when aim direction is null (for example when you haven't set any primary input yet)")]
 		public bool AvoidNullAim = true;
-		
-		#if ENABLE_INPUT_SYSTEM
-		[Header("Input System")]
-		public InputAction MousePositionAction;
-		#endif
 
 		protected Vector2 _inputMovement;
 		protected Vector3 _slopeTargetPosition;
@@ -53,12 +48,6 @@ namespace MoreMountains.TopDownEngine
 			}
 			base.Initialization();
 			_mainCamera = Camera.main;
-			
-			#if ENABLE_INPUT_SYSTEM
-			MousePositionAction.Enable();
-			MousePositionAction.performed += context => _mousePosition = context.ReadValue<Vector2>();
-			MousePositionAction.canceled += context => _mousePosition = Vector2.zero;
-			#endif
 		}
 
 		protected virtual void Reset()
@@ -234,9 +223,8 @@ namespace MoreMountains.TopDownEngine
 
 		public virtual void GetMouseAim()
 		{
-			#if !ENABLE_INPUT_SYSTEM
-			_mousePosition = Input.mousePosition;
-			#endif
+			_mousePosition = InputManager.Instance.MousePosition;
+			
 			Ray ray = _mainCamera.ScreenPointToRay(_mousePosition);
 			Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
 			float distance;
@@ -372,8 +360,14 @@ namespace MoreMountains.TopDownEngine
 
 			_aimAtDirection = target - transform.position;
 			_aimAtQuaternion = Quaternion.LookRotation(_aimAtDirection, Vector3.up);
-			transform.rotation = Quaternion.Lerp(transform.rotation, _aimAtQuaternion, WeaponRotationSpeed * Time.deltaTime);
-			//transform.LookAt(target, Vector3.up);
+			if (WeaponRotationSpeed == 0f)
+			{
+				transform.rotation = _aimAtQuaternion;
+			}
+			else
+			{
+				transform.rotation = Quaternion.Lerp(transform.rotation, _aimAtQuaternion, WeaponRotationSpeed * Time.deltaTime);	
+			}
 		}
         
 		/// <summary>

@@ -216,6 +216,11 @@ namespace MoreMountains.Tools
 		}
 
 		public event System.Action<PointerEventData.FramePressState, PointerEventData> ButtonStateChange;
+
+		public virtual void InvokeButtonStateChange(PointerEventData.FramePressState newState, PointerEventData data)
+		{
+			ButtonStateChange?.Invoke(newState, data);
+		}
 			
 		/// <summary>
 		/// Triggers the bound pointer down action
@@ -238,7 +243,7 @@ namespace MoreMountains.Tools
 			}
 			CurrentState = ButtonStates.ButtonDown;
 			_lastClickTimestamp = Time.time;
-			ButtonStateChange?.Invoke(PointerEventData.FramePressState.Pressed, data);
+			InvokeButtonStateChange(PointerEventData.FramePressState.Pressed, data);
 			if ((Time.timeScale != 0) && (PressedFirstTimeDelay > 0))
 			{
 				Invoke ("InvokePressedFirstTime", PressedFirstTimeDelay);	
@@ -272,7 +277,7 @@ namespace MoreMountains.Tools
 			}
 
 			CurrentState = ButtonStates.ButtonUp;
-			ButtonStateChange?.Invoke(PointerEventData.FramePressState.Released, data);
+			InvokeButtonStateChange(PointerEventData.FramePressState.Released, data);
 			if ((Time.timeScale != 0) && (ReleasedDelay > 0))
 			{
 				Invoke ("InvokeReleased", ReleasedDelay);
@@ -360,7 +365,7 @@ namespace MoreMountains.Tools
 			CurrentState = ButtonStates.Off; 
 			if (wasActive)
 			{
-				ButtonStateChange?.Invoke(PointerEventData.FramePressState.Released, null);
+				InvokeButtonStateChange(PointerEventData.FramePressState.Released, null);
 				ButtonReleased?.Invoke();
 			}
 		}

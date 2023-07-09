@@ -96,7 +96,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 			MMDepthOfFieldShakeEvent_URP.Trigger(ShakeFocusDistance, FeedbackDuration, RemapFocusDistanceZero, RemapFocusDistanceOne,
 				ShakeAperture, RemapApertureZero, RemapApertureOne,
 				ShakeFocalLength, RemapFocalLengthZero, RemapFocalLengthOne,
-				RelativeValues, intensityMultiplier, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				RelativeValues, intensityMultiplier, ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
             
 		}
         
@@ -116,7 +116,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 			MMDepthOfFieldShakeEvent_URP.Trigger(ShakeFocusDistance, FeedbackDuration, RemapFocusDistanceZero, RemapFocusDistanceOne,
 				ShakeAperture, RemapApertureZero, RemapApertureOne,
 				ShakeFocalLength, RemapFocalLengthZero, RemapFocalLengthOne,
-				RelativeValues, channel: Channel, stop: true );
+				RelativeValues, channelData:ChannelData(Channel), stop: true );
             
 		}
 	}

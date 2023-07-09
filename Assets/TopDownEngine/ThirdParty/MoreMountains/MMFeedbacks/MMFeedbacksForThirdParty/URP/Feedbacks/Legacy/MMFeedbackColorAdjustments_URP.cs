@@ -137,7 +137,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 				ShakeContrast, RemapContrastZero, RemapContrastOne,
 				ColorFilterMode, ColorFilterGradient, ColorFilterDestination, ColorFilterCurve,
 				FeedbackDuration,
-				RelativeIntensity, intensityMultiplier, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				RelativeIntensity, intensityMultiplier, ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
             
 		}
         
@@ -160,7 +160,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 				ShakeContrast, RemapContrastZero, RemapContrastOne,
 				ColorFilterMode, ColorFilterGradient, ColorFilterDestination, ColorFilterCurve,
 				FeedbackDuration,
-				RelativeIntensity, channel: Channel, stop: true);
+				RelativeIntensity, channelData:ChannelData(Channel), stop: true);
             
 		}
 	}

@@ -609,5 +609,13 @@ namespace MoreMountains.Tools
 			// we fill our dropdown list of names :
 			AttributeNames = _attributesNamesTempList.ToArray();
 		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		public virtual void RestoreInitialValues()
+		{
+			TargetAttribute.SetValue(InitialValue);
+		}
 	}
 }

@@ -57,7 +57,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled, false, RelativeFieldOfView);
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData(Channel), Timing.TimescaleMode == TimescaleModes.Unscaled, false, RelativeFieldOfView);
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled, stop:true);
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData(Channel), Timing.TimescaleMode == TimescaleModes.Unscaled, stop:true);
 		}
 	}
 }

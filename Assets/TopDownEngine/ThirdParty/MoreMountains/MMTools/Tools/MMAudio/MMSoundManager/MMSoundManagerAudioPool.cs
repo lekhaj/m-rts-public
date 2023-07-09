@@ -42,6 +42,9 @@ namespace MoreMountains.Tools
 				GameObject temporaryAudioHost = new GameObject("MMAudioSourcePool_"+i);
 				SceneManager.MoveGameObjectToScene(temporaryAudioHost.gameObject, parent.gameObject.scene);
 				AudioSource tempSource = temporaryAudioHost.AddComponent<AudioSource>();
+				MMFollowTarget followTarget = temporaryAudioHost.AddComponent<MMFollowTarget>();
+				followTarget.enabled = false;
+				followTarget.DisableSelfOnSetActiveFalse = true;
 				temporaryAudioHost.transform.SetParent(parent);
 				temporaryAudioHost.SetActive(false);
 				_pool.Add(tempSource);

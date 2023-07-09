@@ -26,6 +26,8 @@ namespace MoreMountains.Feedbacks
 		public override bool EvaluateRequiresSetup() { return (TargetTMPText == null); }
 		public override string RequiredTargetText { get { return TargetTMPText != null ? TargetTMPText.name : "";  } }
 		#endif
+
+		protected string _originalText;
 		
 		#if MM_TEXTMESHPRO
 		/// the duration of this feedback 
@@ -43,17 +45,34 @@ namespace MoreMountains.Feedbacks
 					{
 						return 0f;
 					}
-	                    
+
+					float foundLength = 0f;
+
+					if (ReplaceText)
+					{
+						_originalText = TargetTMPText.text;
+						TargetTMPText.text = NewText;
+					}
+					
 					switch (RevealMode)
 					{
 						case RevealModes.Character:
-							return RichTextLength(TargetTMPText.text) * IntervalBetweenReveals;
+							foundLength = RichTextLength(TargetTMPText.text) * IntervalBetweenReveals;
+							break;
 						case RevealModes.Lines:
-							return TargetTMPText.textInfo.lineCount * IntervalBetweenReveals;
+							foundLength = TargetTMPText.textInfo.lineCount * IntervalBetweenReveals;
+							break;
 						case RevealModes.Words:
-							return TargetTMPText.textInfo.wordCount * IntervalBetweenReveals;
+							foundLength = TargetTMPText.textInfo.wordCount * IntervalBetweenReveals;
+							break;
 					}
-					return 0f;
+
+					if (ReplaceText)
+					{
+						TargetTMPText.text = _originalText;
+					}
+
+					return foundLength;
 				}                
 			}
 			set
@@ -66,6 +85,11 @@ namespace MoreMountains.Feedbacks
 				{
 					if (TargetTMPText != null)
 					{
+						if (ReplaceText)
+						{
+							_originalText = TargetTMPText.text;
+							TargetTMPText.text = NewText;
+						}
 						switch (RevealMode)
 						{
 							case RevealModes.Character:
@@ -77,6 +101,10 @@ namespace MoreMountains.Feedbacks
 							case RevealModes.Words:
 								IntervalBetweenReveals = value / TargetTMPText.textInfo.wordCount;
 								break;
+						}
+						if (ReplaceText)
+						{
+							TargetTMPText.text = _originalText;
 						}
 					}
 				}
@@ -129,6 +157,7 @@ namespace MoreMountains.Feedbacks
 		protected int _totalCharacters;
 		protected int _totalLines;
 		protected int _totalWords;
+		protected string _initialText;
         
 		/// <summary>
 		/// On play we change the text of our target TMPText
@@ -148,6 +177,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+
+			_initialText = TargetTMPText.text;
 
 			if (ReplaceText)
 			{
@@ -223,14 +254,7 @@ namespace MoreMountains.Feedbacks
 					delay = _delay - FeedbackDeltaTime;
 				}
 	                
-				if (Timing.TimescaleMode == TimescaleModes.Scaled)
-				{
-					yield return MMFeedbacksCoroutine.WaitFor(delay);    
-				}
-				else
-				{
-					yield return MMFeedbacksCoroutine.WaitForUnscaled(delay);
-				}
+				yield return WaitFor(delay);
 			}
 			TargetTMPText.maxVisibleCharacters = _richTextLength;
 			IsPlaying = false;
@@ -251,14 +275,7 @@ namespace MoreMountains.Feedbacks
 				TargetTMPText.maxVisibleLines = visibleLines;
 				visibleLines++;
 
-				if (Timing.TimescaleMode == TimescaleModes.Scaled)
-				{
-					yield return MMFeedbacksCoroutine.WaitFor(_delay);    
-				}
-				else
-				{
-					yield return MMFeedbacksCoroutine.WaitForUnscaled(_delay);
-				}
+				yield return WaitFor(_delay);
 			}
 			TargetTMPText.maxVisibleLines = _totalLines;
 			IsPlaying = false;
@@ -279,14 +296,8 @@ namespace MoreMountains.Feedbacks
 				TargetTMPText.maxVisibleWords = visibleWords;
 				visibleWords++;
 
-				if (Timing.TimescaleMode == TimescaleModes.Scaled)
-				{
-					yield return MMFeedbacksCoroutine.WaitFor(_delay);    
-				}
-				else
-				{
-					yield return MMFeedbacksCoroutine.WaitForUnscaled(_delay);
-				}
+				
+				yield return WaitFor(_delay);
 			}
 
 			TargetTMPText.maxVisibleWords = _totalWords;
@@ -371,5 +382,19 @@ namespace MoreMountains.Feedbacks
 			return richTextLength;
 		}
 		#endif
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.text = _initialText;
+			#endif
+		}
 	}
 }

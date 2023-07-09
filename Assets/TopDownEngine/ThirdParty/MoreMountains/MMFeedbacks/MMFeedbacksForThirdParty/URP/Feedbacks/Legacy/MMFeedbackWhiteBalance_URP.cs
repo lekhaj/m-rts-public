@@ -84,7 +84,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
 			MMWhiteBalanceShakeEvent_URP.Trigger(ShakeTemperature, FeedbackDuration, RemapTemperatureZero, RemapTemperatureOne,
 				ShakeTint, RemapTintZero, RemapTintOne, RelativeValues, intensityMultiplier,
-				Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
             
 		}
         
@@ -103,7 +103,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 			base.CustomStopFeedback(position, feedbacksIntensity);
             
 			MMWhiteBalanceShakeEvent_URP.Trigger(ShakeTemperature, FeedbackDuration, RemapTemperatureZero, RemapTemperatureOne,
-				ShakeTint, RemapTintZero, RemapTintOne, RelativeValues, stop: true, channel: Channel);
+				ShakeTint, RemapTintZero, RemapTintOne, RelativeValues, stop: true, channelData:ChannelData(Channel));
             
 		}
 	}

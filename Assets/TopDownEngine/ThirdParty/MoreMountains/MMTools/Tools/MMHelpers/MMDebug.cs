@@ -278,19 +278,12 @@ namespace MoreMountains.Tools
 		/// </summary>
 		public struct MMDebugLogEvent
 		{
-			public delegate void Delegate(DebugLogItem item);
 			static private event Delegate OnEvent;
+			[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+			static public void Register(Delegate callback) { OnEvent += callback; }
+			static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-			static public void Register(Delegate callback)
-			{
-				OnEvent += callback;
-			}
-
-			static public void Unregister(Delegate callback)
-			{
-				OnEvent -= callback;
-			}
-
+			public delegate void Delegate(DebugLogItem item);
 			static public void Trigger(DebugLogItem item)
 			{
 				OnEvent?.Invoke(item);

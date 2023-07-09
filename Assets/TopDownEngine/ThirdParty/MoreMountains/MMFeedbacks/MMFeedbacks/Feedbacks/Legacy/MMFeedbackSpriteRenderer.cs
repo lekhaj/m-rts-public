@@ -172,7 +172,7 @@ namespace MoreMountains.Feedbacks
 					MMSpriteRendererShakeEvent.Trigger(FeedbackDuration, ModifyColor, ColorOverTime, 
 						FlipX, FlipY,   
 						intensityMultiplier,
-						Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake,
+						ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake,
 						UseRange, EventRange, EventOriginTransform.position);
 					break;
 				case Modes.ToDestinationColor:

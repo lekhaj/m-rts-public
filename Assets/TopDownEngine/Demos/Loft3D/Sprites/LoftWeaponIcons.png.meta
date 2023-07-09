@@ -29,6 +29,9 @@ TextureImporter:
   - first:
       213: 21300016
     second: WeaponIcons_LoftSword
+  - first:
+      213: 6437930568224669061
+    second: WeaponIcons_Punch
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -142,18 +145,6 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
     buildTarget: Server
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
-  - serializedVersion: 3
-    buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -356,6 +347,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: WeaponIcons_Punch
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58df8affdbf185950800000000000000
+      internalID: 6437930568224669061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -372,6 +384,7 @@ TextureImporter:
       WeaponIcons_Handgun: 21300002
       WeaponIcons_HandgunAmmo: 21300012
       WeaponIcons_LoftSword: 21300016
+      WeaponIcons_Punch: 6437930568224669061
       WeaponIcons_Shotgun: 21300000
       WeaponIcons_ShotgunAmmo: 21300014
       WeaponIcons_SniperRifle: 21300010

@@ -24,6 +24,9 @@ namespace MoreMountains.Feedbacks
 
 	public abstract class MMFeedbackBase : MMFeedback
 	{
+		/// a static bool used to disable all feedbacks of this type at once
+		public static bool FeedbackTypeAuthorized = true;
+		
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant } 
         
@@ -121,7 +124,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
 		{
-			if (Active)
+			if (Active && FeedbackTypeAuthorized)
 			{
 				Turn(true);
 				switch (Mode)

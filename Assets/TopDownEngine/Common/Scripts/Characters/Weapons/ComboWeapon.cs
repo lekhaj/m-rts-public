@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this component to an object containing multiple weapons and it'll turn it into a ComboWeapon, allowing you to chain attacks from all the different weapons
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Weapons/Combo Weapon")]
-	public class ComboWeapon : MonoBehaviour
+	public class ComboWeapon : TopDownMonoBehaviour
 	{
 		[Header("Combo")]
 		/// whether or not the combo can be dropped if enough time passes between two consecutive attacks
@@ -59,6 +59,7 @@ namespace MoreMountains.TopDownEngine
 		}
 
 		protected int _currentWeaponIndex = 0;
+		protected WeaponAutoShoot _weaponAutoShoot;
 		protected bool _countdownActive = false;
         
 		/// <summary>
@@ -75,6 +76,7 @@ namespace MoreMountains.TopDownEngine
 		public virtual void Initialization()
 		{
 			Weapons = GetComponents<Weapon>();
+			_weaponAutoShoot = this.gameObject.GetComponent<WeaponAutoShoot>();
 			InitializeUnusedWeapons();
 		}
 
@@ -103,6 +105,10 @@ namespace MoreMountains.TopDownEngine
 						_currentWeaponIndex = 0;
 						OwnerCharacterHandleWeapon.CurrentWeapon = Weapons[_currentWeaponIndex];
 						OwnerCharacterHandleWeapon.ChangeWeapon(Weapons[_currentWeaponIndex], Weapons[_currentWeaponIndex].WeaponName, true);
+						if (_weaponAutoShoot != null)
+						{
+							_weaponAutoShoot.SetCurrentWeapon(Weapons[_currentWeaponIndex]);
+						}
 					}
 				}
 			}
@@ -122,6 +128,11 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		/// <param name="weaponThatStopped"></param>
 		public virtual void WeaponStopped(Weapon weaponThatStopped)
+		{
+			ProceedToNextWeapon();
+		}
+
+		public virtual void ProceedToNextWeapon()
 		{
 			OwnerCharacterHandleWeapon = Weapons[_currentWeaponIndex].CharacterHandleWeapon;
             
@@ -147,6 +158,11 @@ namespace MoreMountains.TopDownEngine
 					OwnerCharacterHandleWeapon.CurrentWeapon.WeaponCurrentlyActive = false;
 					OwnerCharacterHandleWeapon.ChangeWeapon(Weapons[newIndex], Weapons[newIndex].WeaponName, true);
 					OwnerCharacterHandleWeapon.CurrentWeapon.WeaponCurrentlyActive = true;
+					
+					if (_weaponAutoShoot != null)
+					{
+						_weaponAutoShoot.SetCurrentWeapon(Weapons[newIndex]);
+					}
 				}
 			}
 		}

@@ -66,7 +66,8 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("how to change the state on skip")]
 		[MMFCondition("SetStateOnSkip", true)]
 		public PossibleStates StateOnSkip = PossibleStates.Inactive;
-        
+
+		protected bool _initialState;
         
 		/// <summary>
 		/// On init we change the state of our object if needed
@@ -77,6 +78,7 @@ namespace MoreMountains.Feedbacks
 			base.CustomInitialization(owner);
 			if (Active && (TargetGameObject != null))
 			{
+				_initialState = TargetGameObject.activeInHierarchy;
 				if (SetStateOnInit)
 				{
 					SetStatus(StateOnInit);
@@ -185,6 +187,18 @@ namespace MoreMountains.Feedbacks
 					break;
 			}
 			TargetGameObject.SetActive(newState);
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetGameObject.SetActive(_initialState);
 		}
 	}
 }

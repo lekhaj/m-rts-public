@@ -17,9 +17,21 @@ namespace MoreMountains.FeedbacksForThirdParty
 	public class MMCinemachineCameraShaker : MonoBehaviour
 	{
 		[Header("Settings")]
-		/// the channel to receive events on
-		[Tooltip("the channel to receive events on")]
+		/// whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what.
+		/// MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable
+		[Tooltip("whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what. " +
+		         "MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable")]
+		public MMChannelModes ChannelMode = MMChannelModes.Int;
+		/// the channel to listen to - has to match the one on the feedback
+		[Tooltip("the channel to listen to - has to match the one on the feedback")]
+		[MMFEnumCondition("ChannelMode", (int)MMChannelModes.Int)]
 		public int Channel = 0;
+		/// the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel,
+		/// right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name
+		[Tooltip("the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel, " +
+		         "right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name")]
+		[MMFEnumCondition("ChannelMode", (int)MMChannelModes.MMChannel)]
+		public MMChannel MMChannelDefinition = null;
 		/// The default amplitude that will be applied to your shakes if you don't specify one
 		[Tooltip("The default amplitude that will be applied to your shakes if you don't specify one")]
 		public float DefaultShakeAmplitude = .5f;
@@ -150,18 +162,18 @@ namespace MoreMountains.FeedbacksForThirdParty
 			_targetFrequency = IdleFrequency;
 		}
 
-		public virtual void OnCameraShakeEvent(float duration, float amplitude, float frequency, float amplitudeX, float amplitudeY, float amplitudeZ, bool infinite, int channel, bool useUnscaledTime)
+		public virtual void OnCameraShakeEvent(float duration, float amplitude, float frequency, float amplitudeX, float amplitudeY, float amplitudeZ, bool infinite, MMChannelData channelData, bool useUnscaledTime)
 		{
-			if ((channel != Channel) && (channel != -1) && (Channel != -1))
+			if (!MMChannel.Match(channelData, ChannelMode, Channel, MMChannelDefinition))
 			{
 				return;
 			}
 			this.ShakeCamera(duration, amplitude, frequency, infinite, useUnscaledTime);
 		}
 
-		public virtual void OnCameraShakeStopEvent(int channel)
+		public virtual void OnCameraShakeStopEvent(MMChannelData channelData)
 		{
-			if ((channel != Channel) && (channel != -1) && (Channel != -1))
+			if (!MMChannel.Match(channelData, ChannelMode, Channel, MMChannelDefinition))
 			{
 				return;
 			}
@@ -186,7 +198,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 
 		protected virtual void TestShake()
 		{
-			MMCameraShakeEvent.Trigger(TestDuration, TestAmplitude, TestFrequency, 0f, 0f, 0f, false, 0);
+			MMCameraShakeEvent.Trigger(TestDuration, TestAmplitude, TestFrequency, 0f, 0f, 0f, false, new MMChannelData(ChannelMode, Channel, MMChannelDefinition));
 		}
 		#endif
 	}

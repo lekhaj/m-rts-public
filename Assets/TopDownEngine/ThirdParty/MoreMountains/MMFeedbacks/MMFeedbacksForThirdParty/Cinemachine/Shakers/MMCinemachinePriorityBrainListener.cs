@@ -46,7 +46,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// <param name="forceTransition"></param>
 		/// <param name="blendDefinition"></param>
 		/// <param name="resetValuesAfterTransition"></param>
-		public virtual void OnMMCinemachinePriorityEvent(int channel, bool forceMaxPriority, int newPriority, bool forceTransition, CinemachineBlendDefinition blendDefinition, bool resetValuesAfterTransition, TimescaleModes timescaleMode)
+		public virtual void OnMMCinemachinePriorityEvent(MMChannelData channelData, bool forceMaxPriority, int newPriority, bool forceTransition, CinemachineBlendDefinition blendDefinition, bool resetValuesAfterTransition, TimescaleModes timescaleMode, bool restore = false)
 		{
 			if (forceTransition)
 			{

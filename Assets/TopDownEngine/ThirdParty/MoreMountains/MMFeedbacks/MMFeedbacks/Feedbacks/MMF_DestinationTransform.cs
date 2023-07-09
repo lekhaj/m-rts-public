@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 
 namespace MoreMountains.Feedbacks
@@ -22,6 +23,7 @@ namespace MoreMountains.Feedbacks
 		public override bool EvaluateRequiresSetup() { return (TargetTransform == null) || (Destination == null); }
 		public override string RequiredTargetText { get { return TargetTransform != null ? TargetTransform.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetTransform and a Destination be set to be able to work properly. You can set one below."; } }
+		public override bool HasCustomInspectors { get { return true; } }
 		#endif
 
 		[MMFInspectorGroup("Target to animate", true, 61, true)]
@@ -41,12 +43,9 @@ namespace MoreMountains.Feedbacks
 		public Transform Destination;
         
 		[MMFInspectorGroup("Transition", true, 63)]
-		/// whether or not we want to force transform properties at the end of the transition
-		[Tooltip("whether or not we want to force transform properties at the end of the transition")]
-		public bool ForceDestinationOnEnd = false;
 		/// a global curve to animate all properties on, unless dedicated ones are specified
 		[Tooltip("a global curve to animate all properties on, unless dedicated ones are specified")]
-		public AnimationCurve GlobalAnimationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
+		public MMTweenType GlobalAnimationTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
 		/// the duration of the transition, in seconds
 		[Tooltip("the duration of the transition, in seconds")]
 		public float Duration = 0.2f;
@@ -91,7 +90,7 @@ namespace MoreMountains.Feedbacks
 		/// the curve to use to animate the position on
 		[Tooltip("the curve to use to animate the position on")]
 		[MMFCondition("SeparatePositionCurve", true)]
-		public AnimationCurve AnimatePositionCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
+		public MMTweenType AnimatePositionTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
         
 		/// whether or not to use a separate animation curve to animate the rotation
 		[Tooltip("whether or not to use a separate animation curve to animate the rotation")]
@@ -99,7 +98,7 @@ namespace MoreMountains.Feedbacks
 		/// the curve to use to animate the rotation on
 		[Tooltip("the curve to use to animate the rotation on")]
 		[MMFCondition("SeparateRotationCurve", true)]
-		public AnimationCurve AnimateRotationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
+		public MMTweenType AnimateRotationTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
         
 		/// whether or not to use a separate animation curve to animate the scale
 		[Tooltip("whether or not to use a separate animation curve to animate the scale")]
@@ -107,11 +106,20 @@ namespace MoreMountains.Feedbacks
 		/// the curve to use to animate the scale on
 		[Tooltip("the curve to use to animate the scale on")]
 		[MMFCondition("SeparateScaleCurve", true)]
-		public AnimationCurve AnimateScaleCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
+		public MMTweenType AnimateScaleTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
         
 		/// the duration of this feedback is the duration of the movement
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 
+		/// a global curve to animate all properties on, unless dedicated ones are specified
+		[HideInInspector] public AnimationCurve GlobalAnimationCurve = null;
+		/// the curve to use to animate the position on
+		[HideInInspector] public AnimationCurve AnimateScaleCurve = null;
+		/// the curve to use to animate the rotation on
+		[HideInInspector] public AnimationCurve AnimatePositionCurve = null;
+		/// the curve to use to animate the scale on
+		[HideInInspector] public AnimationCurve AnimateRotationCurve = null;
+		
 		protected Coroutine _coroutine;
 		protected Vector3 _newPosition;
 		protected Quaternion _newRotation;
@@ -122,7 +130,11 @@ namespace MoreMountains.Feedbacks
 		protected Quaternion _pointBRotation;
 		protected Vector3 _pointAScale;
 		protected Vector3 _pointBScale;
-		protected AnimationCurve _animationCurve;
+		protected MMTweenType _animationTweenType;
+
+		protected Vector3 _initialPosition;
+		protected Vector3 _initialScale;
+		protected Quaternion _initialRotation;
         
 		/// <summary>
 		/// On Play we animate the pos/rotation/scale of the target transform towards its destination
@@ -144,6 +156,10 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator AnimateToDestination()
 		{
+			_initialPosition = TargetTransform.position;
+			_initialRotation = TargetTransform.rotation;
+			_initialScale = TargetTransform.localScale;
+			
 			_pointAPosition = ForceOrigin ? Origin.transform.position : TargetTransform.position;
 			_pointBPosition = Destination.transform.position;
 
@@ -171,43 +187,37 @@ namespace MoreMountains.Feedbacks
 			while ((journey >= 0) && (journey <= Duration) && (Duration > 0))
 			{
 				float percent = Mathf.Clamp01(journey / Duration);
-
-				_animationCurve = SeparatePositionCurve ? AnimatePositionCurve : GlobalAnimationCurve;
-				_newPosition = Vector3.LerpUnclamped(_pointAPosition, _pointBPosition, _animationCurve.Evaluate(percent));
-                
-				_animationCurve = SeparateRotationCurve ? AnimateRotationCurve : GlobalAnimationCurve;
-				_newRotation = Quaternion.LerpUnclamped(_pointARotation, _pointBRotation, _animationCurve.Evaluate(percent));
-                
-				_animationCurve = SeparateScaleCurve ? AnimateScaleCurve : GlobalAnimationCurve;
-				_newScale = Vector3.LerpUnclamped(_pointAScale, _pointBScale, _animationCurve.Evaluate(percent));
-
-				TargetTransform.position = _newPosition;
-				TargetTransform.rotation = _newRotation;
-				TargetTransform.localScale = _newScale;
-
+				ChangeTransformValues(percent);
 				journey += NormalPlayDirection ? FeedbackDeltaTime : -FeedbackDeltaTime;
 				yield return null;
 			}
 
 			// set final position
-			if (ForceDestinationOnEnd)
-			{
-				if (NormalPlayDirection)
-				{
-					TargetTransform.position = _pointBPosition;
-					TargetTransform.rotation = _pointBRotation;
-					TargetTransform.localScale = _pointBScale;
-				}
-				else
-				{
-					TargetTransform.position = _pointAPosition;
-					TargetTransform.rotation = _pointARotation;
-					TargetTransform.localScale = _pointAScale;
-				}    
-			}
+			ChangeTransformValues(1f);
+			
 			IsPlaying = false;
 			_coroutine = null;
 			yield break;
+		}
+
+		/// <summary>
+		/// Computes the new position, rotation and scale for our transform, and applies it to the transform
+		/// </summary>
+		/// <param name="percent"></param>
+		protected virtual void ChangeTransformValues(float percent)
+		{
+			_animationTweenType = SeparatePositionCurve ? AnimatePositionTween : GlobalAnimationTween;
+			_newPosition = Vector3.LerpUnclamped(_pointAPosition, _pointBPosition, _animationTweenType.Evaluate(percent));
+                
+			_animationTweenType = SeparateRotationCurve ? AnimateRotationTween : GlobalAnimationTween;
+			_newRotation = Quaternion.LerpUnclamped(_pointARotation, _pointBRotation, _animationTweenType.Evaluate(percent));
+                
+			_animationTweenType = SeparateScaleCurve ? AnimateScaleTween : GlobalAnimationTween;
+			_newScale = Vector3.LerpUnclamped(_pointAScale, _pointBScale, _animationTweenType.Evaluate(percent));
+			
+			TargetTransform.position = _newPosition;
+			TargetTransform.rotation = _newRotation;
+			TargetTransform.localScale = _newScale;
 		}
 
 		/// <summary>
@@ -229,6 +239,32 @@ namespace MoreMountains.Feedbacks
 			{
 				Owner.StopCoroutine(_coroutine);
 			}
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetTransform.position = _initialPosition;
+			TargetTransform.rotation = _initialRotation;
+			TargetTransform.localScale = _initialScale;
+		}
+		
+		/// <summary>
+		/// On Validate, we migrate our deprecated animation curves to our tween types if needed
+		/// </summary>
+		public override void OnValidate()
+		{
+			base.OnValidate();
+			MMFeedbacksHelpers.MigrateCurve(GlobalAnimationCurve, GlobalAnimationTween, Owner);
+			MMFeedbacksHelpers.MigrateCurve(AnimatePositionCurve, AnimatePositionTween, Owner);
+			MMFeedbacksHelpers.MigrateCurve(AnimateRotationCurve, AnimateRotationTween, Owner);
+			MMFeedbacksHelpers.MigrateCurve(AnimateScaleCurve, AnimateScaleTween, Owner);
 		}
 	}    
 }

@@ -15,6 +15,7 @@ namespace MoreMountains.Feedbacks
 		public static bool FeedbackTypeAuthorized = true;
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.PauseColor; } }
+		public override bool DisplayFullHeaderColor => true;
 		#endif
 		public override IEnumerator Pause { get { return PauseWait(); } }
         
@@ -53,14 +54,7 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator PauseWait()
 		{
-			if (Timing.TimescaleMode == TimescaleModes.Scaled)
-			{
-				return MMFeedbacksCoroutine.WaitFor(PauseDuration);
-			}
-			else
-			{
-				return MMFeedbacksCoroutine.WaitForUnscaled(PauseDuration);
-			}
+			yield return WaitFor(PauseDuration);
 		}
 
 		/// <summary>

@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A class used in the Koala demo to emit particles if a spawner is active and stop them otherwise
 	/// </summary>
-	public class DungeonPortal : MonoBehaviour
+	public class DungeonPortal : TopDownMonoBehaviour
 	{
 		/// the particles to play while the portal is spawning
 		[Tooltip("the particles to play while the portal is spawning")]

@@ -24,6 +24,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return TargetFloatController != null ? TargetFloatController.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetFloatController be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Float Controller", true, 36, true)]
 		/// the mode this controller is in
@@ -117,7 +118,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			TargetFloatController.RevertToInitialValueAfterEnd = RevertToInitialValueAfterEnd;
 
 			if (Mode == Modes.OneTime)
@@ -183,6 +184,18 @@ namespace MoreMountains.Feedbacks
 			{
 				TargetFloatController.Stop();
 			}
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetFloatController.RestoreInitialValues();
 		}
 	}
 }

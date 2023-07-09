@@ -45,14 +45,21 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("if this is true, will add an empty slot to the weapon rotation")]
 		public WeaponRotationModes WeaponRotationMode = WeaponRotationModes.Normal;
 
-		[Header("AutoEquip")]
+		[Header("Auto Pick")]
 		/// a list of items to automatically add to this Character's inventories on start
 		[Tooltip("a list of items to automatically add to this Character's inventories on start")]
 		public AutoPickItem[] AutoPickItems;
+		/// if this is true, auto pick items will only be added if the main inventory is empty
+		[Tooltip("if this is true, auto pick items will only be added if the main inventory is empty")]
+		public bool AutoPickOnlyIfMainInventoryIsEmpty;
+		
+		[Header("Auto Equip")]
 		/// a weapon to auto equip on start
 		[Tooltip("a weapon to auto equip on start")]
 		public InventoryWeapon AutoEquipWeaponOnStart;
-        
+		/// if this is true, auto equip will only occur if the main inventory is empty
+		[Tooltip("if this is true, auto equip will only occur if the main inventory is empty")]
+		public bool AutoEquipOnlyIfMainInventoryIsEmpty;
 		/// the target handle weapon ability - if left empty, will pick the first one it finds
 		[Tooltip("the target handle weapon ability - if left empty, will pick the first one it finds")]
 		public CharacterHandleWeapon CharacterHandleWeapon;
@@ -60,6 +67,7 @@ namespace MoreMountains.TopDownEngine
 		public Inventory MainInventory { get; set; }
 		public Inventory WeaponInventory { get; set; }
 		public Inventory HotbarInventory { get; set; }
+		public List<string> AvailableWeaponsIDs => _availableWeaponsIDs;
 
 		protected List<int> _availableWeapons;
 		protected List<string> _availableWeaponsIDs;
@@ -68,6 +76,7 @@ namespace MoreMountains.TopDownEngine
 		protected string _nextFrameWeaponName;
 		protected const string _emptySlotWeaponName = "_EmptySlotWeaponName";
 		protected const string _initialSlotWeaponName = "_InitialSlotWeaponName";
+		protected bool _initialized = false;
 
 		/// <summary>
 		/// On init we setup our ability
@@ -94,8 +103,21 @@ namespace MoreMountains.TopDownEngine
 			}
 			FillAvailableWeaponsLists ();
 
+			if (_initialized)
+			{
+				return;
+			}
+
+			bool mainInventoryEmpty = true;
+			if (MainInventory != null)
+			{
+				mainInventoryEmpty = MainInventory.NumberOfFilledSlots == 0;
+			}
+			bool canAutoPick = !(AutoPickOnlyIfMainInventoryIsEmpty && !mainInventoryEmpty);
+			bool canAutoEquip = !(AutoEquipOnlyIfMainInventoryIsEmpty && !mainInventoryEmpty);
+			
 			// we auto pick items if needed
-			if (AutoPickItems.Length > 0)
+			if ((AutoPickItems.Length > 0) && !_initialized && canAutoPick)
 			{
 				foreach (AutoPickItem item in AutoPickItems)
 				{
@@ -104,11 +126,12 @@ namespace MoreMountains.TopDownEngine
 			}
 
 			// we auto equip a weapon if needed
-			if (AutoEquipWeaponOnStart != null)
+			if ((AutoEquipWeaponOnStart != null) && !_initialized && canAutoEquip)
 			{
 				MMInventoryEvent.Trigger(MMInventoryEventType.Pick, null, AutoEquipWeaponOnStart.TargetInventoryName, AutoEquipWeaponOnStart, 1, 0, PlayerID);
 				EquipWeapon(AutoEquipWeaponOnStart.ItemID);
 			}
+			_initialized = true;
 		}
 
 		public override void ProcessAbility()
@@ -127,20 +150,25 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void GrabInventories()
 		{
-			if (MainInventory == null)
+			Inventory[] inventories = FindObjectsOfType<Inventory>();
+			foreach (Inventory inventory in inventories)
 			{
-				GameObject mainInventoryTmp = GameObject.Find (MainInventoryName);
-				if (mainInventoryTmp != null) { MainInventory = mainInventoryTmp.GetComponent<Inventory> (); }	
-			}
-			if (WeaponInventory == null)
-			{
-				GameObject weaponInventoryTmp = GameObject.Find (WeaponInventoryName);
-				if (weaponInventoryTmp != null) { WeaponInventory = weaponInventoryTmp.GetComponent<Inventory> (); }	
-			}
-			if (HotbarInventory == null)
-			{
-				GameObject hotbarInventoryTmp = GameObject.Find (HotbarInventoryName);
-				if (hotbarInventoryTmp != null) { HotbarInventory = hotbarInventoryTmp.GetComponent<Inventory> (); }	
+				if (inventory.PlayerID != PlayerID)
+				{
+					continue;
+				}
+				if ((MainInventory == null) && (inventory.name == MainInventoryName))
+				{
+					MainInventory = inventory;
+				}
+				if ((WeaponInventory == null) && (inventory.name == WeaponInventoryName))
+				{
+					WeaponInventory = inventory;
+				}
+				if ((HotbarInventory == null) && (inventory.name == HotbarInventoryName))
+				{
+					HotbarInventory = inventory;
+				}
 			}
 			if (MainInventory != null) { MainInventory.SetOwner (this.gameObject); MainInventory.TargetTransform = InventoryTransform;}
 			if (WeaponInventory != null) { WeaponInventory.SetOwner (this.gameObject); WeaponInventory.TargetTransform = InventoryTransform;}
@@ -233,7 +261,7 @@ namespace MoreMountains.TopDownEngine
 		/// Equips the weapon with the name passed in parameters
 		/// </summary>
 		/// <param name="weaponID"></param>
-		protected virtual void EquipWeapon(string weaponID)
+		public virtual void EquipWeapon(string weaponID)
 		{
 			if ((weaponID == _emptySlotWeaponName) && (CharacterHandleWeapon != null))
 			{
@@ -250,7 +278,7 @@ namespace MoreMountains.TopDownEngine
 				MMInventoryEvent.Trigger(MMInventoryEventType.Redraw, null, WeaponInventory.name, null, 0, 0, PlayerID);
 				return;
 			}
-
+			
 			for (int i = 0; i < MainInventory.Content.Length ; i++)
 			{
 				if (InventoryItem.IsNull(MainInventory.Content[i]))

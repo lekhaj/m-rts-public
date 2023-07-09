@@ -17,7 +17,7 @@ namespace MoreMountains.TopDownEngine
 	/// Your magnetic enabler would make them follow this specific target on enter.
 	/// From the enabler you can also have it override the follow speed and acceleration.
 	/// </summary>
-	public class MagneticEnabler : MonoBehaviour
+	public class MagneticEnabler : TopDownMonoBehaviour
 	{
 		[Header("Detection")]
 		/// the layermask this magnetic enabler looks at to enable magnetic elements

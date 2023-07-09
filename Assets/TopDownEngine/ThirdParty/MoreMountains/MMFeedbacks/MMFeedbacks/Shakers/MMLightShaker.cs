@@ -187,10 +187,10 @@ namespace MoreMountains.Feedbacks
 			AnimationCurve intensityCurve, float remapIntensityZero, float remapIntensityOne,
 			AnimationCurve rangeCurve, float remapRangeZero, float remapRangeOne,
 			AnimationCurve shadowStrengthCurve, float remapShadowStrengthZero, float remapShadowStrengthOne,
-			float feedbacksIntensity = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
+			float feedbacksIntensity = 1.0f, MMChannelData channelData = null, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
 			bool useRange = false, float eventRange = 0f, Vector3 eventOriginPosition = default(Vector3))
 		{
-			if (!CheckEventAllowed(channel, useRange, eventRange, eventOriginPosition) || (!Interruptible && Shaking))
+			if (!CheckEventAllowed(channelData, useRange, eventRange, eventOriginPosition) || (!Interruptible && Shaking))
 			{
 				return;
 			}
@@ -235,36 +235,30 @@ namespace MoreMountains.Feedbacks
            
 	public struct MMLightShakeEvent
 	{
+		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
+
 		public delegate void Delegate(float shakeDuration, bool relativeValues, bool modifyColor, Gradient colorOverTime, 
 			AnimationCurve intensityCurve, float remapIntensityZero, float remapIntensityOne,
 			AnimationCurve rangeCurve, float remapRangeZero, float remapRangeOne, 
 			AnimationCurve shadowStrengthCurve, float remapShadowStrengthZero, float remapShadowStrengthOne,
-			float feedbacksIntensity = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
+			float feedbacksIntensity = 1.0f, MMChannelData channelData = null, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
 			bool useRange = false, float eventRange = 0f, Vector3 eventOriginPosition = default(Vector3));
-		static private event Delegate OnEvent;
-
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
 
 		static public void Trigger(float shakeDuration, bool relativeValues, bool modifyColor, Gradient colorOverTime,
 			AnimationCurve intensityCurve, float remapIntensityZero, float remapIntensityOne,
 			AnimationCurve rangeCurve, float remapRangeZero, float remapRangeOne,
 			AnimationCurve shadowStrengthCurve, float remapShadowStrengthZero, float remapShadowStrengthOne,
-			float feedbacksIntensity = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
+			float feedbacksIntensity = 1.0f, MMChannelData channelData = null, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
 			bool useRange = false, float eventRange = 0f, Vector3 eventOriginPosition = default(Vector3))
 		{
 			OnEvent?.Invoke(shakeDuration, relativeValues, modifyColor, colorOverTime,
 				intensityCurve, remapIntensityZero, remapIntensityOne,
 				rangeCurve, remapRangeZero, remapRangeOne,
 				shadowStrengthCurve, remapShadowStrengthZero, remapShadowStrengthOne, 
-				feedbacksIntensity, channel, resetShakerValuesAfterShake, resetTargetValuesAfterShake, 
+				feedbacksIntensity, channelData, resetShakerValuesAfterShake, resetTargetValuesAfterShake, 
 				useRange, eventRange, eventOriginPosition);
 		}
 	}

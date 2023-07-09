@@ -112,7 +112,7 @@ MonoBehaviour:
   MovementMultiplier: 0
   PreventAllMovementWhileInUse: 1
   PreventAllAimWhileInUse: 0
-  RecoilForce: 0
+  RecoilForce: -500
   Animators:
   - {fileID: 95971963482004484}
   PerformAnimatorSanityChecks: 0
@@ -138,17 +138,20 @@ MonoBehaviour:
   InitializeOnStart: 0
   Interruptable: 0
   Flipped: 0
+  MeleeDamageAreaMode: 0
   DamageAreaShape: 0
   AreaSize: {x: 4, y: 2, z: 0}
   AreaOffset: {x: 0.64, y: 0, z: 0}
   HitDamageableFeedback: {fileID: 0}
   HitNonDamageableFeedback: {fileID: 0}
+  ExistingDamageArea: {fileID: 0}
   InitialDelay: 0
   ActiveDuration: 0.2
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 8448
-  DamageCaused: 10
+  MinDamageCaused: 10
+  MaxDamageCaused: 10
   Knockback: 1
   KnockbackForce: {x: 500, y: 0, z: 0}
   InvincibilityDuration: 0.5
@@ -195,7 +198,7 @@ MonoBehaviour:
   MovementMultiplier: 0
   PreventAllMovementWhileInUse: 1
   PreventAllAimWhileInUse: 0
-  RecoilForce: 0
+  RecoilForce: -100
   Animators:
   - {fileID: 95971963482004484}
   PerformAnimatorSanityChecks: 0
@@ -221,17 +224,20 @@ MonoBehaviour:
   InitializeOnStart: 0
   Interruptable: 0
   Flipped: 0
+  MeleeDamageAreaMode: 0
   DamageAreaShape: 0
   AreaSize: {x: 3, y: 3, z: 0}
   AreaOffset: {x: 0.57, y: 0.2, z: 0}
   HitDamageableFeedback: {fileID: 0}
   HitNonDamageableFeedback: {fileID: 0}
+  ExistingDamageArea: {fileID: 0}
   InitialDelay: 0
   ActiveDuration: 0.2
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 8448
-  DamageCaused: 10
+  MinDamageCaused: 10
+  MaxDamageCaused: 10
   Knockback: 1
   KnockbackForce: {x: 500, y: 0, z: 0}
   InvincibilityDuration: 0.5
@@ -304,17 +310,20 @@ MonoBehaviour:
   InitializeOnStart: 0
   Interruptable: 0
   Flipped: 0
+  MeleeDamageAreaMode: 0
   DamageAreaShape: 0
   AreaSize: {x: 4, y: 3, z: 0}
   AreaOffset: {x: 1.5, y: 0.5, z: 0}
   HitDamageableFeedback: {fileID: 0}
   HitNonDamageableFeedback: {fileID: 0}
+  ExistingDamageArea: {fileID: 0}
   InitialDelay: 0
   ActiveDuration: 0.2
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 8448
-  DamageCaused: 10
+  MinDamageCaused: 10
+  MaxDamageCaused: 10
   Knockback: 1
   KnockbackForce: {x: 500, y: 0, z: 0}
   InvincibilityDuration: 0.5
@@ -496,10 +505,46 @@ MonoBehaviour:
   AutoChangeDirectionOnEnd: 0
   AutoPlayOnStart: 0
   AutoPlayOnEnable: 0
+  ForceTimescaleMode: 0
+  ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  RandomizeDuration: 0
+  RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
+  PlayerTimescaleMode: 1
+  OnlyPlayIfWithinRange: 0
+  RangeCenter: {fileID: 0}
+  RangeDistance: 5
+  UseRangeFalloff: 0
+  RangeFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RemapRangeFalloff: {x: 0, y: 1}
+  IgnoreRangeEvents: 0
   CooldownDuration: 0
   InitialDelay: 0
+  CanPlay: 1
   CanPlayWhileAlreadyPlaying: 1
   ChanceToPlay: 100
   FeedbacksIntensity: 1
@@ -798,6 +843,7 @@ MonoBehaviour:
   MinPitch: 1
   MaxPitch: 1
   SfxAudioMixerGroup: {fileID: 0}
+  Priority: 128
 --- !u!1 &1891080909852819448
 GameObject:
   m_ObjectHideFlags: 0
@@ -860,10 +906,46 @@ MonoBehaviour:
   AutoChangeDirectionOnEnd: 0
   AutoPlayOnStart: 0
   AutoPlayOnEnable: 0
+  ForceTimescaleMode: 0
+  ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  RandomizeDuration: 0
+  RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
+  PlayerTimescaleMode: 1
+  OnlyPlayIfWithinRange: 0
+  RangeCenter: {fileID: 0}
+  RangeDistance: 5
+  UseRangeFalloff: 0
+  RangeFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RemapRangeFalloff: {x: 0, y: 1}
+  IgnoreRangeEvents: 0
   CooldownDuration: 0
   InitialDelay: 0
+  CanPlay: 1
   CanPlayWhileAlreadyPlaying: 1
   ChanceToPlay: 100
   FeedbacksIntensity: 1
@@ -1162,6 +1244,7 @@ MonoBehaviour:
   MinPitch: 1
   MaxPitch: 1
   SfxAudioMixerGroup: {fileID: 0}
+  Priority: 128
 --- !u!114 &4643787643886568759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1254,6 +1337,7 @@ MonoBehaviour:
   MinPitch: 1
   MaxPitch: 1
   SfxAudioMixerGroup: {fileID: 0}
+  Priority: 128
 --- !u!1 &6211418183160165590
 GameObject:
   m_ObjectHideFlags: 0
@@ -1312,10 +1396,46 @@ MonoBehaviour:
   AutoChangeDirectionOnEnd: 0
   AutoPlayOnStart: 0
   AutoPlayOnEnable: 0
+  ForceTimescaleMode: 0
+  ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  RandomizeDuration: 0
+  RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
+  PlayerTimescaleMode: 1
+  OnlyPlayIfWithinRange: 0
+  RangeCenter: {fileID: 0}
+  RangeDistance: 5
+  UseRangeFalloff: 0
+  RangeFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RemapRangeFalloff: {x: 0, y: 1}
+  IgnoreRangeEvents: 0
   CooldownDuration: 0
   InitialDelay: 0
+  CanPlay: 1
   CanPlayWhileAlreadyPlaying: 1
   ChanceToPlay: 100
   FeedbacksIntensity: 1
@@ -1614,3 +1734,4 @@ MonoBehaviour:
   MinPitch: 1
   MaxPitch: 1
   SfxAudioMixerGroup: {fileID: 0}
+  Priority: 128

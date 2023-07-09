@@ -7,7 +7,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// This class handles a X-players split screen setup
 	/// </summary>
-	public class MultiplayerSplitCameraRig : MonoBehaviour, MMEventListener<MMGameEvent>
+	public class MultiplayerSplitCameraRig : TopDownMonoBehaviour, MMEventListener<MMGameEvent>
 	{
 		[Header("Multiplayer Split Camera Rig")]
 		/// the list of camera controllers to bind to level manager players on load

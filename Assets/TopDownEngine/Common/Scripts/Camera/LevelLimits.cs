@@ -7,7 +7,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this class to a boxcollider to signify the bounds of your level
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Camera/LevelLimits")]
-	public class LevelLimits : MonoBehaviour
+	public class LevelLimits : TopDownMonoBehaviour
 	{
 		/// left x coordinate
 		[Tooltip("Left x coordinate")]

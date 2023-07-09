@@ -1,9 +1,7 @@
-﻿using MoreMountains.Feedbacks;
+﻿using System;
+using MoreMountains.Feedbacks;
 using MoreMountains.Tools;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace MoreMountains.TopDownEngine
 {
@@ -12,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// Extended components should be placed on a weapon with an aim component
 	/// </summary>
 	[RequireComponent(typeof(Weapon))]
-	public abstract class WeaponAutoAim : MonoBehaviour
+	public abstract class WeaponAutoAim : TopDownMonoBehaviour
 	{
 		[Header("Layer Masks")]
 		/// the layermask on which to look for aim targets
@@ -65,6 +63,9 @@ namespace MoreMountains.TopDownEngine
 		/// An AimMarker prefab to use to show where this auto aim weapon is aiming
 		[Tooltip("An AimMarker prefab to use to show where this auto aim weapon is aiming")]
 		public AimMarker AimMarkerPrefab;
+		/// if this is true, the aim marker will be removed when the weapon gets destroyed
+		[Tooltip("if this is true, the aim marker will be removed when the weapon gets destroyed")]
+		public bool DestroyAimMarkerOnWeaponDestroy = true;
 
 		[Header("Feedback")]
 		/// A feedback to play when a target is found and we didn't have one already
@@ -111,6 +112,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			_weaponAim = this.gameObject.GetComponent<WeaponAim>();
 			_weapon = this.gameObject.GetComponent<Weapon>();
+			_isOwnerNull = _weapon.Owner == null;
 			if (_weaponAim == null)
 			{
 				Debug.LogWarning(this.name + " : the WeaponAutoAim on this object requires that you add either a WeaponAim2D or WeaponAim3D component to your weapon.");
@@ -172,7 +174,8 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected Vector3 _newCamTargetPosition;
 		protected Vector3 _newCamTargetDirection;
-        
+		protected bool _isOwnerNull;
+
 		/// <summary>
 		/// Checks for target changes and triggers the appropriate methods if needed
 		/// </summary>
@@ -235,7 +238,7 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void HandleMoveCameraTarget()
 		{
-			if (!MoveCameraTarget || (Target == null))
+			if (!MoveCameraTarget || (Target == null) || (_isOwnerNull))
 			{
 				return;
 			}
@@ -312,6 +315,14 @@ namespace MoreMountains.TopDownEngine
 			if (_aimMarker != null)
 			{
 				_aimMarker.Disable();
+			}
+		}
+
+		protected void OnDestroy()
+		{
+			if (DestroyAimMarkerOnWeaponDestroy && (_aimMarker != null))
+			{
+				Destroy(_aimMarker.gameObject);
 			}
 		}
 	}

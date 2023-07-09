@@ -102,6 +102,8 @@ namespace MoreMountains.Tools
 		[Header("Mode")]
 		/// the update at which the movement happens
 		public UpdateModes UpdateMode = UpdateModes.Update;
+		/// if this is true, this component will self disable when its host game object gets disabled
+		public bool DisableSelfOnSetActiveFalse = false;
         
 		[Header("Distances")]
 		/// whether or not to force a minimum distance between the object and its target before it starts following
@@ -407,5 +409,13 @@ namespace MoreMountains.Tools
 		}
         
 		public virtual void ChangeFollowTarget(Transform newTarget) => Target = newTarget;
+
+		protected virtual void OnDisable()
+		{
+			if (DisableSelfOnSetActiveFalse)
+			{
+				this.enabled = false;
+			}
+		}
 	}
 }

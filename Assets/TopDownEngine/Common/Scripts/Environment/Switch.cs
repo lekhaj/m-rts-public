@@ -11,7 +11,7 @@ namespace MoreMountains.TopDownEngine
 	/// Switches can be used to trigger actions based on their current state (on or off). Useful to open doors, chests, portals, bridges...
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Environment/Switch")]
-	public class Switch : MonoBehaviour
+	public class Switch : TopDownMonoBehaviour
 	{
 		[Header("Bindings")]
 		/// a SpriteReplace to represent the switch knob when it's on

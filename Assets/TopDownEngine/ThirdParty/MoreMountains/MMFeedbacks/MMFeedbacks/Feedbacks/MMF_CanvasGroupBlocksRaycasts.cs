@@ -27,6 +27,8 @@ namespace MoreMountains.Feedbacks
 		/// if this is true, on play, the target canvas group will block raycasts, if false it won't
 		[Tooltip("if this is true, on play, the target canvas group will block raycasts, if false it won't")]
 		public bool ShouldBlockRaycasts = true;
+
+		protected bool _initialState;
         
 		/// <summary>
 		/// On play we turn raycast block on or off
@@ -45,7 +47,20 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
+			_initialState = TargetCanvasGroup.blocksRaycasts;
 			TargetCanvasGroup.blocksRaycasts = ShouldBlockRaycasts;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetCanvasGroup.blocksRaycasts = _initialState;
 		}
 	}
 }

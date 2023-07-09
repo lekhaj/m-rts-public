@@ -99,6 +99,5 @@ namespace MoreMountains.Feedbacks
 
 			_targets.Add(targetMax);
 		}
-
 	}
 }

@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
     /// A simple component you can use to control a weapon and have it start and stop on demand, without having a character to handle it
     /// You can see it in action in the KoalaHealth demo scene, it's powering that demo's cannons
     /// </summary>
-    public class WeaponHandler : MonoBehaviour
+    public class WeaponHandler : TopDownMonoBehaviour
     {
         [Header("Weapon")]
         /// the weapon you want this component to pilot

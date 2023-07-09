@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace MoreMountains.TopDownEngine
 {
-	public class GrasslandHUD : MonoBehaviour, MMEventListener<TopDownEngineEvent>
+	public class GrasslandHUD : TopDownMonoBehaviour, MMEventListener<TopDownEngineEvent>
 	{
 		/// The playerID associated to this HUD
 		[Tooltip("The playerID associated to this HUD")]

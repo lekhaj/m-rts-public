@@ -136,6 +136,11 @@ namespace MoreMountains.TopDownEngine
 				_health.DamageDisabled();
 			}
 
+			HandleDashMode();
+		}
+
+		protected virtual void HandleDashMode()
+		{
 			switch (DashMode)
 			{
 				case DashModes.MainMovement:
@@ -151,11 +156,11 @@ namespace MoreMountains.TopDownEngine
 					break;
 
 				case DashModes.MousePosition:
-					_inputPosition = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
+					_inputPosition = _mainCamera.ScreenToWorldPoint(InputManager.Instance.MousePosition);
 					_inputPosition.z = this.transform.position.z;
 					_dashDestination = this.transform.position + (_inputPosition - this.transform.position).normalized * DashDistance;
 					break;
-			}            
+			}  
 		}
 
 		/// <summary>

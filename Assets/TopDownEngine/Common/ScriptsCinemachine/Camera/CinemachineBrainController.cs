@@ -38,7 +38,7 @@ namespace MoreMountains.TopDownEngine
 	#if MM_CINEMACHINE
 	[RequireComponent(typeof(CinemachineBrain))]
 	#endif
-	public class CinemachineBrainController : MonoBehaviour, MMEventListener<MMCinemachineBrainEvent>
+	public class CinemachineBrainController : TopDownMonoBehaviour, MMEventListener<MMCinemachineBrainEvent>
 	{
 		#if MM_CINEMACHINE
 		protected CinemachineBrain _brain;

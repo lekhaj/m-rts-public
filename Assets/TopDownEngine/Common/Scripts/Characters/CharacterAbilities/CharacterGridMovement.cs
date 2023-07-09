@@ -260,7 +260,8 @@ namespace MoreMountains.TopDownEngine
 		{
 			base.ProcessAbility();
 
-			if (_character.ConditionState.CurrentState == CharacterStates.CharacterConditions.Frozen)
+			if ((_character.ConditionState.CurrentState == CharacterStates.CharacterConditions.Frozen)
+				|| (_character.ConditionState.CurrentState == CharacterStates.CharacterConditions.Stunned))
 			{
 				return;
 			}

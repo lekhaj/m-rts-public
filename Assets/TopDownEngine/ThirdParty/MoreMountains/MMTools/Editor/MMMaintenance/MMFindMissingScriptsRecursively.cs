@@ -12,7 +12,7 @@ namespace MoreMountains.Tools
 	{
 		static int go_count = 0, components_count = 0, missing_count = 0;
 	 
-		[MenuItem("Window/FindMissingScriptsRecursively")]
+		[MenuItem("Tools/More Mountains/Find missing scripts recursively", false, 505)]
 		public static void ShowWindow()
 		{
 			EditorWindow.GetWindow(typeof(MMFindMissingScriptsRecursively));

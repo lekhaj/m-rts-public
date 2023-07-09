@@ -7,7 +7,6 @@ namespace MoreMountains.Tools
 {
 	/// <summary>
 	/// The formulas described here are (loosely) based on Robert Penner's easing equations http://robertpenner.com/easing/
-	/// I recommend reading this blog post if you're interested in the subject : http://blog.moagrius.com/actionscript/jsas-understanding-easing/
 	/// </summary>
 
 	public class MMTween : MonoBehaviour
@@ -30,6 +29,22 @@ namespace MoreMountains.Tools
 			EaseInCircular,     EaseOutCircular,    EaseInOutCircular,
 			AntiLinearTween,    AlmostIdentity
 		}
+		
+		public static TweenDelegate[] TweenDelegateArray = new TweenDelegate[]
+		{
+			LinearTween,        
+			EaseInQuadratic,    EaseOutQuadratic,   EaseInOutQuadratic,
+			EaseInCubic,        EaseOutCubic,       EaseInOutCubic,
+			EaseInQuartic,      EaseOutQuartic,     EaseInOutQuartic,
+			EaseInQuintic,      EaseOutQuintic,     EaseInOutQuintic,
+			EaseInSinusoidal,   EaseOutSinusoidal,  EaseInOutSinusoidal,
+			EaseInBounce,       EaseOutBounce,      EaseInOutBounce,
+			EaseInOverhead,     EaseOutOverhead,    EaseInOutOverhead,
+			EaseInExponential,  EaseOutExponential, EaseInOutExponential,
+			EaseInElastic,      EaseOutElastic,     EaseInOutElastic,
+			EaseInCircular,     EaseOutCircular,    EaseInOutCircular,
+			AntiLinearTween,    AlmostIdentity
+		};
 
 		// Core methods ---------------------------------------------------------------------------------------------------------------
 
@@ -46,55 +61,26 @@ namespace MoreMountains.Tools
 		public static float Tween(float currentTime, float initialTime, float endTime, float startValue, float endValue, MMTweenCurve curve)
 		{
 			currentTime = MMMaths.Remap(currentTime, initialTime, endTime, 0f, 1f);
-			switch (curve)
-			{
-				case MMTweenCurve.LinearTween: currentTime = MMTweenDefinitions.Linear_Tween(currentTime); break;
-				case MMTweenCurve.AntiLinearTween: currentTime = MMTweenDefinitions.LinearAnti_Tween(currentTime); break;
-
-				case MMTweenCurve.EaseInQuadratic: currentTime = MMTweenDefinitions.EaseIn_Quadratic(currentTime); break;
-				case MMTweenCurve.EaseOutQuadratic: currentTime = MMTweenDefinitions.EaseOut_Quadratic(currentTime); break;
-				case MMTweenCurve.EaseInOutQuadratic: currentTime = MMTweenDefinitions.EaseInOut_Quadratic(currentTime); break;
-
-				case MMTweenCurve.EaseInCubic: currentTime = MMTweenDefinitions.EaseIn_Cubic(currentTime); break;
-				case MMTweenCurve.EaseOutCubic: currentTime = MMTweenDefinitions.EaseOut_Cubic(currentTime); break;
-				case MMTweenCurve.EaseInOutCubic: currentTime = MMTweenDefinitions.EaseInOut_Cubic(currentTime); break;
-
-				case MMTweenCurve.EaseInQuartic: currentTime = MMTweenDefinitions.EaseIn_Quartic(currentTime); break;
-				case MMTweenCurve.EaseOutQuartic: currentTime = MMTweenDefinitions.EaseOut_Quartic(currentTime); break;
-				case MMTweenCurve.EaseInOutQuartic: currentTime = MMTweenDefinitions.EaseInOut_Quartic(currentTime); break;
-
-				case MMTweenCurve.EaseInQuintic: currentTime = MMTweenDefinitions.EaseIn_Quintic(currentTime); break;
-				case MMTweenCurve.EaseOutQuintic: currentTime = MMTweenDefinitions.EaseOut_Quintic(currentTime); break;
-				case MMTweenCurve.EaseInOutQuintic: currentTime = MMTweenDefinitions.EaseInOut_Quintic(currentTime); break;
-
-				case MMTweenCurve.EaseInSinusoidal: currentTime = MMTweenDefinitions.EaseIn_Sinusoidal(currentTime); break;
-				case MMTweenCurve.EaseOutSinusoidal: currentTime = MMTweenDefinitions.EaseOut_Sinusoidal(currentTime); break;
-				case MMTweenCurve.EaseInOutSinusoidal: currentTime = MMTweenDefinitions.EaseInOut_Sinusoidal(currentTime); break;
-
-				case MMTweenCurve.EaseInBounce: currentTime = MMTweenDefinitions.EaseIn_Bounce(currentTime); break;
-				case MMTweenCurve.EaseOutBounce: currentTime = MMTweenDefinitions.EaseOut_Bounce(currentTime); break;
-				case MMTweenCurve.EaseInOutBounce: currentTime = MMTweenDefinitions.EaseInOut_Bounce(currentTime); break;
-
-				case MMTweenCurve.EaseInOverhead: currentTime = MMTweenDefinitions.EaseIn_Overhead(currentTime); break;
-				case MMTweenCurve.EaseOutOverhead: currentTime = MMTweenDefinitions.EaseOut_Overhead(currentTime); break;
-				case MMTweenCurve.EaseInOutOverhead: currentTime = MMTweenDefinitions.EaseInOut_Overhead(currentTime); break;
-
-				case MMTweenCurve.EaseInExponential: currentTime = MMTweenDefinitions.EaseIn_Exponential(currentTime); break;
-				case MMTweenCurve.EaseOutExponential: currentTime = MMTweenDefinitions.EaseOut_Exponential(currentTime); break;
-				case MMTweenCurve.EaseInOutExponential: currentTime = MMTweenDefinitions.EaseInOut_Exponential(currentTime); break;
-
-				case MMTweenCurve.EaseInElastic: currentTime = MMTweenDefinitions.EaseIn_Elastic(currentTime); break;
-				case MMTweenCurve.EaseOutElastic: currentTime = MMTweenDefinitions.EaseOut_Elastic(currentTime); break;
-				case MMTweenCurve.EaseInOutElastic: currentTime = MMTweenDefinitions.EaseInOut_Elastic(currentTime); break;
-
-				case MMTweenCurve.EaseInCircular: currentTime = MMTweenDefinitions.EaseIn_Circular(currentTime); break;
-				case MMTweenCurve.EaseOutCircular: currentTime = MMTweenDefinitions.EaseOut_Circular(currentTime); break;
-				case MMTweenCurve.EaseInOutCircular: currentTime = MMTweenDefinitions.EaseInOut_Circular(currentTime); break;
-
-				case MMTweenCurve.AlmostIdentity: currentTime = MMTweenDefinitions.AlmostIdentity(currentTime); break;
-
-			}
+			currentTime = TweenDelegateArray[(int)curve](currentTime);
 			return startValue + currentTime * (endValue - startValue);
+		}
+
+		public static float Evaluate(float t, MMTweenCurve curve)
+		{
+			return TweenDelegateArray[(int)curve](t);
+		}
+
+		public static float Evaluate(float t, MMTweenType tweenType)
+		{
+			if (tweenType.MMTweenDefinitionType == MMTweenDefinitionTypes.MMTween)
+			{
+				return Evaluate(t, tweenType.MMTweenCurve);
+			}
+			if (tweenType.MMTweenDefinitionType == MMTweenDefinitionTypes.AnimationCurve)
+			{
+				return tweenType.Curve.Evaluate(t);
+			}
+			return 0f;
 		}
 
 		public delegate float TweenDelegate(float currentTime);

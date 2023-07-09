@@ -13,6 +13,9 @@ namespace MoreMountains.Feedbacks
 	[FeedbackPath("GameObject/MMRadioSignal")]
 	public class MMFeedbackRadioSignal : MMFeedback
 	{
+		/// a static bool used to disable all feedbacks of this type at once
+		public static bool FeedbackTypeAuthorized = true;
+		
 		/// the duration of this feedback is the duration of the light, or 0 if instant
 		public override float FeedbackDuration { get { return 0f; } }
 
@@ -43,7 +46,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
 		{
-			if (Active)
+			if (Active && FeedbackTypeAuthorized)
 			{
 				if (TargetSignal != null)
 				{

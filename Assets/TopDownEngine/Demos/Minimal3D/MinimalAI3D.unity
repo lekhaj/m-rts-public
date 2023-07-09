@@ -708,14 +708,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4e997f38a2e2884e89b9bd8ad830fee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AutoAttributePlayerIDs: 1
   PlayerPrefabs:
   - {fileID: 114839196621103566, guid: bfbd3fb63c624fb4884bf770fcc77ed9, type: 3}
-  AutoAttributePlayerIDs: 1
   SceneCharacters: []
   InitialSpawnPoint: {fileID: 1618121293}
   CurrentCheckpoint: {fileID: 0}
   PointsOfEntry: []
   IntroFadeDuration: 0.1
+  SpawnDelay: 0
   OutroFadeDuration: 0.1
   FaderID: 0
   FadeCurve:
@@ -745,6 +746,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    Initialized: 0
   RespawnDelay: 2
   DelayBeforeDeathScreen: 1
   UseLevelBounds: 1
@@ -769,6 +771,7 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
+      Initialized: 0
     ExitFadeTween:
       MMTweenDefinitionType: 0
       MMTweenCurve: 0
@@ -778,9 +781,11 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
+      Initialized: 0
     ProgressBarSpeed: 5
     FadeMode: 0
     UnloadMethod: 2
+  SetPlayerAsFeedbackRangeCenter: 0
 --- !u!1001 &139557747
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2229,6 +2234,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114989594728610836, guid: 45478dfee9bf51247810d02cd8e66be8,
         type: 3}
+      propertyPath: ActionsFrequency
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114989594728610836, guid: 45478dfee9bf51247810d02cd8e66be8,
+        type: 3}
       propertyPath: States.Array.data[0].Actions.array.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -2236,11 +2246,6 @@ PrefabInstance:
         type: 3}
       propertyPath: States.Array.data[1].Actions.array.Array.size
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114989594728610836, guid: 45478dfee9bf51247810d02cd8e66be8,
-        type: 3}
-      propertyPath: ActionsFrequency
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114989594728610836, guid: 45478dfee9bf51247810d02cd8e66be8,
         type: 3}
@@ -3448,8 +3453,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 1569126690}
     m_Modifications:
     - target: {fileID: 1268774173141522, guid: ac32a8e25dd86c446826e440005f6388, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+      propertyPath: m_Name
+      value: LoftPatrolAndPathfinderAI
       objectReference: {fileID: 0}
     - target: {fileID: 4062671130946132, guid: ac32a8e25dd86c446826e440005f6388, type: 3}
       propertyPath: m_RootOrder
@@ -3483,10 +3488,17 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 114354343164434314, guid: ac32a8e25dd86c446826e440005f6388,
-        type: 3}
-      propertyPath: TargetLayerMask.m_Bits
-      value: 1024
+    - target: {fileID: 4062671130946132, guid: ac32a8e25dd86c446826e440005f6388, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4062671130946132, guid: ac32a8e25dd86c446826e440005f6388, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4062671130946132, guid: ac32a8e25dd86c446826e440005f6388, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac32a8e25dd86c446826e440005f6388, type: 3}
@@ -4025,13 +4037,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7de9ef06f04864391a928af29f4b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NormalTimescale: 1
-  DefaultLerpSpeed: 1
-  DefaultLerpTimescale: 0
+  NormalTimeScale: 1
   CurrentTimeScale: 1
   TargetTimeScale: 1
-  LerpTimescale: 1
-  LerpSpeed: 0
   TestButton: 0
 --- !u!4 &1787262175 stripped
 Transform:

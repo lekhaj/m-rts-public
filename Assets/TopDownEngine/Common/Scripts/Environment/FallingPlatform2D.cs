@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add an AutoRespawn component to your platform and it'll get reset when your character dies
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Environment/Falling Platform 2D")]
-	public class FallingPlatform2D : MonoBehaviour 
+	public class FallingPlatform2D : TopDownMonoBehaviour 
 	{
 		/// the possible states for the falling platform
 		public enum FallingPlatformStates { Idle, Shaking, Falling, ColliderOff }

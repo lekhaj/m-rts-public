@@ -34,6 +34,10 @@ namespace MoreMountains.TopDownEngine
 		/// if this is true, the collider will be resized when crouched
 		[Tooltip("if this is true, the collider will be resized when crouched")]
 		public bool ResizeColliderWhenCrouched = false;
+		/// if this is true, the collider will be vertically translated on resize, this can avoid your controller getting teleported into the ground if its center isn't at its y:0
+		[Tooltip("if this is true, the collider will be vertically translated on resize, this can avoid your controller getting teleported into the ground if its center isn't at its y:0")]
+		[MMCondition("ResizeColliderWhenCrouched", true)]
+		public bool TranslateColliderOnCrouch = false;
 		/// the size to apply to the collider when crouched (if ResizeColliderWhenCrouched is true, otherwise this will be ignored)
 		[Tooltip("the size to apply to the collider when crouched (if ResizeColliderWhenCrouched is true, otherwise this will be ignored)")]
 		public float CrouchedColliderHeight = 1.25f;
@@ -183,7 +187,7 @@ namespace MoreMountains.TopDownEngine
 			// we resize our collider to match the new shape of our character (it's usually smaller when crouched)
 			if (ResizeColliderWhenCrouched)
 			{
-				_controller.ResizeColliderHeight(CrouchedColliderHeight);		
+				_controller.ResizeColliderHeight(CrouchedColliderHeight, TranslateColliderOnCrouch);		
 			}
 
 			// we change our character's speed

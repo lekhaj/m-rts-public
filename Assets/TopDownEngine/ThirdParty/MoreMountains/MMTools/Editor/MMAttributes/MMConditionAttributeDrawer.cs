@@ -18,20 +18,21 @@ namespace MoreMountains.Tools
 			MMConditionAttribute conditionAttribute = (MMConditionAttribute)attribute;
 			bool enabled = GetConditionAttributeResult(conditionAttribute, property);
 			bool previouslyEnabled = GUI.enabled;
-			GUI.enabled = enabled;
-			if (!conditionAttribute.Hidden || enabled)
+			bool shouldDisplay = ShouldDisplay(conditionAttribute, enabled);
+			if (shouldDisplay)
 			{
+				GUI.enabled = enabled;
 				EditorGUI.PropertyField(position, property, label, true);
+				GUI.enabled = previouslyEnabled;
 			}
-			GUI.enabled = previouslyEnabled;
 		}
 		#endif
         
-		private bool GetConditionAttributeResult(MMConditionAttribute condHAtt, SerializedProperty property)
+		private bool GetConditionAttributeResult(MMConditionAttribute conditionAttribute, SerializedProperty property)
 		{
 			bool enabled = true;
 			string propertyPath = property.propertyPath; 
-			string conditionPath = propertyPath.Replace(property.name, condHAtt.ConditionBoolean); 
+			string conditionPath = propertyPath.Replace(property.name, conditionAttribute.ConditionBoolean); 
 			SerializedProperty sourcePropertyValue = property.serializedObject.FindProperty(conditionPath);
 
 			if (sourcePropertyValue != null)
@@ -40,10 +41,19 @@ namespace MoreMountains.Tools
 			}
 			else
 			{
-				Debug.LogWarning("No matching boolean found for ConditionAttribute in object: " + condHAtt.ConditionBoolean);
+				Debug.LogWarning("No matching boolean found for ConditionAttribute in object: " + conditionAttribute.ConditionBoolean);
 			}
-
+			if (conditionAttribute.Negative)
+			{
+				enabled = !enabled;
+			}
 			return enabled;
+		}
+
+		private bool ShouldDisplay(MMConditionAttribute conditionAttribute, bool result)
+		{
+			bool shouldDisplay = !conditionAttribute.Hidden || result;
+			return shouldDisplay;
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -51,7 +61,8 @@ namespace MoreMountains.Tools
 			MMConditionAttribute conditionAttribute = (MMConditionAttribute)attribute;
 			bool enabled = GetConditionAttributeResult(conditionAttribute, property);
 
-			if (!conditionAttribute.Hidden || enabled)
+			bool shouldDisplay = ShouldDisplay(conditionAttribute, enabled);
+			if (shouldDisplay)
 			{
 				return EditorGUI.GetPropertyHeight(property, label);
 			}

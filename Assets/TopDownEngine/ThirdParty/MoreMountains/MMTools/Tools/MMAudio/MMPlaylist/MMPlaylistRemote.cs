@@ -109,5 +109,28 @@ namespace MoreMountains.Tools
 				PlaySelectedTrack();
 			}
 		}
+
+		/// <summary>
+		/// On trigger enter 2D, we play the selected track if needed
+		/// </summary>
+		/// <param name="collider"></param>
+		protected virtual void OnTriggerEnter2D(Collider2D collider)
+		{
+			if (PlaySelectedTrackOnTriggerEnter && (collider.CompareTag(TriggerTag)))
+			{
+				PlaySelectedTrack();
+			}
+		}
+
+		/// <summary>
+		/// On trigger exit 2D, we play the selected track if needed
+		/// </summary>
+		protected virtual void OnTriggerExit2D(Collider2D collider)
+		{
+			if (PlaySelectedTrackOnTriggerExit && (collider.CompareTag(TriggerTag)))
+			{
+				PlaySelectedTrack();
+			}
+		}
 	}
 }

@@ -99,7 +99,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 				ShakeGreen, RemapGreenZero, RemapGreenOne,
 				ShakeBlue, RemapBlueZero, RemapBlueOne,
 				FeedbackDuration,
-				RelativeIntensity, intensityMultiplier, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				RelativeIntensity, intensityMultiplier, ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
 		}
         
 		/// <summary>
@@ -119,7 +119,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 				ShakeGreen, RemapGreenZero, RemapGreenOne,
 				ShakeBlue, RemapBlueZero, RemapBlueOne,
 				FeedbackDuration,
-				RelativeIntensity, channel:Channel, stop:true);
+				RelativeIntensity, channelData:ChannelData(Channel), stop:true);
             
 		}
 	}

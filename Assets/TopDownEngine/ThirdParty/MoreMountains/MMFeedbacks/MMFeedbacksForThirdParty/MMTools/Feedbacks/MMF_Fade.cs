@@ -148,5 +148,17 @@ namespace MoreMountains.Feedbacks
 					return position + PositionOffset;
 			}
 		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			MMFadeStopEvent.Trigger(ID, true);
+		}
 	}
 }

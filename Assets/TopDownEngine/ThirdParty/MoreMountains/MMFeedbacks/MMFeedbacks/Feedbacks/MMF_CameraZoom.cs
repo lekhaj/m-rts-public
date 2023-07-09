@@ -21,7 +21,7 @@ namespace MoreMountains.Feedbacks
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
-		public override string RequiredTargetText { get { return "Channel "+Channel;  } }
+		public override string RequiredTargetText => RequiredChannelText;
 		#endif
 
 		/// the duration of this feedback is the duration of the zoom
@@ -56,7 +56,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled, false, RelativeFieldOfView);
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData, ComputedTimescaleMode == TimescaleModes.Unscaled, false, RelativeFieldOfView);
 		}
 
 		/// <summary>
@@ -71,7 +71,19 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled, stop:true);
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData, ComputedTimescaleMode == TimescaleModes.Unscaled, stop:true);
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData, ComputedTimescaleMode == TimescaleModes.Unscaled, restore:true);
 		}
 	}
 }

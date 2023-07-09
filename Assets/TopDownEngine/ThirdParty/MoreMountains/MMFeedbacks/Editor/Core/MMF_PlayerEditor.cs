@@ -43,6 +43,16 @@ namespace MoreMountains.Feedbacks
 		protected SerializedProperty _mmfeedbacksEvents;
 		protected SerializedProperty _keepPlayModeChanges;
 		protected SerializedProperty _mmfeedbacksChanceToPlay;
+		protected SerializedProperty _mmfeedbacksRandomizeDuration;
+		protected SerializedProperty _mmfeedbacksRandomDurationMultiplier;
+
+		protected SerializedProperty _mmfeedbacksOnlyPlayIfWithinRange;
+		protected SerializedProperty _mmfeedbacksRangeCenter;
+		protected SerializedProperty _mmfeedbacksRangeDistance;
+		protected SerializedProperty _mmfeedbacksUseRangeFalloff;
+		protected SerializedProperty _mmfeedbacksRangeFalloff;
+		protected SerializedProperty _mmfeedbacksRemapRangeFalloff;
+		protected SerializedProperty _mmfeedbacksIgnoreRangeEvents;
 
 		protected bool _feedbackListIsExpanded;
 		protected string _feedbackListLabel;
@@ -97,6 +107,7 @@ namespace MoreMountains.Feedbacks
 		protected GUIContent _pasteAllAsNewGUIContent;
 		protected GUIContent _feedbackPlayGUIContent;
 		protected GUIContent _feedbackRemoveGUIContent;
+		protected GUIContent _feedbackDuplicateGUIContent;
 		protected GUIContent _feedbackCopyGUIContent;
 		protected GUIContent _feedbackPasteGUIContent;
         
@@ -121,6 +132,7 @@ namespace MoreMountains.Feedbacks
 		protected const string _directionText = "Direction";
 		protected const string _intensityText = "Intensity";
 		protected const string _timingText = "Timing";
+		protected const string _rangeText = "Range";
 		protected const string _playConditionsText = "Play Settings";
 		protected const string _eventsText = "Events";
 		protected const string _settingsText = "Settings";
@@ -134,9 +146,11 @@ namespace MoreMountains.Feedbacks
 		protected const string _stopText = "Stop";
 		protected const string _resetText = "Reset";
 		protected const string _revertText = "Revert";
+		protected const string _duplicateText = "Duplicate";
 		protected const string _copyText = "Copy";
 		protected const string _pasteText = "Paste";
 		protected const string _skipText = "Skip";
+		protected const string _restoreText = "Restore";
 		protected const string _keepPlaymodeChangesText = "Keep Playmode Changes";
 		protected const string _scriptDrivenInProgressText = "Script driven pause in progress, call Resume() to exit pause";
 		protected const string _resumeText = "Resume";
@@ -167,6 +181,8 @@ namespace MoreMountains.Feedbacks
 			_mmfeedbacksDirection = serializedObject.FindProperty("Direction");
 			_mmfeedbacksAutoChangeDirectionOnEnd = serializedObject.FindProperty("AutoChangeDirectionOnEnd");
 			_mmfeedbacksDurationMultiplier = serializedObject.FindProperty("DurationMultiplier");
+			_mmfeedbacksRandomizeDuration = serializedObject.FindProperty("RandomizeDuration");
+			_mmfeedbacksRandomDurationMultiplier = serializedObject.FindProperty("RandomDurationMultiplier");
 			_mmfeedbacksForceTimescaleMode = serializedObject.FindProperty("ForceTimescaleMode");
 			_mmfeedbacksForcedTimescaleMode = serializedObject.FindProperty("ForcedTimescaleMode");
 			_mmfeedbacksPlayerTimescaleMode = serializedObject.FindProperty("PlayerTimescaleMode");
@@ -180,6 +196,15 @@ namespace MoreMountains.Feedbacks
 			_mmfeedbacksPerformanceMode = serializedObject.FindProperty("PerformanceMode");
 			_mmfeedbacksForceStopFeedbacksOnDisable = serializedObject.FindProperty("ForceStopFeedbacksOnDisable");
 			_mmfeedbacksChanceToPlay = serializedObject.FindProperty("ChanceToPlay");
+			
+			_mmfeedbacksOnlyPlayIfWithinRange = serializedObject.FindProperty("OnlyPlayIfWithinRange");
+			_mmfeedbacksRangeCenter = serializedObject.FindProperty("RangeCenter");
+			_mmfeedbacksRangeDistance = serializedObject.FindProperty("RangeDistance");
+			_mmfeedbacksUseRangeFalloff = serializedObject.FindProperty("UseRangeFalloff");
+			_mmfeedbacksRangeFalloff = serializedObject.FindProperty("RangeFalloff");
+			_mmfeedbacksRemapRangeFalloff = serializedObject.FindProperty("RemapRangeFalloff");
+			_mmfeedbacksIgnoreRangeEvents = serializedObject.FindProperty("IgnoreRangeEvents");	
+
 			_expandGroupsInInspectors = MMF_PlayerConfiguration.Instance.InspectorGroupsExpandedByDefault;
 
 			_mmfeedbacksEvents = serializedObject.FindProperty("Events");
@@ -293,6 +318,7 @@ namespace MoreMountains.Feedbacks
 			_pasteAllAsNewGUIContent = new GUIContent(_pasteAllAsNewText);
 			_feedbackPlayGUIContent = new GUIContent(_playText);
 			_feedbackRemoveGUIContent = new GUIContent(_removeText);
+			_feedbackDuplicateGUIContent = new GUIContent(_duplicateText);
 			_feedbackCopyGUIContent = new GUIContent(_copyText);
 			_feedbackPasteGUIContent = new GUIContent(_pasteText);
 			_pasteAsNewOption = GUILayout.Width(EditorStyles.miniButton.CalcSize(_pasteAsNewGUIContent).x);
@@ -355,12 +381,31 @@ namespace MoreMountains.Feedbacks
 				EditorGUILayout.PropertyField(_mmfeedbacksForceTimescaleMode);
 				EditorGUILayout.PropertyField(_mmfeedbacksForcedTimescaleMode);
 				EditorGUILayout.PropertyField(_mmfeedbacksDurationMultiplier);
+				EditorGUILayout.PropertyField(_mmfeedbacksRandomizeDuration);
+				EditorGUILayout.PropertyField(_mmfeedbacksRandomDurationMultiplier);
 				EditorGUILayout.PropertyField(_mmfeedbacksDisplayFullDurationDetails);
 				EditorGUILayout.PropertyField(_mmfeedbacksCooldownDuration);
 				EditorGUILayout.PropertyField(_mmfeedbacksInitialDelay);
 				EditorGUILayout.PropertyField(_mmfeedbacksChanceToPlay);
 				EditorGUILayout.PropertyField(_mmfeedbacksPlayerTimescaleMode);
-                
+
+				EditorGUILayout.Space(10);
+				EditorGUILayout.LabelField(_rangeText, EditorStyles.boldLabel);
+				EditorGUILayout.PropertyField(_mmfeedbacksOnlyPlayIfWithinRange);
+				
+				if (TargetMmfPlayer.OnlyPlayIfWithinRange)
+				{
+					EditorGUILayout.PropertyField(_mmfeedbacksRangeCenter);
+					EditorGUILayout.PropertyField(_mmfeedbacksRangeDistance);
+					EditorGUILayout.PropertyField(_mmfeedbacksUseRangeFalloff);
+					EditorGUILayout.PropertyField(_mmfeedbacksRangeFalloff);
+					if (TargetMmfPlayer.UseRangeFalloff)
+					{
+						EditorGUILayout.PropertyField(_mmfeedbacksRemapRangeFalloff);
+					}
+					EditorGUILayout.PropertyField(_mmfeedbacksIgnoreRangeEvents);
+				}
+
 				EditorGUILayout.Space(10);
 				EditorGUILayout.LabelField(_playConditionsText, EditorStyles.boldLabel);
 				EditorGUILayout.PropertyField(_mmfeedbacksCanPlay);
@@ -465,6 +510,12 @@ namespace MoreMountains.Feedbacks
 				if (GUILayout.Button(_skipText, EditorStyles.miniButtonMid))
 				{
 					(target as MMF_Player).SkipToTheEnd();
+				}
+                
+				// restore button
+				if (GUILayout.Button(_restoreText, EditorStyles.miniButtonMid))
+				{
+					(target as MMF_Player).RestoreInitialValues();
 				}
                 
 				// reset button
@@ -628,7 +679,7 @@ namespace MoreMountains.Feedbacks
 				DrawFeedbackHeader(i);
                 
 				// If expanded, draw feedback editor
-				_feedbackListProperty.isExpanded = _feedbackListIsExpanded;
+				_feedbackListFeedback.IsExpanded = _feedbackListIsExpanded;
 				if (_feedbackListIsExpanded)
 				{
 					MMF_PlayerStyling.DrawSplitter();
@@ -642,7 +693,7 @@ namespace MoreMountains.Feedbacks
                     
 					SerializedProperty currentProperty = _feedbackListProperty;
 
-					if (_feedbackListProperty.isExpanded)
+					if (_feedbackListFeedback.IsExpanded)
 					{
 						if(MMF_FeedbackInspectors.TryGetValue(_feedbackListFeedback.UniqueID, out _mmfFeedbackInspector))
 						{
@@ -698,7 +749,7 @@ namespace MoreMountains.Feedbacks
 			}
             
 			// Draw header
-			_feedbackListIsExpanded = _feedbackListProperty.isExpanded;
+			_feedbackListIsExpanded = _feedbackListFeedback.IsExpanded;
 			_feedbackListLabel = _feedbackListFeedback.Label;
 			_feedbackListPause = false;
 
@@ -732,6 +783,7 @@ namespace MoreMountains.Feedbacks
 					menu.AddSeparator(null);
 					menu.AddItem(_feedbackRemoveGUIContent, false, () => RemoveFeedback(i));
 					menu.AddSeparator(null);
+					menu.AddItem(_feedbackDuplicateGUIContent, false, () => DuplicateFeedback(i));
 					menu.AddItem(_feedbackCopyGUIContent, false, () => CopyFeedback(i));
 					if (MMF_PlayerCopy.HasCopy())
 						menu.AddItem(_feedbackPasteGUIContent, false, PasteAsNew);
@@ -746,6 +798,7 @@ namespace MoreMountains.Feedbacks
 				_feedbackListFeedback.RequiresSetup,
 				_feedbackListFeedback.RequiredTarget,
 				_feedbackListFeedback.DisplayColor,
+				_feedbackListFeedback.DisplayFullHeaderColor,
 				TargetMmfPlayer 
 			);
 
@@ -922,6 +975,17 @@ namespace MoreMountains.Feedbacks
 			MMF_Feedback feedback = TargetMmfPlayer.FeedbacksList[id];
 
 			MMF_PlayerCopy.Copy(feedback);
+		}
+		
+		/// <summary>
+		/// Copies and instantly pastes the selected feedback
+		/// </summary>
+		protected virtual void DuplicateFeedback(int id)
+		{
+			MMF_Feedback feedback = TargetMmfPlayer.FeedbacksList[id];
+
+			MMF_PlayerCopy.Copy(feedback);
+			PasteAsNew();
 		}
 
 		/// <summary>

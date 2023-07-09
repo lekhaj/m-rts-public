@@ -34,21 +34,13 @@ namespace  MoreMountains.Feedbacks
 	/// </summary>
 	public struct MMF_PlayerEvent
 	{
-		public enum EventTypes { Play, Pause, Resume, Revert, Complete }
-        
-		public delegate void Delegate(MMF_Player source, EventTypes type);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public enum EventTypes { Play, Pause, Resume, Revert, Complete }
+		public delegate void Delegate(MMF_Player source, EventTypes type);
 		static public void Trigger(MMF_Player source, EventTypes type)
 		{
 			OnEvent?.Invoke(source, type);

@@ -17,12 +17,15 @@ namespace MoreMountains.Feedbacks
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TransformColor; } }
-		public override string RequiredTargetText { get { return "Channel "+Channel;  } }
+		public override string RequiredTargetText => RequiredChannelText;
 		#endif
 		/// returns the duration of the feedback
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 		public override bool HasChannel => true;
+		public override bool HasRandomness => true;
+		public override bool HasRange => true;
 
+		[MMFInspectorGroup("Optional Target", true, 33)]
 		/// a specific (and optional) shaker to target, regardless of its channel
 		[Tooltip("a specific (and optional) shaker to target, regardless of its channel")]
 		public MMPositionShaker TargetShaker;
@@ -39,57 +42,57 @@ namespace MoreMountains.Feedbacks
 		public bool ResetTargetValuesAfterShake = true;
 		
 		[MMFInspectorGroup("Shake Settings", true, 42)]
-        /// the speed at which the transform should shake
-        [Tooltip("the speed at which the transform should shake")]
-        public float ShakeSpeed = 20f;
-        /// the maximum distance from its initial position the transform will move to during the shake
-        [Tooltip("the maximum distance from its initial position the transform will move to during the shake")]
-        public float ShakeRange = 0.5f;
+		/// the speed at which the transform should shake
+		[Tooltip("the speed at which the transform should shake")]
+		public float ShakeSpeed = 20f;
+		/// the maximum distance from its initial position the transform will move to during the shake
+		[Tooltip("the maximum distance from its initial position the transform will move to during the shake")]
+		public float ShakeRange = 0.5f;
         
-        [MMFInspectorGroup("Direction", true, 43)]
-        /// the direction along which to shake the transform's position
-        [Tooltip("the direction along which to shake the transform's position")]
-        public Vector3 ShakeMainDirection = Vector3.up;
-        /// if this is true, instead of using ShakeMainDirection as the direction of the shake, a random vector3 will be generated, randomized between ShakeMainDirection and ShakeAltDirection
-        [Tooltip("if this is true, instead of using ShakeMainDirection as the direction of the shake, a random vector3 will be generated, randomized between ShakeMainDirection and ShakeAltDirection")]
-        public bool RandomizeDirection = false;
-        /// when in RandomizeDirection mode, a vector against which to randomize the main direction
-        [Tooltip("when in RandomizeDirection mode, a vector against which to randomize the main direction")]
-        [MMFCondition("RandomizeDirection", true)]
-        public Vector3 ShakeAltDirection = Vector3.up;
-        /// if this is true, a new direction will be randomized every time a shake happens
-        [Tooltip("if this is true, a new direction will be randomized every time a shake happens")]
-        public bool RandomizeDirectionOnPlay = false;
+		[MMFInspectorGroup("Direction", true, 43)]
+		/// the direction along which to shake the transform's position
+		[Tooltip("the direction along which to shake the transform's position")]
+		public Vector3 ShakeMainDirection = Vector3.up;
+		/// if this is true, instead of using ShakeMainDirection as the direction of the shake, a random vector3 will be generated, randomized between ShakeMainDirection and ShakeAltDirection
+		[Tooltip("if this is true, instead of using ShakeMainDirection as the direction of the shake, a random vector3 will be generated, randomized between ShakeMainDirection and ShakeAltDirection")]
+		public bool RandomizeDirection = false;
+		/// when in RandomizeDirection mode, a vector against which to randomize the main direction
+		[Tooltip("when in RandomizeDirection mode, a vector against which to randomize the main direction")]
+		[MMFCondition("RandomizeDirection", true)]
+		public Vector3 ShakeAltDirection = Vector3.up;
+		/// if this is true, a new direction will be randomized every time a shake happens
+		[Tooltip("if this is true, a new direction will be randomized every time a shake happens")]
+		public bool RandomizeDirectionOnPlay = false;
 
-        [MMFInspectorGroup("Directional Noise", true, 47)]
-        /// whether or not to add noise to the main direction
-        [Tooltip("whether or not to add noise to the main direction")]
-        public bool AddDirectionalNoise = true;
-        /// when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMax
-        [Tooltip("when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMax")]
-        [MMFCondition("AddDirectionalNoise", true)]
-        public Vector3 DirectionalNoiseStrengthMin = new Vector3(0.25f, 0.25f, 0.25f);
-        /// when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMin
-        [Tooltip("when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMin")]
-        [MMFCondition("AddDirectionalNoise", true)]
-        public Vector3 DirectionalNoiseStrengthMax = new Vector3(0.25f, 0.25f, 0.25f);
+		[MMFInspectorGroup("Directional Noise", true, 47)]
+		/// whether or not to add noise to the main direction
+		[Tooltip("whether or not to add noise to the main direction")]
+		public bool AddDirectionalNoise = true;
+		/// when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMax
+		[Tooltip("when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMax")]
+		[MMFCondition("AddDirectionalNoise", true)]
+		public Vector3 DirectionalNoiseStrengthMin = new Vector3(0.25f, 0.25f, 0.25f);
+		/// when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMin
+		[Tooltip("when adding directional noise, noise strength will be randomized between this value and DirectionalNoiseStrengthMin")]
+		[MMFCondition("AddDirectionalNoise", true)]
+		public Vector3 DirectionalNoiseStrengthMax = new Vector3(0.25f, 0.25f, 0.25f);
         
-        [MMFInspectorGroup("Randomness", true, 44)]
-        /// a unique seed you can use to get different outcomes when shaking more than one transform at once
-        [Tooltip("a unique seed you can use to get different outcomes when shaking more than one transform at once")]
-        public Vector3 RandomnessSeed;
-        /// whether or not to generate a unique seed automatically on every shake
-        [Tooltip("whether or not to generate a unique seed automatically on every shake")]
-        public bool RandomizeSeedOnShake = true;
+		[MMFInspectorGroup("Randomness", true, 44)]
+		/// a unique seed you can use to get different outcomes when shaking more than one transform at once
+		[Tooltip("a unique seed you can use to get different outcomes when shaking more than one transform at once")]
+		public Vector3 RandomnessSeed;
+		/// whether or not to generate a unique seed automatically on every shake
+		[Tooltip("whether or not to generate a unique seed automatically on every shake")]
+		public bool RandomizeSeedOnShake = true;
 
-        [MMFInspectorGroup("One Time", true, 45)]
-        /// whether or not to use attenuation, which will impact the amplitude of the shake, along the defined curve
-        [Tooltip("whether or not to use attenuation, which will impact the amplitude of the shake, along the defined curve")]
-        public bool UseAttenuation = true;
-        /// the animation curve used to define attenuation, impacting the amplitude of the shake
-        [Tooltip("the animation curve used to define attenuation, impacting the amplitude of the shake")]
+		[MMFInspectorGroup("One Time", true, 45)]
+		/// whether or not to use attenuation, which will impact the amplitude of the shake, along the defined curve
+		[Tooltip("whether or not to use attenuation, which will impact the amplitude of the shake, along the defined curve")]
+		public bool UseAttenuation = true;
+		/// the animation curve used to define attenuation, impacting the amplitude of the shake
+		[Tooltip("the animation curve used to define attenuation, impacting the amplitude of the shake")]
 		[MMFCondition("UseAttenuation", true)]
-        public AnimationCurve AttenuationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
+		public AnimationCurve AttenuationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
 
 		/// <summary>
 		/// Triggers the corresponding coroutine
@@ -102,13 +105,23 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-            
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
-			MMPositionShakeEvent.Trigger(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
-				DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve,
-				intensityMultiplier, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
 			
-			TargetShaker?.Play();
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
+
+			if (TargetShaker == null)
+			{
+				MMPositionShakeEvent.Trigger(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
+					DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve,
+					UseRange, RangeDistance, UseRangeFalloff, RangeFalloff, RemapRangeFalloff, position,
+					intensityMultiplier, ChannelData, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, ComputedTimescaleMode);
+			}
+			else
+			{
+				TargetShaker?.OnMMPositionShakeEvent(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
+					DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve,
+					UseRange, RangeDistance, UseRangeFalloff, RangeFalloff, RemapRangeFalloff, position,
+					intensityMultiplier, TargetShaker.ChannelData, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, ComputedTimescaleMode);	
+			}
 		}
         
 		/// <summary>
@@ -123,10 +136,39 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMPositionShakeEvent.Trigger(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
-				DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve, stop:true);
-			
-			TargetShaker?.Stop();
+
+			if (TargetShaker == null)
+			{
+				MMPositionShakeEvent.Trigger(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
+					DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve, stop:true);	
+			}
+			else
+			{
+				TargetShaker?.OnMMPositionShakeEvent(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
+					DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve, channelData:TargetShaker.ChannelData, stop:true);	
+			}
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			if (TargetShaker == null)
+			{
+				MMPositionShakeEvent.Trigger(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
+					DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve, restore:true);	
+			}
+			else
+			{
+				TargetShaker?.OnMMPositionShakeEvent(Duration, ShakeSpeed,  ShakeRange,  ShakeMainDirection,  RandomizeDirection,  ShakeAltDirection,  RandomizeDirectionOnPlay,  AddDirectionalNoise, 
+					DirectionalNoiseStrengthMin,  DirectionalNoiseStrengthMax,  RandomnessSeed,  RandomizeSeedOnShake,  UseAttenuation,  AttenuationCurve, channelData:TargetShaker.ChannelData, restore:true);	
+			}
 		}
 	}
 }

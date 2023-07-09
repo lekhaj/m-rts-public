@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	[RequireComponent(typeof(Collider))]
 	[AddComponentMenu("TopDown Engine/Environment/Crouch Zone")]
-	public class CrouchZone : MonoBehaviour
+	public class CrouchZone : TopDownMonoBehaviour
 	{
 		protected CharacterCrouch _characterCrouch;
 

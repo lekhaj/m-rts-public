@@ -30,7 +30,9 @@ namespace MoreMountains.Feedbacks
 		/// if this is true, when played, the target image will become a raycast target
 		[Tooltip("if this is true, when played, the target image will become a raycast target")]
 		public bool ShouldBeRaycastTarget = true;
-        
+
+		protected bool _initialState;
+		
 		/// <summary>
 		/// On play we turn raycastTarget on or off
 		/// </summary>
@@ -48,7 +50,20 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
+			_initialState = TargetImage.raycastTarget;
 			TargetImage.raycastTarget = NormalPlayDirection ? ShouldBeRaycastTarget : !ShouldBeRaycastTarget;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetImage.raycastTarget = _initialState;
 		}
 	}
 }

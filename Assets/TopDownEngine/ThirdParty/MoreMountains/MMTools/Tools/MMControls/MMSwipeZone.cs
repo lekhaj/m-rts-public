@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -117,7 +117,7 @@ namespace MoreMountains.Tools
 		/// </summary>
 		public virtual void OnPointerDown(PointerEventData data)
 		{
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			_firstTouchPosition = Mouse.current.position.ReadValue();
 			#else
 			_firstTouchPosition = Input.mousePosition;
@@ -135,7 +135,7 @@ namespace MoreMountains.Tools
 				return;
 			}
 
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
             _destination = Mouse.current.position.ReadValue();
 			#else
 			_destination = Input.mousePosition;

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem.UI;
 #endif
 
@@ -12,7 +12,7 @@ namespace MoreMountains.Tools
 	/// </summary>
 	public class MMAutoInputModule : MonoBehaviour
 	{
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 		protected InputSystemUIInputModule _module;
 		#endif
 
@@ -39,7 +39,7 @@ namespace MoreMountains.Tools
 				yield break;
 			}
 			
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				_eventSystemGameObject = eventSystem.gameObject;
 				_module = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
 				// thanks new input system.

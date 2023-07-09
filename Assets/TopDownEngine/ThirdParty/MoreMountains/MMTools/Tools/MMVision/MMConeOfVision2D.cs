@@ -212,7 +212,7 @@ namespace MoreMountains.Tools
 				RaycastData newViewCast = RaycastAtAngle(angle);
 
 				bool thresholdExceeded = Mathf.Abs(minimumViewCast.Distance - newViewCast.Distance) > EdgeThreshold;
-				if (newViewCast.Hit = minimumViewCast.Hit && !thresholdExceeded)
+				if (newViewCast.Hit == minimumViewCast.Hit && !thresholdExceeded)
 				{
 					minAngle = angle;
 					_minPoint = newViewCast.Point;

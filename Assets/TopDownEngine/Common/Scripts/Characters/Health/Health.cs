@@ -450,7 +450,7 @@ namespace MoreMountains.TopDownEngine
 			}
             
 			// we trigger a damage taken event
-			MMDamageTakenEvent.Trigger(_character, instigator, CurrentHealth, damage, previousHealth);
+			MMDamageTakenEvent.Trigger(this, instigator, CurrentHealth, damage, previousHealth);
 
 			// we update our animator
 			if (TargetAnimator != null)
@@ -588,6 +588,11 @@ namespace MoreMountains.TopDownEngine
 		/// <returns></returns>
 		public virtual float ComputeDamageOutput(float damage, List<TypedDamage> typedDamages = null, bool damageApplied = false)
 		{
+			if (Invulnerable || ImmuneToDamage)
+			{
+				return 0;
+			}
+			
 			float totalDamage = 0f;
 			// we process our damage through our potential resistances
 			if (TargetDamageResistanceProcessor != null)

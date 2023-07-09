@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using MoreMountains.Tools;
 using System.Collections.Generic;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -16,7 +16,7 @@ namespace MoreMountains.TopDownEngine
 	public class CharacterSwapManager : MMSingleton<CharacterSwapManager>, MMEventListener<TopDownEngineEvent>
 	{
 		[Header("Character Swap")]
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			/// the button to use to go up
 			public Key SwapKey = Key.P;
 		#else
@@ -82,7 +82,7 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void HandleInput()
 		{
-			#if !ENABLE_INPUT_SYSTEM
+			#if !ENABLE_INPUT_SYSTEM || ENABLE_LEGACY_INPUT_MANAGER
 			if (Input.GetButtonDown(SwapButtonName))
 			{
 				SwapCharacter();

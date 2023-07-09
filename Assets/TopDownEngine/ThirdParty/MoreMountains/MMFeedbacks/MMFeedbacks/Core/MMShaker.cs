@@ -7,9 +7,21 @@ namespace MoreMountains.Feedbacks
 	public class MMShaker : MMMonoBehaviour
 	{
 		[MMInspectorGroup("Shaker Settings", true, 3)]
+		/// whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what.
+		/// MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable
+		[Tooltip("whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what. " +
+		         "MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable")]
+		public MMChannelModes ChannelMode = MMChannelModes.Int;
 		/// the channel to listen to - has to match the one on the feedback
 		[Tooltip("the channel to listen to - has to match the one on the feedback")]
+		[MMEnumCondition("ChannelMode", (int)MMChannelModes.Int)]
 		public int Channel = 0;
+		/// the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel,
+		/// right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name
+		[Tooltip("the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel, " +
+		         "right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name")]
+		[MMEnumCondition("ChannelMode", (int)MMChannelModes.MMChannel)]
+		public MMChannel MMChannelDefinition = null;
 		/// the duration of the shake, in seconds
 		[Tooltip("the duration of the shake, in seconds")]
 		public float ShakeDuration = 0.2f;
@@ -42,6 +54,7 @@ namespace MoreMountains.Feedbacks
         
 		public virtual float GetTime() { return (TimescaleMode == TimescaleModes.Scaled) ? Time.time : Time.unscaledTime; }
 		public virtual float GetDeltaTime() { return (TimescaleMode == TimescaleModes.Scaled) ? Time.deltaTime : Time.unscaledDeltaTime; }
+		public virtual MMChannelData ChannelData => new MMChannelData(ChannelMode, Channel, MMChannelDefinition);
         
 		public bool ListeningToEvents => _listeningToEvents;
 
@@ -268,9 +281,9 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		/// <param name="channel"></param>
 		/// <returns></returns>
-		protected virtual bool CheckEventAllowed(int channel, bool useRange = false, float range = 0f, Vector3 eventOriginPosition = default(Vector3))
+		protected virtual bool CheckEventAllowed(MMChannelData channelData, bool useRange = false, float range = 0f, Vector3 eventOriginPosition = default(Vector3))
 		{
-			if ((channel != Channel) && (channel != -1) && (Channel != -1))
+			if (!MMChannel.Match(channelData, ChannelMode, Channel, MMChannelDefinition))
 			{
 				return false;
 			}
@@ -290,6 +303,31 @@ namespace MoreMountains.Feedbacks
 
 				return true;
 			}
+		}
+		
+		public virtual float ComputeRangeIntensity(bool useRange, float rangeDistance, bool useRangeFalloff, AnimationCurve rangeFalloff, Vector2 remapRangeFalloff, Vector3 rangePosition)
+		{
+			if (!useRange)
+			{
+				return 1f;
+			}
+
+			float distanceToCenter = Vector3.Distance(rangePosition, this.transform.position);
+
+			if (distanceToCenter > rangeDistance)
+			{
+				return 0f;
+			}
+
+			if (!useRangeFalloff)
+			{
+				return 1f;
+			}
+
+			float normalizedDistance = MMMaths.Remap(distanceToCenter, 0f, rangeDistance, 0f, 1f);
+			float curveValue = rangeFalloff.Evaluate(normalizedDistance);
+			float newIntensity = MMMaths.Remap(curveValue, 0f, 1f, remapRangeFalloff.x, remapRangeFalloff.y);
+			return newIntensity;
 		}
 	}
 }

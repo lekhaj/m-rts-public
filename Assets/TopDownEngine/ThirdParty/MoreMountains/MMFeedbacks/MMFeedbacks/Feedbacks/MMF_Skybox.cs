@@ -29,6 +29,8 @@ namespace MoreMountains.Feedbacks
 		public Material SingleSkybox;
 		/// the skyboxes to pick from when in Random mode
 		public Material[] RandomSkyboxes;
+
+		protected Material _initialSkybox;
         
 		/// <summary>
 		/// On play, we set the scene's skybox to a new one
@@ -41,6 +43,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+
+			_initialSkybox = RenderSettings.skybox;
             
 			if (Mode == Modes.Single)
 			{
@@ -50,6 +54,19 @@ namespace MoreMountains.Feedbacks
 			{
 				RenderSettings.skybox = RandomSkyboxes[Random.Range(0, RandomSkyboxes.Length)];
 			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			RenderSettings.skybox = _initialSkybox;
 		}
 	}    
 }

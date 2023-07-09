@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A class used in the Explodudes demo scene to handle the exploding bombs
 	/// </summary>
-	public class ExplodudesBomb : MonoBehaviour
+	public class ExplodudesBomb : TopDownMonoBehaviour
 	{
 		[Header("Bindings")]
 		/// the model of the bomb

@@ -205,5 +205,19 @@ namespace MoreMountains.Feedbacks
 			TargetTMPText.alpha = newAlpha;
 			#endif
 		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.alpha = _initialAlpha;
+			#endif
+		}
 	}
 }

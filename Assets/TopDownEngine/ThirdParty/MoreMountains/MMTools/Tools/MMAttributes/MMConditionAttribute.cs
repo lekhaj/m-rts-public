@@ -13,6 +13,7 @@ namespace MoreMountains.Tools
 	{
 		public string ConditionBoolean = "";
 		public bool Hidden = false;
+		public bool Negative = false;
 
 		public MMConditionAttribute(string conditionBoolean)
 		{
@@ -24,6 +25,14 @@ namespace MoreMountains.Tools
 		{
 			this.ConditionBoolean = conditionBoolean;
 			this.Hidden = hideInInspector;
+			this.Negative = false;
+		}
+
+		public MMConditionAttribute(string conditionBoolean, bool hideInInspector, bool negative)
+		{
+			this.ConditionBoolean = conditionBoolean;
+			this.Hidden = hideInInspector;
+			this.Negative = negative;
 		}
 
 	}

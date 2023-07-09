@@ -72,6 +72,24 @@ namespace MoreMountains.Tools
 		public float MaxDistance;
 		/// Whether or not the source should be auto recycled if not done playing
 		public bool DoNotAutoRecycleIfNotDonePlaying;
+		/// a Transform this sound can 'attach' to and follow it along as it plays
+		public Transform AttachToTransform;
+		/// whether or not to use a custom curve for custom volume rolloff
+		public bool UseCustomRolloffCurve;
+		/// the curve to use for custom volume rolloff if UseCustomRolloffCurve is true
+		public AnimationCurve CustomRolloffCurve;
+		/// whether or not to use a custom curve for spatial blend
+		public bool UseSpatialBlendCurve;
+		/// the curve to use for custom spatial blend if UseSpatialBlendCurve is true
+		public AnimationCurve SpatialBlendCurve;
+		/// whether or not to use a custom curve for reverb zone mix
+		public bool UseReverbZoneMixCurve;
+		/// the curve to use for custom reverb zone mix if UseReverbZoneMixCurve is true
+		public AnimationCurve ReverbZoneMixCurve;
+		/// whether or not to use a custom curve for spread
+		public bool UseSpreadCurve;
+		/// the curve to use for custom spread if UseSpreadCurve is true
+		public AnimationCurve SpreadCurve;
         
 		/// <summary>
 		/// A default set of options, meant to suit most common cases.

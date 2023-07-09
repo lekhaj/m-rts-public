@@ -13,15 +13,18 @@ namespace MoreMountains.Tools
 	{
 		/// an ID that has to match the one on the fader
 		public int ID;
+		public bool Restore;
         
-		public MMFadeStopEvent(int id = 0)
+		public MMFadeStopEvent(int id = 0, bool restore = false)
 		{
+			Restore = restore;
 			ID = id;
 		}
 		static MMFadeStopEvent e;
-		public static void Trigger(int id = 0)
+		public static void Trigger(int id = 0, bool restore = false)
 		{
 			e.ID = id;
+			e.Restore = restore;
 			MMEventManager.TriggerEvent(e);
 		}
 	}
@@ -437,6 +440,10 @@ namespace MoreMountains.Tools
 			if (fadeStopEvent.ID == ID)
 			{
 				_fading = false;
+				if (fadeStopEvent.Restore)
+				{
+					_canvasGroup.alpha = _initialAlpha;
+				}
 			}
 		}
 

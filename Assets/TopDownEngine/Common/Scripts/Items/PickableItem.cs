@@ -35,7 +35,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// Coin manager
 	/// </summary>
-	public class PickableItem : MonoBehaviour
+	public class PickableItem : TopDownMonoBehaviour
 	{
 		[Header("Pickable Item")]
 		/// A feedback to play when the object gets picked

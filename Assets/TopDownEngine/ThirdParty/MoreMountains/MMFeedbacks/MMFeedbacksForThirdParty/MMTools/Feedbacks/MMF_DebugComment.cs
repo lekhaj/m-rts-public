@@ -6,10 +6,10 @@ using MoreMountains.Tools;
 namespace MoreMountains.Feedbacks
 {
 	/// <summary>
-	/// This feedback doesn't do anything by default, it's just meant as a comment, you can store text in it for future reference, maybe to remember how you setup a particular MMFeedbacks. Optionnally it can also output that comment to the console on Play.
+	/// This feedback doesn't do anything by default, it's just meant as a comment, you can store text in it for future reference, maybe to remember how you setup a particular MMFeedbacks. Optionally it can also output that comment to the console on Play.
 	/// </summary>
 	[AddComponentMenu("")]
-	[FeedbackHelp("This feedback doesn't do anything by default, it's just meant as a comment, you can store text in it for future reference, maybe to remember how you setup a particular MMFeedbacks. Optionnally it can also output that comment to the console on Play.")]
+	[FeedbackHelp("This feedback doesn't do anything by default, it's just meant as a comment, you can store text in it for future reference, maybe to remember how you setup a particular MMFeedbacks. Optionally it can also output that comment to the console on Play.")]
 	[FeedbackPath("Debug/Comment")]
 	public class MMF_DebugComment : MMF_Feedback
 	{

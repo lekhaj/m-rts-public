@@ -1,5 +1,5 @@
 Inventory Engine
-v3.1
+v3.2
 
 The Inventory Engine is a simple yet flexible inventory solution for Unity, available on the Unity Asset Store. Minimal by design, it gives you all you need to create inventories, items, display them, and plug them into your game. Also included in the Corgi Engine, the best platformer asset for Unity, it's a proven and battle tested solution that just gets the job done.
 

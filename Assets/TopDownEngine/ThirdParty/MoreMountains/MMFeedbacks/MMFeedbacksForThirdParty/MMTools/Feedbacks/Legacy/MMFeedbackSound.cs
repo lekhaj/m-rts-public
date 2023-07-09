@@ -75,6 +75,9 @@ namespace MoreMountains.Feedbacks
 		/// the audiomixer to play the sound with (optional)
 		[Tooltip("the audiomixer to play the sound with (optional)")]
 		public AudioMixerGroup SfxAudioMixerGroup;
+		[Tooltip("the audiosource priority, to be specified if needed between 0 (highest) and 256")] 
+		public int Priority = 128;
+
 
 		/// the duration of this feedback is the duration of the clip being played
 		public override float FeedbackDuration { get { return GetDuration(); } }
@@ -205,7 +208,7 @@ namespace MoreMountains.Feedbacks
             
 			if (PlayMethod == PlayMethods.Event)
 			{
-				MMSfxEvent.Trigger(sfx, SfxAudioMixerGroup, volume, pitch);
+				MMSfxEvent.Trigger(sfx, SfxAudioMixerGroup, volume, pitch, Priority);
 				return;
 			}
 
@@ -218,7 +221,7 @@ namespace MoreMountains.Feedbacks
 				temporaryAudioHost.transform.position = position;
 				// we add an audio source to that host
 				AudioSource audioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource;
-				PlayAudioSource(audioSource, sfx, volume, pitch, timeSamples, SfxAudioMixerGroup);
+				PlayAudioSource(audioSource, sfx, volume, pitch, timeSamples, SfxAudioMixerGroup, Priority);
 				// we destroy the host after the clip has played
 				Destroy(temporaryAudioHost, sfx.length);
 			}
@@ -226,7 +229,7 @@ namespace MoreMountains.Feedbacks
 			if (PlayMethod == PlayMethods.Cached)
 			{
 				// we set that audio source clip to the one in paramaters
-				PlayAudioSource(_cachedAudioSource, sfx, volume, pitch, timeSamples, SfxAudioMixerGroup);
+				PlayAudioSource(_cachedAudioSource, sfx, volume, pitch, timeSamples, SfxAudioMixerGroup, Priority);
 			}
 
 			if (PlayMethod == PlayMethods.Pool)
@@ -234,7 +237,7 @@ namespace MoreMountains.Feedbacks
 				_tempAudioSource = GetAudioSourceFromPool();
 				if (_tempAudioSource != null)
 				{
-					PlayAudioSource(_tempAudioSource, sfx, volume, pitch, timeSamples, SfxAudioMixerGroup);
+					PlayAudioSource(_tempAudioSource, sfx, volume, pitch, timeSamples, SfxAudioMixerGroup, Priority);
 				}
 			}
 		}
@@ -246,7 +249,8 @@ namespace MoreMountains.Feedbacks
 		/// <param name="sfx"></param>
 		/// <param name="volume"></param>
 		/// <param name="pitch"></param>
-		protected virtual void PlayAudioSource(AudioSource audioSource, AudioClip sfx, float volume, float pitch, int timeSamples, AudioMixerGroup audioMixerGroup = null)
+		protected virtual void PlayAudioSource(AudioSource audioSource, AudioClip sfx, float volume, float pitch,
+			int timeSamples, AudioMixerGroup audioMixerGroup = null, int priority = 128)
 		{
 			// we set that audio source clip to the one in paramaters
 			audioSource.clip = sfx;
@@ -256,6 +260,7 @@ namespace MoreMountains.Feedbacks
 			audioSource.pitch = pitch;
 			// we set our loop setting
 			audioSource.loop = false;
+			audioSource.priority = priority;
 			if (audioMixerGroup != null)
 			{
 				audioSource.outputAudioMixerGroup = audioMixerGroup;

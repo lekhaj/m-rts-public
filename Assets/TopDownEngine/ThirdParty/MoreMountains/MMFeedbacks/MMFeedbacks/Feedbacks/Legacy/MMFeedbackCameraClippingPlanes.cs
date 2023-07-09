@@ -75,7 +75,7 @@ namespace MoreMountains.Feedbacks
 			MMCameraClippingPlanesShakeEvent.Trigger(ShakeNear, FeedbackDuration, RemapNearZero, RemapNearOne, 
 				ShakeFar, RemapFarZero, RemapFarOne,
 				RelativeClippingPlanes,
-				feedbacksIntensity, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				feedbacksIntensity, ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
 		}
 
 		/// <summary>

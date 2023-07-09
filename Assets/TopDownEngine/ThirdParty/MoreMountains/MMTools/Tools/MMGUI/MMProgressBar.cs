@@ -31,77 +31,103 @@ namespace MoreMountains.Tools
         
 		[MMInspectorGroup("Bindings", true, 10)]
 		/// optional - the ID of the player associated to this bar
+		[Tooltip("optional - the ID of the player associated to this bar")]
 		public string PlayerID;
 		/// the main, foreground bar
+		[Tooltip("the main, foreground bar")]
 		public Transform ForegroundBar;
 		/// the delayed bar that will show when moving from a value to a new, lower value
+		[Tooltip("the delayed bar that will show when moving from a value to a new, lower value")]
 		[FormerlySerializedAs("DelayedBar")] 
 		public Transform DelayedBarDecreasing;
 		/// the delayed bar that will show when moving from a value to a new, higher value
+		[Tooltip("the delayed bar that will show when moving from a value to a new, higher value")]
 		public Transform DelayedBarIncreasing;
-
         
 		[MMInspectorGroup("Fill Settings", true, 11)]
 		/// the local scale or fillamount value to reach when the value associated to the bar is at 0%
 		[FormerlySerializedAs("StartValue")] 
 		[Range(0f,1f)]
+		[Tooltip("the local scale or fillamount value to reach when the value associated to the bar is at 0%")]
 		public float MinimumBarFillValue = 0f;
 		/// the local scale or fillamount value to reach when the bar is full
 		[FormerlySerializedAs("EndValue")] 
 		[Range(0f,1f)]
+		[Tooltip("the local scale or fillamount value to reach when the bar is full")]
 		public float MaximumBarFillValue = 1f;
 		/// whether or not to initialize the value of the bar on start
+		[Tooltip("whether or not to initialize the value of the bar on start")]
 		public bool SetInitialFillValueOnStart = false;
 		/// the initial value of the bar
 		[MMCondition("SetInitialFillValueOnStart", true)]
 		[Range(0f,1f)]
+		[Tooltip("the initial value of the bar")]
 		public float InitialFillValue = 0f;
 		/// the direction this bar moves to
+		[Tooltip("the direction this bar moves to")]
 		public BarDirections BarDirection = BarDirections.LeftToRight;
 		/// the foreground bar's fill mode
+		[Tooltip("the foreground bar's fill mode")]
 		public FillModes FillMode = FillModes.LocalScale;
 		/// defines whether the bar will work on scaled or unscaled time (whether or not it'll keep moving if time is slowed down for example)
+		[Tooltip("defines whether the bar will work on scaled or unscaled time (whether or not it'll keep moving if time is slowed down for example)")]
 		public TimeScales TimeScale = TimeScales.UnscaledTime;
 		/// the selected fill animation mode
+		[Tooltip("the selected fill animation mode")]
 		public BarFillModes BarFillMode = BarFillModes.SpeedBased;
 
 		[MMInspectorGroup("Foreground Bar Settings", true, 12)]
 		/// whether or not the foreground bar should lerp
+		[Tooltip("whether or not the foreground bar should lerp")]
 		public bool LerpForegroundBar = true;
 		/// the speed at which to lerp the foreground bar
+		[Tooltip("the speed at which to lerp the foreground bar")]
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarSpeedDecreasing = 15f;
+		/// the speed at which to lerp the foreground bar if value is increasing
+		[Tooltip("the speed at which to lerp the foreground bar if value is increasing")]
 		[FormerlySerializedAs("LerpForegroundBarSpeed")]
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarSpeedIncreasing = 15f;
+		/// the speed at which to lerp the foreground bar if speed is decreasing
+		[Tooltip("the speed at which to lerp the foreground bar if speed is decreasing")]
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarDurationDecreasing = 0.2f;
 		/// the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)
+		[Tooltip("the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)")]
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarDurationIncreasing = 0.2f;
-		/// the curve to use when animating the foreground bar fill
+		/// the curve to use when animating the foreground bar fill decreasing
+		[Tooltip("the curve to use when animating the foreground bar fill decreasing")]
 		[MMCondition("LerpForegroundBar", true)]
 		public AnimationCurve LerpForegroundBarCurveDecreasing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+		/// the curve to use when animating the foreground bar fill increasing
+		[Tooltip("the curve to use when animating the foreground bar fill increasing")]
 		[MMCondition("LerpForegroundBar", true)]
 		public AnimationCurve LerpForegroundBarCurveIncreasing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 		[MMInspectorGroup("Delayed Bar Decreasing", true, 13)]
 		
 		/// the delay before the delayed bar moves (in seconds)
+		[Tooltip("the delay before the delayed bar moves (in seconds)")]
 		[FormerlySerializedAs("Delay")] 
 		public float DecreasingDelay = 1f;
 		/// whether or not the delayed bar's animation should lerp
+		[Tooltip("whether or not the delayed bar's animation should lerp")]
 		[FormerlySerializedAs("LerpDelayedBar")] 
 		public bool LerpDecreasingDelayedBar = true;
 		/// the speed at which to lerp the delayed bar
+		[Tooltip("the speed at which to lerp the delayed bar")]
 		[FormerlySerializedAs("LerpDelayedBarSpeed")] 
 		[MMCondition("LerpDecreasingDelayedBar", true)]
 		public float LerpDecreasingDelayedBarSpeed = 15f;
 		/// the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)
+		[Tooltip("the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)")]
 		[FormerlySerializedAs("LerpDelayedBarDuration")] 
 		[MMCondition("LerpDecreasingDelayedBar", true)]
 		public float LerpDecreasingDelayedBarDuration = 0.2f;
 		/// the curve to use when animating the delayed bar fill
+		[Tooltip("the curve to use when animating the delayed bar fill")]
 		[FormerlySerializedAs("LerpDelayedBarCurve")] 
 		[MMCondition("LerpDecreasingDelayedBar", true)]
 		public AnimationCurve LerpDecreasingDelayedBarCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -109,38 +135,53 @@ namespace MoreMountains.Tools
 		[MMInspectorGroup("Delayed Bar Increasing", true, 18)]
 		
 		/// the delay before the delayed bar moves (in seconds)
+		[Tooltip("the delay before the delayed bar moves (in seconds)")]
 		public float IncreasingDelay = 1f;
 		/// whether or not the delayed bar's animation should lerp
+		[Tooltip("whether or not the delayed bar's animation should lerp")]
 		public bool LerpIncreasingDelayedBar = true;
 		/// the speed at which to lerp the delayed bar
+		[Tooltip("the speed at which to lerp the delayed bar")]
 		[MMCondition("LerpIncreasingDelayedBar", true)]
 		public float LerpIncreasingDelayedBarSpeed = 15f;
 		/// the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)
+		[Tooltip("the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)")]
 		[MMCondition("LerpIncreasingDelayedBar", true)]
 		public float LerpIncreasingDelayedBarDuration = 0.2f;
 		/// the curve to use when animating the delayed bar fill
+		[Tooltip("the curve to use when animating the delayed bar fill")]
 		[MMCondition("LerpIncreasingDelayedBar", true)]
 		public AnimationCurve LerpIncreasingDelayedBarCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 		[MMInspectorGroup("Bump", true, 14)]
-		
 		/// whether or not the bar should "bump" when changing value
+		[Tooltip("whether or not the bar should 'bump' when changing value")]
 		public bool BumpScaleOnChange = true;
 		/// whether or not the bar should bump when its value increases
+		[Tooltip("whether or not the bar should bump when its value increases")]
 		public bool BumpOnIncrease = false;
 		/// whether or not the bar should bump when its value decreases
+		[Tooltip("whether or not the bar should bump when its value decreases")]
 		public bool BumpOnDecrease = false;
 		/// the duration of the bump animation
+		[Tooltip("the duration of the bump animation")]
 		public float BumpDuration = 0.2f;
 		/// whether or not the bar should flash when bumping
+		[Tooltip("whether or not the bar should flash when bumping")]
 		public bool ChangeColorWhenBumping = true;
+		/// whether or not to store the initial bar color before a bump
+		[Tooltip("whether or not to store the initial bar color before a bump")]
+		public bool StoreBarColorOnPlay = true;
 		/// the color to apply to the bar when bumping
+		[Tooltip("the color to apply to the bar when bumping")]
 		[MMCondition("ChangeColorWhenBumping", true)]
 		public Color BumpColor = Color.white;
 		/// the curve to map the bump animation on
+		[Tooltip("the curve to map the bump animation on")]
 		[FormerlySerializedAs("BumpAnimationCurve")]
 		public AnimationCurve BumpScaleAnimationCurve = new AnimationCurve(new Keyframe(1, 1), new Keyframe(0.3f, 1.05f), new Keyframe(1, 1));
 		/// the curve to map the bump animation color animation on
+		[Tooltip("the curve to map the bump animation color animation on")]
 		public AnimationCurve BumpColorAnimationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
 		/// whether or not the bar is bumping right now
 		public bool Bumping { get; protected set; }
@@ -148,29 +189,47 @@ namespace MoreMountains.Tools
 		[MMInspectorGroup("Events", true, 16)] 
         
 		/// an event to trigger every time the bar bumps
+		[Tooltip("an event to trigger every time the bar bumps")]
 		public UnityEvent OnBump;
-		// an event to trigger every time the bar starts decreasing
+		/// an event to trigger every time the bar starts decreasing
+		[Tooltip("an event to trigger every time the bar starts decreasing")]
 		public UnityEvent OnBarMovementDecreasingStart;
-		// an event to trigger every time the bar stops decreasing
+		/// an event to trigger every time the bar stops decreasing
+		[Tooltip("an event to trigger every time the bar stops decreasing")]
 		public UnityEvent OnBarMovementDecreasingStop;
-		// an event to trigger every time the bar starts increasing
+		/// an event to trigger every time the bar starts increasing
+		[Tooltip("an event to trigger every time the bar starts increasing")]
 		public UnityEvent OnBarMovementIncreasingStart;
-		// an event to trigger every time the bar stops increasing
+		/// an event to trigger every time the bar stops increasing
+		[Tooltip("an event to trigger every time the bar stops increasing")]
 		public UnityEvent OnBarMovementIncreasingStop;
 
 		[MMInspectorGroup("Text", true, 20)] 
+		/// a Text object to update with the bar's value
+		[Tooltip("a Text object to update with the bar's value")]
 		public Text PercentageText;
 		#if MM_TEXTMESHPRO
+		/// a TMPro text object to update with the bar's value
+		[Tooltip("a TMPro text object to update with the bar's value")]
 		public TMP_Text PercentageTextMeshPro;
 		#endif
 
+		/// a prefix to always add to the bar's value display
+		[Tooltip("a prefix to always add to the bar's value display")]
 		public string TextPrefix;
+		/// a suffix to always add to the bar's value display
+		[Tooltip("a suffix to always add to the bar's value display")]
 		public string TextSuffix;
+		/// a value multiplier to always apply to the bar's value when displaying it
+		[Tooltip("a value multiplier to always apply to the bar's value when displaying it")]
 		public float TextValueMultiplier = 1f;
+		/// the format in which the text should display
+		[Tooltip("the format in which the text should display")]
 		public string TextFormat = "{000}";
 
 		[MMInspectorGroup("Debug", true, 15)]
 		/// the value the bar will move to if you press the DebugSet button
+		[Tooltip("the value the bar will move to if you press the DebugSet button")]
 		[Range(0f, 1f)] 
 		public float DebugNewTargetValue;
 
@@ -187,12 +246,19 @@ namespace MoreMountains.Tools
         
 		[MMInspectorGroup("Debug Read Only", true, 19)]
 		/// the current progress of the bar, ideally read only
+		[Tooltip("the current progress of the bar, ideally read only")]
 		[Range(0f,1f)]
-		public float BarProgress;/// the current progress of the bar, ideally read only
+		public float BarProgress;
+		/// the current progress of the bar, ideally read only
+		[Tooltip("the current progress of the bar, ideally read only")]
 		[Range(0f,1f)]
 		public float BarTarget;
+		/// the current progress of the delayed bar increasing
+		[Tooltip("the current progress of the delayed bar increasing")]
 		[Range(0f,1f)]
 		public float DelayedBarIncreasingProgress;
+		/// the current progress of the delayed bar decreasing
+		[Tooltip("the current progress of the delayed bar decreasing")]
 		[Range(0f,1f)]
 		public float DelayedBarDecreasingProgress;
 
@@ -200,16 +266,13 @@ namespace MoreMountains.Tools
 		protected Vector2 _initialBarSize;
 		protected Color _initialColor;
 		protected Vector3 _initialScale;
-        
 		protected Image _foregroundImage;
 		protected Image _delayedDecreasingImage;
 		protected Image _delayedIncreasingImage;
-        
 		protected Vector3 _targetLocalScale = Vector3.one;
 		protected float _newPercent;
 		protected float _percentLastTimeBarWasUpdated;
 		protected float _lastUpdateTimestamp;
-        
 		protected float _time;
 		protected float _deltaTime;
 		protected int _direction;
@@ -219,11 +282,14 @@ namespace MoreMountains.Tools
 		protected bool _isDelayedBarDecreasingNotNull;
 		protected bool _actualUpdate;
 		protected Vector2 _anchorVector;
-
 		protected float _delayedBarDecreasingProgress;
 		protected float _delayedBarIncreasingProgress;
 		protected MMProgressBarStates CurrentState = MMProgressBarStates.Idle;
 		protected string _updatedText;
+		protected bool _isForegroundBarNotNull;
+		protected bool _isForegroundImageNotNull;
+		protected bool _isPercentageTextNotNull;
+		protected bool _isPercentageTextMeshProNotNull;
 
 		#region PUBLIC_API
         
@@ -248,7 +314,12 @@ namespace MoreMountains.Tools
 			{
 				Initialization();
 			}
-            
+
+			if (StoreBarColorOnPlay)
+			{
+				StoreInitialColor();	
+			}
+
 			if (!this.gameObject.activeInHierarchy)
 			{
 				this.gameObject.SetActive(true);    
@@ -387,43 +458,51 @@ namespace MoreMountains.Tools
 				return;
 			}
 
-			if (_foregroundImage != null)
-			{
-				_foregroundImage.color = _initialColor;    
-			}
+			StoreInitialColor();
 		}
 
 		public virtual void Initialization()
 		{
+			_isForegroundBarNotNull = ForegroundBar != null;
 			_isDelayedBarDecreasingNotNull = DelayedBarDecreasing != null;
 			_isDelayedBarIncreasingNotNull = DelayedBarIncreasing != null;
+			_isPercentageTextNotNull = PercentageText != null;
+			#if MM_TEXTMESHPRO
+			_isPercentageTextMeshProNotNull = PercentageTextMeshPro != null;
+			#endif
 			_initialScale = this.transform.localScale;
 
-			if (ForegroundBar != null)
+			if (_isForegroundBarNotNull)
 			{
 				_foregroundImage = ForegroundBar.GetComponent<Image>();
+				_isForegroundImageNotNull = _foregroundImage != null;
 				_initialBarSize = _foregroundImage.rectTransform.sizeDelta;
 			}
-			if (DelayedBarDecreasing != null)
+			if (_isDelayedBarDecreasingNotNull)
 			{
 				_delayedDecreasingImage = DelayedBarDecreasing.GetComponent<Image>();
 			}
-			if (DelayedBarIncreasing != null)
+			if (_isDelayedBarIncreasingNotNull)
 			{
 				_delayedIncreasingImage = DelayedBarIncreasing.GetComponent<Image>();
 			}
 			_initialized = true;
 
-			if (_foregroundImage != null)
-			{
-				_initialColor = _foregroundImage.color;
-			}
+			StoreInitialColor();
 
 			_percentLastTimeBarWasUpdated = BarProgress;
 
 			if (SetInitialFillValueOnStart)
 			{
 				SetBar01(InitialFillValue);
+			}
+		}
+
+		protected virtual void StoreInitialColor()
+		{
+			if (!Bumping && _isForegroundImageNotNull)
+			{
+				_initialColor = _foregroundImage.color;
 			}
 		}
         
@@ -473,12 +552,12 @@ namespace MoreMountains.Tools
 		protected virtual void UpdateText()
 		{
 			_updatedText = TextPrefix + (BarTarget * TextValueMultiplier).ToString(TextFormat) + TextSuffix;
-			if (PercentageText != null)
+			if (_isPercentageTextNotNull)
 			{
 				PercentageText.text = _updatedText;
 			}
 			#if MM_TEXTMESHPRO
-			if (PercentageTextMeshPro != null)
+			if (_isPercentageTextMeshProNotNull)
 			{
 				PercentageTextMeshPro.text = _updatedText;
 			}
@@ -788,14 +867,13 @@ namespace MoreMountains.Tools
 				float colorCurvePercent = BumpColorAnimationCurve.Evaluate(percent);
 				this.transform.localScale = curvePercent * _initialScale;
 
-				if (ChangeColorWhenBumping && (_foregroundImage != null))
+				if (ChangeColorWhenBumping && _isForegroundImageNotNull)
 				{
 					_foregroundImage.color = Color.Lerp(_initialColor, BumpColor, colorCurvePercent);
 				}
-
 				yield return null;
 			}
-			if (ChangeColorWhenBumping && (_foregroundImage != null))
+			if (ChangeColorWhenBumping && _isForegroundImageNotNull)
 			{
 				_foregroundImage.color = _initialColor;
 			}

@@ -23,6 +23,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return BoundImage != null ? BoundImage.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a BoundImage be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasCustomInspectors => true;
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant, ToDestination }
@@ -73,6 +74,7 @@ namespace MoreMountains.Feedbacks
 
 		protected Coroutine _coroutine;
 		protected float _initialFill;
+		protected bool _initialState;
 
 		/// <summary>
 		/// On Play we turn our Image on and start an over time coroutine if needed
@@ -85,8 +87,10 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-            
+
+			_initialState = BoundImage.gameObject.activeInHierarchy;
 			Turn(true);
+			_initialFill = BoundImage.fillAmount;
 			switch (Mode)
 			{
 				case Modes.Instant:
@@ -182,6 +186,20 @@ namespace MoreMountains.Feedbacks
 		{
 			BoundImage.gameObject.SetActive(status);
 			BoundImage.enabled = status;
+		}
+
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			Turn(_initialState);
+			BoundImage.fillAmount = _initialFill;
 		}
 	}
 }

@@ -10,19 +10,12 @@ namespace MoreMountains.Tools
 
 	public struct MMPlaylistPlayEvent
 	{
-		public delegate void Delegate(int channel);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public delegate void Delegate(int channel);
 		static public void Trigger(int channel)
 		{
 			OnEvent?.Invoke(channel);
@@ -30,19 +23,12 @@ namespace MoreMountains.Tools
 	}
 	public struct MMPlaylistStopEvent
 	{
-		public delegate void Delegate(int channel);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public delegate void Delegate(int channel);
 		static public void Trigger(int channel)
 		{
 			OnEvent?.Invoke(channel);
@@ -50,19 +36,12 @@ namespace MoreMountains.Tools
 	}
 	public struct MMPlaylistPauseEvent
 	{
-		public delegate void Delegate(int channel);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public delegate void Delegate(int channel);
 		static public void Trigger(int channel)
 		{
 			OnEvent?.Invoke(channel);
@@ -70,19 +49,12 @@ namespace MoreMountains.Tools
 	}
 	public struct MMPlaylistPlayNextEvent
 	{
-		public delegate void Delegate(int channel);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public delegate void Delegate(int channel);
 		static public void Trigger(int channel)
 		{
 			OnEvent?.Invoke(channel);
@@ -90,19 +62,12 @@ namespace MoreMountains.Tools
 	}
 	public struct MMPlaylistPlayPreviousEvent
 	{
-		public delegate void Delegate(int channel);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public delegate void Delegate(int channel);
 		static public void Trigger(int channel)
 		{
 			OnEvent?.Invoke(channel);
@@ -111,19 +76,12 @@ namespace MoreMountains.Tools
 
 	public struct MMPlaylistPlayIndexEvent
 	{
-		public delegate void Delegate(int channel, int index);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
-
+		public delegate void Delegate(int channel, int index);
 		static public void Trigger(int channel, int index)
 		{
 			OnEvent?.Invoke(channel, index);
@@ -137,7 +95,7 @@ namespace MoreMountains.Tools
 		public AudioSource TargetAudioSource;
 		/// the min (when it's off) and max (when it's playing) volume for this source
 		[MMVector("Min", "Max")]
-		public Vector2 Volume = new Vector2(0f, 1f);
+		public Vector2 Volume = new Vector2(1f, 1f);
 		/// a random delay in seconds to apply, between its RMin and RMax
 		[MMVector("RMin", "RMax")]
 		public Vector2 InitialDelay = Vector2.zero;
@@ -164,7 +122,7 @@ namespace MoreMountains.Tools
 
 		public virtual void Initialization()
 		{
-			this.Volume = new Vector2(0f, 1f);
+			this.Volume = new Vector2(1f, 1f);
 			this.InitialDelay = Vector2.zero;
 			this.CrossFadeDuration = new Vector2(2f, 2f);
 			this.Pitch = Vector2.one;
@@ -178,7 +136,8 @@ namespace MoreMountains.Tools
 	/// Use this class to play audiosources (usually background music but feel free to use that for anything) in sequence, with optional crossfade between songs
 	/// </summary>
 	[AddComponentMenu("More Mountains/Tools/Audio/MMPlaylist")]
-	public class MMPlaylist : MonoBehaviour
+	[MMRequiresConstantRepaint]
+	public class MMPlaylist : MMMonoBehaviour
 	{
 		/// the possible states this playlist can be in
 		public enum PlaylistStates
@@ -187,8 +146,8 @@ namespace MoreMountains.Tools
 			Playing,
 			Paused
 		}
-
-		[Header("Playlist Songs")] 
+		
+		[MMInspectorGroup("Playlist Songs", true, 18)]
         
 		/// the channel on which to broadcast orders for this playlist
 		[Tooltip("the channel on which to broadcast orders for this playlist")]
@@ -197,7 +156,8 @@ namespace MoreMountains.Tools
 		[Tooltip("the songs that this playlist will play")]
 		public List<MMPlaylistSong> Songs;
 
-		[Header("Settings")]
+		[MMInspectorGroup("Settings", true, 13)]
+		
 		/// whether this should play in random order or not
 		[Tooltip("whether this should play in random order or not")]
 		public bool RandomOrder = false;
@@ -214,8 +174,25 @@ namespace MoreMountains.Tools
 		/// a global volume multiplier to apply when playing a song
 		[Tooltip("a global volume multiplier to apply when playing a song")]
 		public float VolumeMultiplier = 1f;
+		/// if this is true, this playlist will automatically pause/resume OnApplicationPause, useful if you've prevented your game from running in the background
+		[Tooltip("if this is true, this playlist will automatically pause/resume OnApplicationPause, useful if you've prevented your game from running in the background")]
+		public bool AutoHandleApplicationPause = true;
+		
+		[MMInspectorGroup("Persistence", true, 32)]
+		/// if this is true, this playlist will persist from scene to scene
+		[Tooltip("if this is true, this playlist will persist from scene to scene")]
+		public bool Persistent = false;
+		/// if this is true, this singleton will auto detach if it finds itself parented on awake
+		[Tooltip("if this is true, this singleton will auto detach if it finds itself parented on awake")]
+		[MMCondition("Persistent", true)]
+		public bool AutomaticallyUnparentOnAwake = true;
 
-		[Header("Status")]
+		[MMInspectorGroup("Status", true, 14)]
+		
+		/// the current state of the playlist, debug display only
+		[Tooltip("the current state of the playlist, debug display only")]
+		[MMReadOnly]
+		public PlaylistStates DebugCurrentState = PlaylistStates.Idle;
 		/// the index we're currently playing
 		[Tooltip("the index we're currently playing")]
 		[MMReadOnly]
@@ -228,7 +205,8 @@ namespace MoreMountains.Tools
 		[MMReadOnly]
 		public MMStateMachine<MMPlaylist.PlaylistStates> PlaylistState;
 
-		[Header("Test")]
+		[MMInspectorGroup("Tests", true, 15)]
+		
 		/// a play test button
 		[MMInspectorButton("Play")]
 		public bool PlayButton;
@@ -248,10 +226,83 @@ namespace MoreMountains.Tools
 		[MMInspectorButton("PlayTargetSong")]
 		public bool TargetSongButton;
         
-
 		protected int _songsPlayedSoFar = 0;
 		protected int _songsPlayedThisCycle = 0;
 		protected Coroutine _coroutine;
+		protected bool _shouldResumeOnApplicationPause = false;
+		
+		public static bool HasInstance => _instance != null;
+		public static MMPlaylist Current => _instance;
+		protected static MMPlaylist _instance;
+		protected bool _enabled;
+		
+		/// <summary>
+		/// Singleton design pattern
+		/// </summary>
+		/// <value>The instance.</value>
+		public static MMPlaylist Instance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = FindObjectOfType<MMPlaylist> ();
+					if (_instance == null)
+					{
+						GameObject obj = new GameObject ();
+						obj.name = typeof(MMPlaylist).Name + "_AutoCreated";
+						_instance = obj.AddComponent<MMPlaylist> ();
+					}
+				}
+				return _instance;
+			}
+		}
+		
+		/// <summary>
+		/// On awake, we check if there's already a copy of the object in the scene. If there's one, we destroy it.
+		/// </summary>
+		protected virtual void Awake ()
+		{
+			InitializeSingleton();
+		}
+
+		/// <summary>
+		/// Initializes the singleton.
+		/// </summary>
+		protected virtual void InitializeSingleton()
+		{
+			if (!Application.isPlaying)
+			{
+				return;
+			}
+
+			if (!Persistent)
+			{
+				return;
+			}
+
+			if (AutomaticallyUnparentOnAwake)
+			{
+				this.transform.SetParent(null);
+			}
+
+			if (_instance == null)
+			{
+				//If I am the first instance, make me the Singleton
+				_instance = this;
+				DontDestroyOnLoad (transform.gameObject);
+				_enabled = true;
+			}
+			else
+			{
+				//If a Singleton already exists and you find
+				//another reference in scene, destroy it!
+				if(this != _instance)
+				{
+					Destroy(this.gameObject);
+				}
+			}
+		}
         
 		/// <summary>
 		/// On Start we initialize our playlist
@@ -272,7 +323,7 @@ namespace MoreMountains.Tools
 			}
 			_songsPlayedSoFar = 0;
 			PlaylistState = new MMStateMachine<MMPlaylist.PlaylistStates>(this.gameObject, true);
-			PlaylistState.ChangeState(PlaylistStates.Idle);
+			ChangePlaylistState(PlaylistStates.Idle);
 			if (Songs.Count == 0)
 			{
 				return;
@@ -281,6 +332,12 @@ namespace MoreMountains.Tools
 			{
 				PlayFirstSong();
 			}
+		}
+
+		protected virtual void ChangePlaylistState(PlaylistStates newState)
+		{
+			PlaylistState.ChangeState(newState);
+			DebugCurrentState = newState;
 		}
 
 		/// <summary>
@@ -371,13 +428,13 @@ namespace MoreMountains.Tools
 
 			// updates our state
 			CurrentSongName = Songs[index].TargetAudioSource.clip.name;
-			PlaylistState.ChangeState(PlaylistStates.Playing);
+			ChangePlaylistState(PlaylistStates.Playing);
 			Songs[index].Playing = true;
 			CurrentlyPlayingIndex = index;
 			_songsPlayedSoFar++;
 			_songsPlayedThisCycle++;
 
-			while (Songs[index].TargetAudioSource.isPlaying)
+			while (Songs[index].TargetAudioSource.isPlaying || (PlaylistState.CurrentState == PlaylistStates.Paused) || _shouldResumeOnApplicationPause)
 			{
 				yield return null;
 			}
@@ -399,7 +456,7 @@ namespace MoreMountains.Tools
 				}
 				else
 				{
-					PlaylistState.ChangeState(PlaylistStates.Idle);
+					ChangePlaylistState(PlaylistStates.Idle);
 				}
 			}
 		}
@@ -511,7 +568,7 @@ namespace MoreMountains.Tools
 
 				case PlaylistStates.Paused:
 					Songs[CurrentlyPlayingIndex].TargetAudioSource.UnPause();
-					PlaylistState.ChangeState(PlaylistStates.Playing);
+					ChangePlaylistState(PlaylistStates.Playing);
 					break;
 
 				case PlaylistStates.Playing:
@@ -534,9 +591,9 @@ namespace MoreMountains.Tools
 			{
 				return;
 			}
-	        
+
 			Songs[CurrentlyPlayingIndex].TargetAudioSource.Pause();
-			PlaylistState.ChangeState(PlaylistStates.Paused);
+			ChangePlaylistState(PlaylistStates.Paused);
 		}
 
 		/// <summary>
@@ -553,7 +610,7 @@ namespace MoreMountains.Tools
 			Songs[CurrentlyPlayingIndex].Playing = false;
 			Songs[CurrentlyPlayingIndex].Fading = false;
 			CurrentlyPlayingIndex = -1;
-			PlaylistState.ChangeState(PlaylistStates.Idle);
+			ChangePlaylistState(PlaylistStates.Idle);
 		}
 
 		/// <summary>
@@ -676,6 +733,30 @@ namespace MoreMountains.Tools
 					}
 					_listCount = Songs.Count;
 				}
+			}
+		}
+
+		/// <summary>
+		/// On ApplicationPause, we pause the playlist and resume it afterwards
+		/// </summary>
+		/// <param name="pauseStatus"></param>
+		protected virtual void OnApplicationPause(bool pauseStatus)
+		{
+			if (!AutoHandleApplicationPause)
+			{
+				return;
+			}
+			
+			if (pauseStatus && PlaylistState.CurrentState == PlaylistStates.Playing)
+			{
+				Pause();
+				_shouldResumeOnApplicationPause = true;
+			}
+
+			if (!pauseStatus && _shouldResumeOnApplicationPause)
+			{
+				_shouldResumeOnApplicationPause = false;
+				Play();
 			}
 		}
 	}

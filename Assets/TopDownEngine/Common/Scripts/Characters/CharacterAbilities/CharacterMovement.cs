@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
 using System.Collections.Generic;
@@ -110,8 +110,24 @@ namespace MoreMountains.TopDownEngine
 		protected override void Initialization()
 		{
 			base.Initialization ();
+			ResetAbility();
+		}
+
+		/// <summary>
+		/// Resets character movement states and speeds
+		/// </summary>
+        public override void ResetAbility()
+        {
+	        base.ResetAbility();
 			MovementSpeed = WalkSpeed;
-			_movement.ChangeState(CharacterStates.MovementStates.Idle);
+			if (ContextSpeedStack != null)
+			{
+				ContextSpeedStack.Clear();
+			}
+			if ((_movement != null) && (_movement.CurrentState != CharacterStates.MovementStates.FallingDownHole))
+			{
+				_movement.ChangeState(CharacterStates.MovementStates.Idle);
+			}
 			MovementSpeedMultiplier = 1f;
 			MovementForbidden = false;
 
@@ -138,6 +154,8 @@ namespace MoreMountains.TopDownEngine
 		{
 			base.ProcessAbility();
 			
+			HandleFrozen();
+			
 			if (!AbilityAuthorized
 			    || ((_condition.CurrentState != CharacterStates.CharacterConditions.Normal) && (_condition.CurrentState != CharacterStates.CharacterConditions.ControlledMovement)))
 			{
@@ -148,7 +166,6 @@ namespace MoreMountains.TopDownEngine
 				return;
 			}
 			HandleDirection();
-			HandleFrozen();
 			HandleMovement();
 			Feedbacks ();
 		}
@@ -364,6 +381,10 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void HandleFrozen()
 		{
+			if (!AbilityAuthorized)
+			{
+				return;
+			}
 			if (_condition.CurrentState == CharacterStates.CharacterConditions.Frozen)
 			{
 				_horizontalMovement = 0f;

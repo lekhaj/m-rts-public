@@ -77,9 +77,9 @@ namespace MoreMountains.Tools
 					break;
 				case Modes.ScreenRatio:
 					#if UNITY_EDITOR
-						string[] res = UnityStats.screenRes.Split('x');
-						ratioX = int.Parse(res[0]);
-						ratioY = int.Parse(res[1]);
+					string[] res = UnityStats.screenRes.Split('x');
+					ratioX = int.Parse(res[0]);
+					ratioY = int.Parse(res[1]);
 					#else
 						ratioX = Screen.width;
 						ratioY = Screen.height;
