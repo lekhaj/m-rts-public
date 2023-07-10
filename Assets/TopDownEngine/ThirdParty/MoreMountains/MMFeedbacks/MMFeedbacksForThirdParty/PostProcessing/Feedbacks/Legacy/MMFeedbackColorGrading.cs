@@ -112,7 +112,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 				ShakeSaturation, RemapSaturationZero, RemapSaturationOne, 
 				ShakeContrast, RemapContrastZero, RemapContrastOne, 
 				FeedbackDuration,                     
-				RelativeIntensity, intensityMultiplier, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				RelativeIntensity, intensityMultiplier, ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
             
 		}
 

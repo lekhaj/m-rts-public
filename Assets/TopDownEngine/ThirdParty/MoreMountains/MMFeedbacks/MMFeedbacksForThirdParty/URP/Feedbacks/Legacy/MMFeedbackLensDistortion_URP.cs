@@ -80,7 +80,7 @@ namespace MoreMountains.FeedbacksForThirdParty
             
 			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
 			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, intensityMultiplier,
-				Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
             
 		}
         
@@ -97,7 +97,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
             
-			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop:true, channel: Channel);
+			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop:true, channelData:ChannelData(Channel));
             
 		}
 	}

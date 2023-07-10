@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MoreMountains.Tools;
@@ -18,12 +19,12 @@ namespace MoreMountains.TopDownEngine
 		/// the prefab you want for your player
 		[Header("Instantiate Characters")]
 		[MMInformation("The LevelManager is responsible for handling spawn/respawn, checkpoints management and level bounds. Here you can define one or more playable characters for your level..",MMInformationAttribute.InformationType.Info,false)]
-		/// the list of player prefabs to instantiate
-		[Tooltip("The list of player prefabs this level manager will instantiate on Start")]
-		public Character[] PlayerPrefabs ;
 		/// should the player IDs be auto attributed (usually yes)
 		[Tooltip("should the player IDs be auto attributed (usually yes)")]
 		public bool AutoAttributePlayerIDs = true;
+		/// the list of player prefabs to instantiate
+		[Tooltip("The list of player prefabs this level manager will instantiate on Start")]
+		public Character[] PlayerPrefabs ;
 
 		[Header("Characters already in the scene")]
 		[MMInformation("It's recommended to have the LevelManager instantiate your characters, but if instead you'd prefer to have them already present in the scene, just bind them in the list below.", MMInformationAttribute.InformationType.Info, false)]
@@ -79,7 +80,6 @@ namespace MoreMountains.TopDownEngine
 		/// the method to use to load the destination level
 		[Tooltip("the method to use to load the destination level")]
 		public MMLoadScene.LoadingSceneModes LoadingSceneMode = MMLoadScene.LoadingSceneModes.MMSceneLoadingManager;
-
 		/// the name of the MMSceneLoadingManager scene you want to use
 		[Tooltip("the name of the MMSceneLoadingManager scene you want to use")]
 		[MMEnumCondition("LoadingSceneMode", (int) MMLoadScene.LoadingSceneModes.MMSceneLoadingManager)]
@@ -88,6 +88,11 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("the settings to use when loading the scene in additive mode")]
 		[MMEnumCondition("LoadingSceneMode", (int)MMLoadScene.LoadingSceneModes.MMAdditiveSceneLoadingManager)]
 		public MMAdditiveSceneLoadingManagerSettings AdditiveLoadingSettings; 
+		
+		[Header("Feedbacks")] 
+		/// if this is true, an event will be triggered on player instantiation to set the range target of all feedbacks to it
+		[Tooltip("if this is true, an event will be triggered on player instantiation to set the range target of all feedbacks to it")]
+		public bool SetPlayerAsFeedbackRangeCenter = false;
         
 		/// the level limits, camera and player won't go beyond this point.
 		public Bounds LevelBounds {  get { return (_collider==null)? new Bounds(): _collider.bounds; } }
@@ -162,6 +167,11 @@ namespace MoreMountains.TopDownEngine
 			// we trigger a level start event
 			TopDownEngineEvent.Trigger(TopDownEngineEventTypes.LevelStart, null);
 			MMGameEvent.Trigger("Load");
+
+			if (SetPlayerAsFeedbackRangeCenter)
+			{
+				MMSetFeedbackRangeCenterEvent.Trigger(Players[0].transform);
+			}
 
 			MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, Players[0]);
 			MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
@@ -428,9 +438,6 @@ namespace MoreMountains.TopDownEngine
 			GUIManager.Instance.SetDeathScreen(false);
 			MMFadeOutEvent.Trigger(OutroFadeDuration, FadeCurve, FaderID, true, Players[0].transform.position);
 
-
-			MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
-
 			if (CurrentCheckpoint == null)
 			{
 				CurrentCheckpoint = InitialSpawnPoint;
@@ -451,6 +458,8 @@ namespace MoreMountains.TopDownEngine
 			}
 
 			_started = DateTime.UtcNow;
+			
+			MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
 
 			// we send a new points event for the GameManager to catch (and other classes that may listen to it too)
 			TopDownEnginePointEvent.Trigger(PointsMethods.Set, 0);

@@ -11,7 +11,7 @@ namespace MoreMountains.TopDownEngine
 	/// Simple start screen class.
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/GUI/StartScreen")]
-	public class StartScreen : MonoBehaviour
+	public class StartScreen : TopDownMonoBehaviour
 	{
 		/// the level to load after the start screen
 		[Tooltip("the level to load after the start screen")]

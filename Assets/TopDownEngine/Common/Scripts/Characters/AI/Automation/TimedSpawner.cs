@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// to spawn objects regularly, at a frequency randomly chosen between the min and max values set in its inspector
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Character/AI/Automation/TimedSpawner")]
-	public class TimedSpawner : MonoBehaviour 
+	public class TimedSpawner : TopDownMonoBehaviour 
 	{
 		/// the object pooler associated to this spawner
 		public MMObjectPooler ObjectPooler { get; set; }

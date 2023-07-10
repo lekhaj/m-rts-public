@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A class used to handle aim markers, (usually circular) visual elements 
 	/// </summary>
-	public class AimMarker : MonoBehaviour
+	public class AimMarker : TopDownMonoBehaviour
 	{
 		/// the possible movement modes for aim markers
 		public enum MovementModes { Instant, Interpolate }

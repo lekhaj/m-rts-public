@@ -4868,6 +4868,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoundsBasedOn: 0
+  ExecuteOnEnable:
+    m_PersistentCalls:
+      m_Calls: []
+  ExecuteOnDisable:
+    m_PersistentCalls:
+      m_Calls: []
   LifeTime: 5
 --- !u!114 &114520861229986060
 MonoBehaviour:
@@ -4882,6 +4888,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoundsBasedOn: 0
+  ExecuteOnEnable:
+    m_PersistentCalls:
+      m_Calls: []
+  ExecuteOnDisable:
+    m_PersistentCalls:
+      m_Calls: []
   LifeTime: 2
   FaceDirection: 1
   FaceMovement: 0
@@ -4913,10 +4925,12 @@ MonoBehaviour:
   MaximumHealth: 1
   ResetHealthOnEnable: 1
   ImmuneToDamage: 0
-  ImmuneToKnockback: 0
   DamageMMFeedbacks: {fileID: 0}
   FeedbackIsProportionalToDamage: 0
   PreventTakeSelfDamage: 0
+  ImmuneToKnockback: 0
+  ImmuneToKnockbackIfZeroDamage: 0
+  KnockbackForceMultiplier: 1
   DestroyOnDeath: 1
   DelayBeforeDestruction: 1
   PointsWhenDestroyed: 0
@@ -4934,6 +4948,7 @@ MonoBehaviour:
   ColorMaterialPropertyName: _Color
   UseMaterialPropertyBlocks: 0
   MasterHealth: {fileID: 0}
+  TargetDamageResistanceProcessor: {fileID: 0}
   TargetAnimator: {fileID: 0}
   DisableAnimatorLogs: 1
 --- !u!114 &114692968763625280
@@ -4951,12 +4966,21 @@ MonoBehaviour:
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 12032
-  DamageCaused: 10
+  Owner: {fileID: 0}
+  TriggerFilter: 195
+  MinDamageCaused: 10
+  MaxDamageCaused: 10
+  TypedDamages: []
+  DamageDirectionMode: 1
   DamageCausedKnockbackType: 1
   DamageCausedKnockbackDirection: 3
   DamageCausedKnockbackForce: {x: 10, y: 2, z: 0}
   InvincibilityDuration: 0.1
-  DamageOnTriggerEnterOnly: 0
+  RepeatDamageOverTime: 0
+  AmountOfRepeats: 3
+  DurationBetweenRepeats: 1
+  DamageOverTimeInterruptible: 1
+  RepeatedDamageType: {fileID: 0}
   DamageTakenEveryTime: 1
   DamageTakenDamageable: 1
   DamageTakenNonDamageable: 1
@@ -4965,7 +4989,7 @@ MonoBehaviour:
   DamageTakenInvincibilityDuration: 0.5
   HitDamageableFeedback: {fileID: 129939367651388674}
   HitNonDamageableFeedback: {fileID: 9075017781267480604}
-  Owner: {fileID: 0}
+  HitAnythingFeedback: {fileID: 0}
 --- !u!65 &65720217773407688
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5012,6 +5036,9 @@ MonoBehaviour:
     m_Bits: 12032
   SkinWidth: 0.1
   RepositionRigidbody: 1
+  RepositionRigidbodyLayerMask:
+    serializedVersion: 2
+    m_Bits: 12032
 --- !u!114 &114469000093533656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9836,10 +9863,46 @@ MonoBehaviour:
   AutoChangeDirectionOnEnd: 0
   AutoPlayOnStart: 0
   AutoPlayOnEnable: 0
+  ForceTimescaleMode: 0
+  ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  RandomizeDuration: 0
+  RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
+  PlayerTimescaleMode: 1
+  OnlyPlayIfWithinRange: 0
+  RangeCenter: {fileID: 0}
+  RangeDistance: 5
+  UseRangeFalloff: 0
+  RangeFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RemapRangeFalloff: {x: 0, y: 1}
+  IgnoreRangeEvents: 0
   CooldownDuration: 0
   InitialDelay: 0
+  CanPlay: 1
   CanPlayWhileAlreadyPlaying: 1
   ChanceToPlay: 100
   FeedbacksIntensity: 1
@@ -9909,6 +9972,7 @@ MonoBehaviour:
   MinPitch: 1
   MaxPitch: 1
   SfxAudioMixerGroup: {fileID: 0}
+  Priority: 128
 --- !u!114 &6039487769240255737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10053,10 +10117,46 @@ MonoBehaviour:
   AutoChangeDirectionOnEnd: 0
   AutoPlayOnStart: 0
   AutoPlayOnEnable: 0
+  ForceTimescaleMode: 0
+  ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  RandomizeDuration: 0
+  RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
+  PlayerTimescaleMode: 1
+  OnlyPlayIfWithinRange: 0
+  RangeCenter: {fileID: 0}
+  RangeDistance: 5
+  UseRangeFalloff: 0
+  RangeFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RemapRangeFalloff: {x: 0, y: 1}
+  IgnoreRangeEvents: 0
   CooldownDuration: 0
   InitialDelay: 0
+  CanPlay: 1
   CanPlayWhileAlreadyPlaying: 1
   ChanceToPlay: 100
   FeedbacksIntensity: 1
@@ -10126,6 +10226,7 @@ MonoBehaviour:
   MinPitch: 1
   MaxPitch: 1
   SfxAudioMixerGroup: {fileID: 0}
+  Priority: 128
 --- !u!114 &8339035922161349686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10284,6 +10385,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -10295,6 +10401,11 @@ PrefabInstance:
     - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
@@ -10311,16 +10422,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6702227914809282779, guid: 8c6c4b46f25c8674c836660af8f3582d,
         type: 3}
@@ -10344,10 +10445,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7565002332994452575, guid: 8c6c4b46f25c8674c836660af8f3582d,
         type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565002332994452575, guid: 8c6c4b46f25c8674c836660af8f3582d,
+        type: 3}
       propertyPath: ShapeModule.angle
       value: 50
       objectReference: {fileID: 0}
-    - target: {fileID: 7565002332994452575, guid: 8c6c4b46f25c8674c836660af8f3582d,
+    - target: {fileID: 8505370646429084235, guid: 8c6c4b46f25c8674c836660af8f3582d,
         type: 3}
       propertyPath: playOnAwake
       value: 0
@@ -10356,11 +10462,6 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.angle
       value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 8505370646429084235, guid: 8c6c4b46f25c8674c836660af8f3582d,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8958866738862430482, guid: 8c6c4b46f25c8674c836660af8f3582d,
         type: 3}

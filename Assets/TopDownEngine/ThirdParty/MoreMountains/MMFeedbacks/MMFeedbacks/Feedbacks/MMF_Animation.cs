@@ -9,7 +9,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will allow you to send to an animator (bound in its inspector) a bool, int, float or trigger parameter, allowing you to trigger an animation, with or without randomness.")]
-	[FeedbackPath("GameObject/Animation")]
+	[FeedbackPath("Animation/Animation Parameter")]
 	public class MMF_Animation : MMF_Feedback 
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -23,16 +23,23 @@ namespace MoreMountains.Feedbacks
 
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
-		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.GameObjectColor; } }
+		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.AnimationColor; } }
 		public override bool EvaluateRequiresSetup() { return (BoundAnimator == null); }
 		public override string RequiredTargetText { get { return BoundAnimator != null ? BoundAnimator.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a BoundAnimator be set to be able to work properly. You can set one below."; } }
 		#endif
+		
+		/// the duration of this feedback is the declared duration 
+		public override float FeedbackDuration { get { return ApplyTimeMultiplier(DeclaredDuration); } set { DeclaredDuration = value;  } }
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Animation", true, 12, true)]
 		/// the animator whose parameters you want to update
 		[Tooltip("the animator whose parameters you want to update")]
 		public Animator BoundAnimator;
+		/// the duration for the player to consider. This won't impact your animation, but is a way to communicate to the MMF Player the duration of this feedback. Usually you'll want it to match your actual animation, and setting it can be useful to have this feedback work with holding pauses.
+		[Tooltip("the duration for the player to consider. This won't impact your animation, but is a way to communicate to the MMF Player the duration of this feedback. Usually you'll want it to match your actual animation, and setting it can be useful to have this feedback work with holding pauses.")]
+		public float DeclaredDuration = 0f;
         
 		[MMFInspectorGroup("Trigger", true, 16)]
 		/// if this is true, will update the specified trigger parameter
@@ -184,7 +191,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 
 			if (UpdateTrigger)
 			{

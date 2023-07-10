@@ -1,7 +1,5 @@
 using UnityEngine;
-using System.Collections;
 using MoreMountains.Tools;
-using UnityEngine.Events;
 using System.Collections.Generic;
 
 namespace MoreMountains.TopDownEngine
@@ -112,6 +110,8 @@ namespace MoreMountains.TopDownEngine
 		public float CameraRotationInput { get { return _cameraRotationInput; } }
 		/// the current camera angle
 		public float CameraAngle { get { return _cameraAngle; } }
+		/// the position of the mouse
+		public virtual Vector2 MousePosition => Input.mousePosition;
 
 		protected Camera _targetCamera;
 		protected bool _camera3D;
@@ -127,6 +127,15 @@ namespace MoreMountains.TopDownEngine
 		protected string _axisShoot;
 		protected string _axisShootSecondary;
 		protected string _axisCamera;
+		
+		/// <summary>
+		/// On Awake we run our pre-initialization
+		/// </summary>
+		protected override void Awake()
+		{
+			base.Awake();
+			PreInitialization();
+		}
 
 		/// <summary>
 		/// On Start we look for what mode to use, and initialize our axis and buttons
@@ -137,13 +146,20 @@ namespace MoreMountains.TopDownEngine
 		}
 
 		/// <summary>
-		/// On init we auto detect control schemes, and initialize our buttons and axis
+		/// Initializes buttons and axis
+		/// </summary>
+		protected virtual void PreInitialization()
+		{
+			InitializeButtons();
+			InitializeAxis();
+		}
+		
+		/// <summary>
+		/// On init we auto detect control schemes
 		/// </summary>
 		protected virtual void Initialization()
 		{
 			ControlsModeDetection();
-			InitializeButtons();
-			InitializeAxis();
 		}
 
 		/// <summary>
@@ -151,34 +167,31 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		public virtual void ControlsModeDetection()
 		{
-			if (GUIManager.HasInstance)
+			if (GUIManager.HasInstance) { GUIManager.Instance.SetMobileControlsActive(false); }
+			IsMobile=false;
+			if (AutoMobileDetection)
 			{
-				GUIManager.Instance.SetMobileControlsActive(false);
-				IsMobile=false;
-				if (AutoMobileDetection)
-				{
-					#if UNITY_ANDROID || UNITY_IPHONE
-					GUIManager.Instance.SetMobileControlsActive(true,MovementControl);
+				#if UNITY_ANDROID || UNITY_IPHONE
+					if (GUIManager.HasInstance) { GUIManager.Instance.SetMobileControlsActive(true,MovementControl); }
 					IsMobile = true;
-					#endif
-				}
-				if (InputForcedMode==InputForcedModes.Mobile)
-				{
-					GUIManager.Instance.SetMobileControlsActive(true,MovementControl);
-					IsMobile = true;
-				}
-				if (InputForcedMode==InputForcedModes.Desktop)
-				{
-					GUIManager.Instance.SetMobileControlsActive(false);
-					IsMobile = false;					
-				}
-				if (HideMobileControlsInEditor)
-				{
-					#if UNITY_EDITOR
-					GUIManager.Instance.SetMobileControlsActive(false);
-					IsMobile = false;	
-					#endif
-				}
+				#endif
+			}
+			if (InputForcedMode==InputForcedModes.Mobile)
+			{
+				if (GUIManager.HasInstance) { GUIManager.Instance.SetMobileControlsActive(true, MovementControl); }
+				IsMobile = true;
+			}
+			if (InputForcedMode==InputForcedModes.Desktop)
+			{
+				if (GUIManager.HasInstance) { GUIManager.Instance.SetMobileControlsActive(false); }
+				IsMobile = false;					
+			}
+			if (HideMobileControlsInEditor)
+			{
+				#if UNITY_EDITOR
+				if (GUIManager.HasInstance) { GUIManager.Instance.SetMobileControlsActive(false); }
+				IsMobile = false;	
+				#endif
 			}
 		}
 
@@ -355,7 +368,10 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void SetCameraRotationAxis()
 		{
-			_cameraRotationInput = Input.GetAxis(_axisCamera);
+			if (!IsMobile)
+			{
+				_cameraRotationInput = Input.GetAxis(_axisCamera);	
+			}
 		}
 
 		/// <summary>
@@ -443,6 +459,15 @@ namespace MoreMountains.TopDownEngine
 		{
 			_targetCamera = targetCamera;
 			_camera3D = camera3D;
+		}
+
+		/// <summary>
+		/// Sets the current camera rotation input, which you'll want to keep between -1 (left) and 1 (right), 0 being no rotation
+		/// </summary>
+		/// <param name="newValue"></param>
+		public virtual void SetCameraRotationInput(float newValue)
+		{
+			_cameraRotationInput = newValue;
 		}
 
 		/// <summary>

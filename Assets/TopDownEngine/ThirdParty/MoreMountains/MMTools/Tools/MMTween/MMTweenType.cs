@@ -13,6 +13,7 @@ namespace MoreMountains.Tools
 		public MMTweenDefinitionTypes MMTweenDefinitionType = MMTweenDefinitionTypes.MMTween;
 		public MMTween.MMTweenCurve MMTweenCurve = MMTween.MMTweenCurve.EaseInCubic;
 		public AnimationCurve Curve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1f));
+		public bool Initialized = false;
 
 		public MMTweenType(MMTween.MMTweenCurve newCurve)
 		{
@@ -23,6 +24,11 @@ namespace MoreMountains.Tools
 		{
 			Curve = newCurve;
 			MMTweenDefinitionType = MMTweenDefinitionTypes.AnimationCurve;
+		}
+
+		public float Evaluate(float t)
+		{
+			return MMTween.Evaluate(t, this);
 		}
 	}
 }

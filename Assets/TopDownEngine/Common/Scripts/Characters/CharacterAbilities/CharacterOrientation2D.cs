@@ -380,6 +380,10 @@ namespace MoreMountains.TopDownEngine
 			{
 				FaceDirection(-1);
 			}
+			if (direction == Character.FacingDirections.East)
+			{
+				FaceDirection(1);
+			}
 		}
 
 		/// <summary>

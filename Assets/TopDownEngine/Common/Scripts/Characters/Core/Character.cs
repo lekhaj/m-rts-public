@@ -17,7 +17,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	[SelectionBase]
 	[AddComponentMenu("TopDown Engine/Character/Core/Character")] 
-	public class Character : MonoBehaviour
+	public class Character : TopDownMonoBehaviour
 	{
 		/// the possible initial facing direction for your character
 		public enum FacingDirections { West, East, North, South }
@@ -135,6 +135,8 @@ namespace MoreMountains.TopDownEngine
 		protected bool _animatorInitialized = false;
 		protected CharacterPersistence _characterPersistence;
 		protected bool _onReviveRegistered;
+		protected Coroutine _conditionChangeCoroutine;
+		protected CharacterStates.CharacterConditions _lastState;
 
 
 		/// <summary>
@@ -544,7 +546,7 @@ namespace MoreMountains.TopDownEngine
 		public virtual void RespawnAt(Transform spawnPoint, FacingDirections facingDirection)
 		{
 			transform.position = spawnPoint.position;
-	        
+			
 			if (!gameObject.activeInHierarchy)
 			{
 				gameObject.SetActive(true);
@@ -584,6 +586,7 @@ namespace MoreMountains.TopDownEngine
 
 			if (CharacterHealth != null)
 			{
+				CharacterHealth.StoreInitialPosition();
 				if (_characterPersistence != null)
 				{
 					if (_characterPersistence.Initialized)
@@ -607,6 +610,7 @@ namespace MoreMountains.TopDownEngine
 			// facing direction
 			if (FindAbility<CharacterOrientation2D>() != null)
 			{
+				FindAbility<CharacterOrientation2D>().InitialFacingDirection = facingDirection;
 				FindAbility<CharacterOrientation2D>().Face(facingDirection);
 			}
 			// facing direction
@@ -649,7 +653,11 @@ namespace MoreMountains.TopDownEngine
 		public virtual void ChangeCharacterConditionTemporarily(CharacterStates.CharacterConditions newCondition,
 			float duration, bool resetControllerForces, bool disableGravity)
 		{
-			StartCoroutine(ChangeCharacterConditionTemporarilyCo(newCondition, duration, resetControllerForces, disableGravity));
+			if (_conditionChangeCoroutine != null)
+			{
+				StopCoroutine(_conditionChangeCoroutine);
+			}
+			_conditionChangeCoroutine = StartCoroutine(ChangeCharacterConditionTemporarilyCo(newCondition, duration, resetControllerForces, disableGravity));
 		}
 
 		/// <summary>
@@ -664,12 +672,16 @@ namespace MoreMountains.TopDownEngine
 			CharacterStates.CharacterConditions newCondition,
 			float duration, bool resetControllerForces, bool disableGravity)
 		{
-			CharacterStates.CharacterConditions lastState = this.ConditionState.CurrentState;
+			if (_lastState != newCondition) if ((_lastState != newCondition) && (this.ConditionState.CurrentState != newCondition))
+			{
+				_lastState = this.ConditionState.CurrentState;
+			}
+			
 			this.ConditionState.ChangeState(newCondition);
 			if (resetControllerForces) { _controller?.SetMovement(Vector2.zero); }
 			if (disableGravity && (_controller != null)) { _controller.GravityActive = false; }
 			yield return MMCoroutine.WaitFor(duration);
-			this.ConditionState.ChangeState(lastState);
+			this.ConditionState.ChangeState(_lastState);
 			if (disableGravity && (_controller != null)) { _controller.GravityActive = true; }
 		}
 

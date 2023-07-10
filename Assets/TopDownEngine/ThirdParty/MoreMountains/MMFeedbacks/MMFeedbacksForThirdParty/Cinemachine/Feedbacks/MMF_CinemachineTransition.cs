@@ -31,7 +31,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
-		public override string RequiredTargetText { get { return "Channel "+Channel;  } }
+		public override string RequiredTargetText => RequiredChannelText;
 		#endif
 		#if MM_CINEMACHINE
 		/// the duration of this feedback is the duration of the shake
@@ -89,13 +89,27 @@ namespace MoreMountains.FeedbacksForThirdParty
 			_tempBlend.m_Time = FeedbackDuration;
 			if (Mode == Modes.Event)
 			{
-				MMCinemachinePriorityEvent.Trigger(Channel, ForceMaxPriority, NewPriority, ForceTransition, _tempBlend, ResetValuesAfterTransition, Timing.TimescaleMode);    
+				MMCinemachinePriorityEvent.Trigger(ChannelData, ForceMaxPriority, NewPriority, ForceTransition, _tempBlend, ResetValuesAfterTransition, ComputedTimescaleMode);    
 			}
 			else
 			{
-				MMCinemachinePriorityEvent.Trigger(Channel, ForceMaxPriority, 0, ForceTransition, _tempBlend, ResetValuesAfterTransition, Timing.TimescaleMode); 
+				MMCinemachinePriorityEvent.Trigger(ChannelData, ForceMaxPriority, 0, ForceTransition, _tempBlend, ResetValuesAfterTransition, ComputedTimescaleMode); 
 				TargetVirtualCamera.Priority = NewPriority;
 			}
+			#endif
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_CINEMACHINE
+			MMCinemachinePriorityEvent.Trigger(ChannelData, ForceMaxPriority, 0, ForceTransition, _tempBlend, ResetValuesAfterTransition, ComputedTimescaleMode, true); 
 			#endif
 		}
 	}

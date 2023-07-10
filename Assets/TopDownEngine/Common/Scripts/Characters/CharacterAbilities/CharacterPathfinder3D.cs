@@ -25,6 +25,9 @@ namespace MoreMountains.TopDownEngine
 		/// if the target point can't be reached, the distance threshold around that point in which to look for an alternative end point
 		[Tooltip("if the target point can't be reached, the distance threshold around that point in which to look for an alternative end point")]
 		public float ClosestPointThreshold = 3f;
+		/// a minimum delay (in seconds) between two navmesh requests - longer delay means better performance but less accuracy
+		[Tooltip("a minimum delay (in seconds) between two navmesh requests - longer delay means better performance but less accuracy")]
+		public float MinimumDelayBeforePollingNavmesh = 0.1f;
 
 		[Header("Debug")]
 
@@ -55,6 +58,11 @@ namespace MoreMountains.TopDownEngine
 
 		public event System.Action<int, int, float> OnPathProgress;
 
+		public virtual void InvokeOnPathProgress(int waypointIndex, int waypointsLength, float distance)
+		{
+			OnPathProgress?.Invoke(waypointIndex, waypointsLength, distance);
+		}
+
 		protected int _waypoints;
 		protected Vector3 _direction;
 		protected Vector2 _newMovement;
@@ -63,6 +71,7 @@ namespace MoreMountains.TopDownEngine
 		protected Vector3 _closestTargetNavmeshPosition;
 		protected NavMeshHit _navMeshHit;
 		protected bool _pathFound;
+		protected float _lastRequestAt = -Single.MaxValue;
 
 		protected override void Initialization()
 		{
@@ -136,9 +145,15 @@ namespace MoreMountains.TopDownEngine
 		/// <returns></returns>        
 		protected virtual void DeterminePath(Vector3 startingPosition, Vector3 targetPosition)
 		{
-			NextWaypointIndex = 0;
+			if (Time.time - _lastRequestAt < MinimumDelayBeforePollingNavmesh)
+			{
+				return;
+			}
 
-            
+			_lastRequestAt = Time.time;
+			
+			NextWaypointIndex = 0;
+			
 			// we find the closest position to the starting position on the navmesh
 			_closestStartNavmeshPosition = startingPosition;
 			if (NavMesh.SamplePosition(startingPosition, out _navMeshHit, ClosestPointThreshold, NavMesh.AllAreas))
@@ -175,7 +190,7 @@ namespace MoreMountains.TopDownEngine
 				NextWaypointIndex = 1;
 			}
 
-			OnPathProgress?.Invoke(NextWaypointIndex, Waypoints.Length, Vector3.Distance(this.transform.position, Waypoints[NextWaypointIndex]));
+			InvokeOnPathProgress(NextWaypointIndex, Waypoints.Length, Vector3.Distance(this.transform.position, Waypoints[NextWaypointIndex]));
 		}
         
 		/// <summary>
@@ -203,7 +218,7 @@ namespace MoreMountains.TopDownEngine
 				{
 					NextWaypointIndex = -1;
 				}
-				OnPathProgress?.Invoke(NextWaypointIndex, _waypoints, distance);
+				InvokeOnPathProgress(NextWaypointIndex, _waypoints, distance);
 			}
 		}
 

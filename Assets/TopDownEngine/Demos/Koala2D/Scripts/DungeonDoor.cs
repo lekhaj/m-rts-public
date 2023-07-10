@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// A class used in the Koala demo to handle the dungeon doors
 	/// </summary>
 	[ExecuteInEditMode]
-	public class DungeonDoor : MonoBehaviour
+	public class DungeonDoor : TopDownMonoBehaviour
 	{
 		/// the possible states of the door
 		public enum DoorStates { Open, Closed }

@@ -143,5 +143,17 @@ namespace MoreMountains.FeedbacksForThirdParty
 				TargetAutoBlend.StopBlending();
 			}
 		}
+
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetAutoBlend.RestoreInitialValues();
+		}
 	}
 }

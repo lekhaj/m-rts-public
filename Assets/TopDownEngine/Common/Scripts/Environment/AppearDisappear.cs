@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this class to an object (usually a platform but it could be anything really) to have it run on an appearing/disappearing loop, like the appearing platforms in Megaman for example.
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Environment/Appear and Disappear")]
-	public class AppearDisappear : MonoBehaviour
+	public class AppearDisappear : TopDownMonoBehaviour
 	{
 		/// the possible states this object can be in
 		public enum AppearDisappearStates { Visible, Hidden, VisibleToHidden, HiddenToVisible }

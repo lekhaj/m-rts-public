@@ -322,7 +322,7 @@ namespace MoreMountains.TopDownEngine
 		/// Resizes the collider to the new size set in parameters
 		/// </summary>
 		/// <param name="newSize">New size.</param>
-		public override void ResizeColliderHeight(float newHeight)
+		public override void ResizeColliderHeight(float newHeight, bool translateCenter = false)
 		{
 			float newYOffset = _originalColliderCenter.y - (_originalColliderSize.y - newHeight) / 2;
 			Vector2 newSize = ColliderSize;

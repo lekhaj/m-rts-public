@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// This class handles the display of a winner screen in the Explodudes demo scene
 	/// </summary>
-	public class ExplodudesWinnerScreen : MonoBehaviour, MMEventListener<TopDownEngineEvent>
+	public class ExplodudesWinnerScreen : TopDownMonoBehaviour, MMEventListener<TopDownEngineEvent>
 	{
 		/// the ID of the player we want this screen to appear for
 		[Tooltip("the ID of the player we want this screen to appear for")]

@@ -16,8 +16,9 @@ namespace MoreMountains.TopDownEngine
 		/// the name of the weapon, only used for debugging
 		[Tooltip("the name of the weapon, only used for debugging")]
 		public string WeaponName;
-		/// the possible use modes for the trigger
+		/// the possible use modes for the trigger (semi auto : the Player needs to release the trigger to fire again, auto : the Player can hold the trigger to fire repeatedly
 		public enum TriggerModes { SemiAuto, Auto }
+		
 		/// the possible states the weapon can be in
 		public enum WeaponStates { WeaponIdle, WeaponStart, WeaponDelayBeforeUse, WeaponUse, WeaponDelayBetweenUses, WeaponStop, WeaponReloadNeeded, WeaponReloadStart, WeaponReload, WeaponReloadStop, WeaponInterrupted }
 
@@ -27,6 +28,9 @@ namespace MoreMountains.TopDownEngine
 		public bool WeaponCurrentlyActive = true;
 
 		[MMInspectorGroup("Use", true, 10)]
+		/// if this is true, this weapon will be able to read input (usually via the CharacterHandleWeapon ability), otherwise player input will be disabled
+		[Tooltip("if this is true, this weapon will be able to read input (usually via the CharacterHandleWeapon ability), otherwise player input will be disabled")]
+		public bool InputAuthorized = true;
 		/// is this weapon on semi or full auto ?
 		[Tooltip("is this weapon on semi or full auto ?")]
 		public TriggerModes TriggerMode = TriggerModes.Auto;
@@ -124,8 +128,8 @@ namespace MoreMountains.TopDownEngine
 		public bool PreventAllAimWhileInUse = false;
 
 		[MMInspectorGroup("Recoil", true, 15)]
-		/// the force to apply to push the character back when shooting
-		[Tooltip("the force to apply to push the character back when shooting")]
+		/// the force to apply to push the character back when shooting - positive values will push the character back, negative values will launch it forward, turning that recoil into a thrust
+		[Tooltip("the force to apply to push the character back when shooting - positive values will push the character back, negative values will launch it forward, turning that recoil into a thrust")]
 		public float RecoilForce = 0f;
 
 		[MMInspectorGroup("Animation", true, 16)]
@@ -261,6 +265,7 @@ namespace MoreMountains.TopDownEngine
 		protected int _weaponAngleRelativeAnimationParameter;
 		protected int _aliveAnimationParameter;
 		protected int _comboInProgressAnimationParameter;
+		protected float _lastShootRequestAt;
 
 		/// <summary>
 		/// On start we initialize our weapon
@@ -622,12 +627,18 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		public virtual IEnumerator ShootRequestCo()
 		{
+			if (Time.time - _lastShootRequestAt < TimeBetweenUses)
+			{
+				yield break;
+			}
+			
 			int remainingShots = UseBurstMode ? BurstLength : 1;
 			float interval = UseBurstMode ? BurstTimeBetweenShots : 1;
 
 			while (remainingShots > 0)
 			{
 				ShootRequest();
+				_lastShootRequestAt = Time.time;
 				remainingShots--;
 				yield return MMCoroutine.WaitFor(interval);
 			}
@@ -715,7 +726,7 @@ namespace MoreMountains.TopDownEngine
 		public virtual void WeaponUse()
 		{
 			// apply recoil
-			if ((RecoilForce > 0f) && (_controller != null))
+			if ((RecoilForce != 0f) && (_controller != null))
 			{
 				if (Owner != null)
 				{

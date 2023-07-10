@@ -28,7 +28,7 @@ namespace MoreMountains.TopDownEngine
 	/// Checkpoint class. Will make the player respawn at this point if it dies.
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Spawn/Checkpoint")]
-	public class CheckPoint : MonoBehaviour 
+	public class CheckPoint : TopDownMonoBehaviour 
 	{
 		[Header("Spawn")]
 		[MMInformation("Add this script to a (preferrably empty) GameObject and it'll be added to the level's checkpoint list, allowing you to respawn from there. If you bind it to the LevelManager's starting point, that's where your character will spawn at the start of the level. And here you can decide whether the character should spawn facing left or right.",MMInformationAttribute.InformationType.Info,false)]

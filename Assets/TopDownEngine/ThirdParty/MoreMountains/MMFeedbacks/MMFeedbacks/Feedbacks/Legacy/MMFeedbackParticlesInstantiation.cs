@@ -184,20 +184,20 @@ namespace MoreMountains.Feedbacks
 			if (system != null)
 			{
 				system.Stop();
-			}
 
-			system.transform.position = GetPosition(this.transform.position);
-			if (ApplyRotation)
-			{
-				system.transform.rotation = GetRotation(this.transform);    
-			}
+				system.transform.position = GetPosition(this.transform.position);
+				if (ApplyRotation)
+				{
+					system.transform.rotation = GetRotation(this.transform);    
+				}
 
-			if (ApplyScale)
-			{
-				system.transform.localScale = GetScale(this.transform);    
-			}
+				if (ApplyScale)
+				{
+					system.transform.localScale = GetScale(this.transform);    
+				}
             
-			system.Clear();
+				system.Clear();
+			}
 		}
 
 		/// <summary>

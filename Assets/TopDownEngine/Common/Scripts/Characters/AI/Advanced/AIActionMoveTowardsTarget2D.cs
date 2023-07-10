@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
+using UnityEngine.Serialization;
 
 namespace MoreMountains.TopDownEngine
 {
@@ -12,10 +13,14 @@ namespace MoreMountains.TopDownEngine
 	//[RequireComponent(typeof(CharacterMovement))]
 	public class AIActionMoveTowardsTarget2D : AIAction
 	{
-		/// the minimum distance from the target this Character can reach.
-		[Tooltip("the minimum distance from the target this Character can reach.")]
-		public float MinimumDistance = 1f;
-
+		/// if this is true, movement will be constrained to not overstep a certain distance to the target on the x axis
+		[Tooltip("if this is true, movement will be constrained to not overstep a certain distance to the target on the x axis")]
+		public bool UseMinimumXDistance = true;
+		/// the minimum distance from the target this Character can reach on the x axis.
+		[FormerlySerializedAs("MinimumDistance")] [Tooltip("the minimum distance from the target this Character can reach on the x axis.")]
+		public float MinimumXDistance = 1f;
+		
+		protected Vector2 _direction;
 		protected CharacterMovement _characterMovement;
 		protected int _numberOfJumps = 0;
 
@@ -46,34 +51,43 @@ namespace MoreMountains.TopDownEngine
 			{
 				return;
 			}
-            
-			if (this.transform.position.x < _brain.Target.position.x)
+
+			if (UseMinimumXDistance)
 			{
-				_characterMovement.SetHorizontalMovement(1f);
+				if (this.transform.position.x < _brain.Target.position.x)
+				{
+					_characterMovement.SetHorizontalMovement(1f);
+				}
+				else
+				{
+					_characterMovement.SetHorizontalMovement(-1f);
+				}
+
+				if (this.transform.position.y < _brain.Target.position.y)
+				{
+					_characterMovement.SetVerticalMovement(1f);
+				}
+				else
+				{
+					_characterMovement.SetVerticalMovement(-1f);
+				}
+            
+				if (Mathf.Abs(this.transform.position.x - _brain.Target.position.x) < MinimumXDistance)
+				{
+					_characterMovement.SetHorizontalMovement(0f);
+				}
+
+				if (Mathf.Abs(this.transform.position.y - _brain.Target.position.y) < MinimumXDistance)
+				{
+					_characterMovement.SetVerticalMovement(0f);
+				}
 			}
 			else
 			{
-				_characterMovement.SetHorizontalMovement(-1f);
+				_direction = (_brain.Target.position - this.transform.position).normalized;
+				_characterMovement.SetMovement(_direction);
 			}
-
-			if (this.transform.position.y < _brain.Target.position.y)
-			{
-				_characterMovement.SetVerticalMovement(1f);
-			}
-			else
-			{
-				_characterMovement.SetVerticalMovement(-1f);
-			}
-            
-			if (Mathf.Abs(this.transform.position.x - _brain.Target.position.x) < MinimumDistance)
-			{
-				_characterMovement.SetHorizontalMovement(0f);
-			}
-
-			if (Mathf.Abs(this.transform.position.y - _brain.Target.position.y) < MinimumDistance)
-			{
-				_characterMovement.SetVerticalMovement(0f);
-			}
+			
 		}
 
 		/// <summary>

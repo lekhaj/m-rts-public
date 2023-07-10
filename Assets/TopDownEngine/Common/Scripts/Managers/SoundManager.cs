@@ -141,7 +141,7 @@ namespace MoreMountains.TopDownEngine
 		/// <param name="soundFadeInDuration"></param>
 		/// <returns></returns>
 		public virtual AudioSource PlaySound(AudioClip sfx, Vector3 location, float pitch, float pan, float spatialBlend = 0.0f, float volumeMultiplier = 1.0f, bool loop = false,
-			AudioSource reuseSource = null, AudioMixerGroup audioGroup = null)
+			AudioSource reuseSource = null, AudioMixerGroup audioGroup = null, int priority = 128)
 		{
 			if (!Settings.SfxOn || !sfx)
 			{
@@ -166,7 +166,7 @@ namespace MoreMountains.TopDownEngine
 
 			// we set that audio source clip to the one in paramaters
 			audioSource.clip = sfx;
-
+			audioSource.priority = priority;
 			audioSource.pitch = pitch;
 			audioSource.spatialBlend = spatialBlend;
 			audioSource.panStereo = pan;
@@ -411,9 +411,9 @@ namespace MoreMountains.TopDownEngine
 		/// When we grab a sfx event, we play the corresponding sound
 		/// </summary>
 		/// <param name="sfxEvent"></param>
-		public virtual void OnMMSfxEvent(AudioClip clipToPlay, AudioMixerGroup audioGroup = null, float volume = 1f, float pitch = 1f)
+		public virtual void OnMMSfxEvent(AudioClip clipToPlay, AudioMixerGroup audioGroup = null, float volume = 1f, float pitch = 1f, int priority = 128)
 		{
-			PlaySound(clipToPlay, this.transform.position, pitch, 0.0f, 0.0f, volume, false, audioGroup: audioGroup);
+			PlaySound(clipToPlay, this.transform.position, pitch, 0.0f, 0.0f, volume, false, audioGroup: audioGroup, priority:priority);
 		}
 
 		/// <summary>

@@ -11,7 +11,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Environment/Character Detector")]
 	[RequireComponent(typeof(Collider2D))]
-	public class CharacterDetector : MonoBehaviour
+	public class CharacterDetector : TopDownMonoBehaviour
 	{
 		/// It this is true, the character will have to be tagged Player for this to work
 		[Tooltip("It this is true, the character will have to be tagged Player for this to work")]

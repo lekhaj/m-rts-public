@@ -83,7 +83,7 @@ namespace MoreMountains.TopDownEngine
             
 			if (Input.GetMouseButtonDown(MouseButtonIndex) && !testUI)
 			{
-				Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+				Ray ray = _mainCamera.ScreenPointToRay(InputManager.Instance.MousePosition);
 				Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
 				float distance;
 				if (_playerPlane.Raycast(ray, out distance))

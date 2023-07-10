@@ -112,9 +112,13 @@ namespace MoreMountains.InventoryEngine
 		/// </summary>
 		public virtual void SlotClicked () 
 		{
-			if (ParentInventoryDisplay!=null)
+			if (ParentInventoryDisplay != null)
 			{
 				InventoryItem item = ParentInventoryDisplay.TargetInventory.Content[Index];
+				if (ParentInventoryDisplay.InEquipSelection)
+				{
+					MMInventoryEvent.Trigger(MMInventoryEventType.EquipRequest, this, ParentInventoryDisplay.TargetInventoryName, ParentInventoryDisplay.TargetInventory.Content[Index], 0, Index, ParentInventoryDisplay.PlayerID);
+				}
 				MMInventoryEvent.Trigger(MMInventoryEventType.Click, this, ParentInventoryDisplay.TargetInventoryName, item, 0, Index, ParentInventoryDisplay.PlayerID);
 				// if we're currently moving an object
 				if (InventoryDisplay.CurrentlyBeingMovedItemIndex != -1)

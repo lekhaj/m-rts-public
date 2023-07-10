@@ -40,8 +40,8 @@ namespace MoreMountains.TopDownEngine
 		/// the flip factor to apply if and when the projectile is mirrored
 		[Tooltip("the flip factor to apply if and when the projectile is mirrored")]
 		public Vector3 FlipValue = new Vector3(-1,1,1);
-		/// the flip factor to apply if and when the projectile is mirrored
-		[Tooltip("the flip factor to apply if and when the projectile is mirrored")]
+		/// set this to true if your projectile's model (or sprite) is facing right, false otherwise
+		[Tooltip("set this to true if your projectile's model (or sprite) is facing right, false otherwise")]
 		public bool ProjectileIsFacingRight = true;
 
 		[Header("Spawn")]
@@ -190,7 +190,7 @@ namespace MoreMountains.TopDownEngine
 
 			if (_damageOnTouch != null)
 			{
-				_damageOnTouch.SetScriptDirection(newDirection);
+				_damageOnTouch.SetKnockbackScriptDirection(newDirection);
 			}
 
 			if (FaceMovement)
@@ -253,7 +253,7 @@ namespace MoreMountains.TopDownEngine
 		/// Sets the damage caused by the projectile's DamageOnTouch to the specified value
 		/// </summary>
 		/// <param name="newDamage"></param>
-		public virtual void SetDamage(int minDamage, int maxDamage)
+		public virtual void SetDamage(float minDamage, float maxDamage)
 		{
 			if (_damageOnTouch != null)
 			{

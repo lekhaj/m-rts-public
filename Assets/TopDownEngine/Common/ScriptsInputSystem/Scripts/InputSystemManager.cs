@@ -15,6 +15,8 @@ namespace MoreMountains.TopDownEngine
     {
         /// a set of input actions to use to read input on
         public TopDownEngineInputActions InputActions;
+        /// the position of the mouse
+        public override Vector2 MousePosition => Mouse.current.position.ReadValue();
 
         protected override void Awake()
         {

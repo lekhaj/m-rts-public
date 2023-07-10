@@ -5,7 +5,7 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
 {
-	public class Magnetic : MonoBehaviour
+	public class Magnetic : TopDownMonoBehaviour
 	{
 		/// the possible update modes
 		public enum UpdateModes { Update, FixedUpdate, LateUpdate }
@@ -24,19 +24,9 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("a unique ID for this type of magnetic objects. This can then be used by a MagneticEnabler to target only that specific ID. An ID of 0 will be picked by all MagneticEnablers automatically.")]
 		public int MagneticTypeID = 0;
 
-		[Header("Follow Position")]
-		/// whether or not the object is currently following its target's position
-		[Tooltip("whether or not the object is currently following its target's position")]
-		public bool FollowPosition = true;
-
 		[Header("Target")]
-		/// the target to follow, read only, for debug only
-		[Tooltip("the target to follow, read only, for debug only")]
-		[MMReadOnly]
-		public Transform Target;
 		/// the offset to apply to the followed target
 		[Tooltip("the offset to apply to the followed target")]
-		[MMCondition("FollowPosition", true)]
 		public Vector3 Offset;
 
 		[Header("Position Interpolation")]
@@ -61,6 +51,16 @@ namespace MoreMountains.TopDownEngine
 		/// an object this magnetic object should copy the active state on
 		[Tooltip("an object this magnetic object should copy the active state on")]
 		public GameObject CopyState;
+		
+		[Header("Debug")]
+		/// the target to follow, read only, for debug only
+		[Tooltip("the target to follow, read only, for debug only")]
+		[MMReadOnly]
+		public Transform Target;
+		/// whether or not the object is currently following its target's position
+		[Tooltip("whether or not the object is currently following its target's position")]
+		[MMReadOnly]
+		public bool FollowPosition = true;
 
 		protected Collider2D _collider2D;
 		protected Collider _collider;
@@ -78,7 +78,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			Initialization();
 		}
-		private void OnEnable()
+		protected virtual void OnEnable()
 		{
 			Reset();
 		}
@@ -96,7 +96,7 @@ namespace MoreMountains.TopDownEngine
 
 			Reset();
 		}
-		private void Reset()
+		protected virtual void Reset()
 		{
 			StopFollowing();
 			_speed = 0f;

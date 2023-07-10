@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A class that handles camera follow for Cinemachine powered cameras
 	/// </summary>
-	public class CinemachineCameraController : MonoBehaviour, MMEventListener<MMCameraEvent>, MMEventListener<TopDownEngineEvent>
+	public class CinemachineCameraController : TopDownMonoBehaviour, MMEventListener<MMCameraEvent>, MMEventListener<TopDownEngineEvent>
 	{
 		/// True if the camera should follow the player
 		public bool FollowsPlayer { get; set; }

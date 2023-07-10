@@ -8,13 +8,13 @@ namespace MoreMountains.TopDownEngine
 	/// Adds this component on a weapon with a WeaponAutoAim (2D or 3D) and it will automatically shoot at targets after an optional delay
 	/// To prevent/stop auto shoot, simply disable this component, and enable it again to resume auto shoot
 	/// </summary>
-	public class WeaponAutoShoot : MonoBehaviour
+	public class WeaponAutoShoot : TopDownMonoBehaviour
 	{
 		[Header("Auto Shoot")]
 		/// the delay (in seconds) between acquiring a target and starting shooting at it
 		[Tooltip("the delay (in seconds) between acquiring a target and starting shooting at it")]
 		public float DelayBeforeShootAfterAcquiringTarget = 0.1f;
-        
+		
 		protected WeaponAutoAim _weaponAutoAim;
 		protected Weapon _weapon;
 		protected bool _hasWeaponAndAutoAim;
@@ -42,6 +42,15 @@ namespace MoreMountains.TopDownEngine
 				return;
 			}
 			_hasWeaponAndAutoAim = (_weapon != null) && (_weaponAutoAim != null);
+		}
+
+		/// <summary>
+		/// A public method you can use to update the cached Weapon
+		/// </summary>
+		/// <param name="newWeapon"></param>
+		public virtual void SetCurrentWeapon(Weapon newWeapon)
+		{
+			_weapon = newWeapon;
 		}
         
 		/// <summary>

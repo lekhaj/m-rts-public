@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this class to a GameObject to have it play a background music when instanciated.
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Sound/BackgroundMusic")]
-	public class BackgroundMusic : MonoBehaviour
+	public class BackgroundMusic : TopDownMonoBehaviour
 	{
 		/// the background music
 		[Tooltip("the audio clip to use as background music")]

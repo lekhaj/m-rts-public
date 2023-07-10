@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this class to a weapon and it'll project a laser ray towards the direction the weapon is facing
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Weapons/Weapon Laser Sight")]
-	public class WeaponLaserSight : MonoBehaviour 
+	public class WeaponLaserSight : TopDownMonoBehaviour 
 	{
 		/// the possible modes this weapon laser sight can run on, 3D by default
 		public enum Modes { TwoD, ThreeD }

@@ -14,9 +14,9 @@ namespace MoreMountains.TopDownEngine
 	/// Rooms are useful if you want to cut your level into portions (think Super Metroid or Hollow Knight for example).
 	/// These rooms will require their own virtual camera, and a confiner to define their size. 
 	/// Note that the confiner is different from the collider that defines the room.
-	/// You can see an example of rooms in action in the RetroVania demo scene.
+	/// You can see an example of rooms in action in the KoalaRooms demo scene.
 	/// </summary>
-	public class Room : MonoBehaviour, MMEventListener<TopDownEngineEvent>
+	public class Room : TopDownMonoBehaviour, MMEventListener<TopDownEngineEvent>
 	{
 		public enum Modes { TwoD, ThreeD }
 
@@ -130,7 +130,10 @@ namespace MoreMountains.TopDownEngine
 		protected virtual void Awake()
 		{
 			#if MM_CINEMACHINE
-			VirtualCamera.Priority = 0;
+			if (VirtualCamera != null)
+			{
+				VirtualCamera.Priority = 0;	
+			}
 			#endif
 		}
         
@@ -237,13 +240,19 @@ namespace MoreMountains.TopDownEngine
 							0f, MMTween.MMTweenCurve.LinearTween);
 
 						PlayerEntersRoom();
-						VirtualCamera.Priority = 10;
-						VirtualCamera.enabled = true;
+						if (VirtualCamera != null)
+						{
+							VirtualCamera.Priority = 10;
+							VirtualCamera.enabled = true;	
+						}
 					}
 					else
 					{
-						VirtualCamera.Priority = 0;
-						VirtualCamera.enabled = false;
+						if (VirtualCamera != null)
+						{
+							VirtualCamera.Priority = 0;
+							VirtualCamera.enabled = false;	
+						}
 					}
 				}
 			}

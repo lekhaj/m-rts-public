@@ -13,6 +13,8 @@ namespace MoreMountains.Feedbacks
 	[FeedbackPath("GameObject/MMRadioSignal")]
 	public class MMF_RadioSignal : MMF_Feedback
 	{
+		/// a static bool used to disable all feedbacks of this type at once
+		public static bool FeedbackTypeAuthorized = true;
         
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.GameObjectColor; } }
@@ -23,6 +25,7 @@ namespace MoreMountains.Feedbacks
         
 		/// the duration of this feedback is the duration of the light, or 0 if instant
 		public override float FeedbackDuration { get { return 0f; } }
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Radio Signal", true, 72)]
 		/// The target MMRadioSignal to trigger
@@ -46,11 +49,11 @@ namespace MoreMountains.Feedbacks
 		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
 		{
-			if (Active)
+			if (Active && FeedbackTypeAuthorized)
 			{
 				if (TargetSignal != null)
 				{
-					float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+					float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
                     
 					TargetSignal.Duration = Duration;
 					TargetSignal.GlobalMultiplier = GlobalMultiplier * intensityMultiplier;
@@ -60,6 +63,11 @@ namespace MoreMountains.Feedbacks
 			}
 		}
 
+		/// <summary>
+		/// On Stop, stops the target signal
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1)
 		{
 			base.CustomStopFeedback(position, feedbacksIntensity);
@@ -69,6 +77,23 @@ namespace MoreMountains.Feedbacks
 				{
 					TargetSignal.Stop();
 				}
+			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			if (TargetSignal != null)
+			{
+				TargetSignal.Stop();
+				TargetSignal.ApplyLevel(0f);
 			}
 		}
 	}

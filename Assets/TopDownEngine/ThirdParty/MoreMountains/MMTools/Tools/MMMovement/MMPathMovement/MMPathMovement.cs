@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
+using Random = UnityEngine.Random;
 
 namespace MoreMountains.Tools
 {
@@ -12,36 +14,15 @@ namespace MoreMountains.Tools
 	public class MMPathMovement : MonoBehaviour 
 	{
 		/// the possible movement types
-		public enum PossibleAccelerationType
-		{
-			ConstantSpeed,
-			EaseOut,
-			AnimationCurve
-		}
-
+		public enum PossibleAccelerationType { ConstantSpeed, EaseOut, AnimationCurve }
 		/// the possible cycle options
-		public enum CycleOptions
-		{
-			BackAndForth,
-			Loop,
-			OnlyOnce,
-			StopAtBounds,
-			Random
-		}
-
+		public enum CycleOptions { BackAndForth, Loop, OnlyOnce, StopAtBounds, Random }
 		/// the possible movement directions
-		public enum MovementDirection
-		{
-			Ascending,
-			Descending
-		}
-
-		public enum UpdateModes
-		{
-			Update,
-			FixedUpdate,
-			LateUpdate
-		}
+		public enum MovementDirection { Ascending, Descending }
+		/// whether progress on the pass should be made at update, fixed update or late update
+		public enum UpdateModes { Update, FixedUpdate, LateUpdate }
+		/// whether to align the path on nothing, this object's rotation, or this object's parent's rotation
+		public enum AlignmentModes { None, ThisRotation, ParentRotation }
 
 		[Header("Path")]
 		[MMInformation("Here you can select the '<b>Cycle Option</b>'. Back and Forth will have your object follow the path until its end, and go back to the original point. If you select Loop, the path will be closed and the object will move along it until told otherwise. If you select Only Once, the object will move along the path from the first to the last point, and remain there forever.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
@@ -49,34 +30,46 @@ namespace MoreMountains.Tools
 
 		[MMInformation("Add points to the <b>Path</b> (set the size of the path first), then position the points using either the inspector or by moving the handles directly in scene view. For each path element you can specify a delay (in seconds). The order of the points will be the order the object follows.\nFor looping paths, you can then decide if the object will go through the points in the Path in Ascending (1, 2, 3...) or Descending (Last, Last-1, Last-2...) order.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
 		/// the initial movement direction : ascending > will go from the points 0 to 1, 2, etc ; descending > will go from the last point to last-1, last-2, etc
+		[Tooltip("the initial movement direction : ascending > will go from the points 0 to 1, 2, etc ; descending > will go from the last point to last-1, last-2, etc")]
 		public MovementDirection LoopInitialMovementDirection = MovementDirection.Ascending;
 		/// the points that make up the path the object will follow
+		[Tooltip("the points that make up the path the object will follow")]
 		public List<MMPathMovementElement> PathElements;
 
+		[Header("Path Alignment")] 
+		/// whether to align the path on nothing, this object's rotation, or this object's parent's rotation
+		[Tooltip("whether to align the path on nothing, this object's rotation, or this object's parent's rotation")]
+		public AlignmentModes AlignmentMode = AlignmentModes.None;
+		
 		[Header("Movement")]
 		[MMInformation("Set the <b>speed</b> at which the path will be crawled, and if the movement should be constant or eased.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
 		/// the movement speed
+		[Tooltip("the movement speed")]
 		public float MovementSpeed = 1;
 		/// returns the current speed at which the object is traveling
 		public Vector3 CurrentSpeed { get; protected set; }
 		/// the movement type of the object
+		[Tooltip("the movement type of the object")]
 		public PossibleAccelerationType AccelerationType = PossibleAccelerationType.ConstantSpeed;
-		/// the acceleration to apply to an object traveling between two points of the path. 
+		/// the acceleration to apply to an object traveling between two points of the path.
+		[Tooltip("the acceleration to apply to an object traveling between two points of the path.")] 
 		public AnimationCurve Acceleration = new AnimationCurve(new Keyframe(0,1f),new Keyframe(1f,0f));
 		/// the chosen update mode (update, fixed update, late update)
+		[Tooltip("the chosen update mode (update, fixed update, late update)")]
 		public UpdateModes UpdateMode = UpdateModes.Update;
 
 		[Header("Settings")]
 		[MMInformation("The <b>MinDistanceToGoal</b> is used to check if we've (almost) reached a point in the Path. The 2 other settings here are for debug only, don't change them.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
 		/// the minimum distance to a point at which we'll arbitrarily decide the point's been reached
+		[Tooltip("the minimum distance to a point at which we'll arbitrarily decide the point's been reached")]
 		public float MinDistanceToGoal = .1f;
 		/// the original position of the transform, hidden and shouldn't be accessed
+		[Tooltip("the original position of the transform, hidden and shouldn't be accessed")]
 		protected Vector3 _originalTransformPosition;
-		/// internal flag, hidden and shouldn't be accessed
-		protected bool _originalTransformPositionStatus=false;
 		/// if this is true, the object can move along the path
 		public virtual bool CanMove { get; set; }
         
+		protected bool _originalTransformPositionStatus = false;
 		protected bool _active=false;
 		protected IEnumerator<Vector3> _currentPoint;
 		protected int _direction = 1;
@@ -153,7 +146,7 @@ namespace MoreMountains.Tools
 				_originalTransformPositionStatus = true;
 				_originalTransformPosition = transform.position;
 			}
-			transform.position = _originalTransformPosition + _currentPoint.Current;
+			transform.position = PointPosition(_currentPoint.Current);
 		}
 
 		protected virtual void FixedUpdate()
@@ -237,7 +230,7 @@ namespace MoreMountains.Tools
 			MoveAlongThePath();
 
 			// we decide if we've reached our next destination or not, if yes, we move our destination to the next point 
-			_distanceToNextPoint = (transform.position - (_originalTransformPosition + _currentPoint.Current)).magnitude;
+			_distanceToNextPoint = (transform.position - (PointPosition(_currentPoint.Current))).magnitude;
 			if(_distanceToNextPoint < MinDistanceToGoal)
 			{
 				//we check if we need to wait
@@ -272,11 +265,11 @@ namespace MoreMountains.Tools
 			switch (AccelerationType)
 			{
 				case PossibleAccelerationType.ConstantSpeed:
-					transform.position = Vector3.MoveTowards (transform.position, _originalTransformPosition + _currentPoint.Current, Time.deltaTime * MovementSpeed);
+					transform.position = Vector3.MoveTowards (transform.position, PointPosition(_currentPoint.Current), Time.deltaTime * MovementSpeed);
 					break;
 				
 				case PossibleAccelerationType.EaseOut:
-					transform.position = Vector3.Lerp (transform.position, _originalTransformPosition + _currentPoint.Current, Time.deltaTime * MovementSpeed);
+					transform.position = Vector3.Lerp (transform.position, PointPosition(_currentPoint.Current), Time.deltaTime * MovementSpeed);
 					break;
 
 				case PossibleAccelerationType.AnimationCurve:
@@ -290,7 +283,7 @@ namespace MoreMountains.Tools
 					float remappedDistance = 1 - MMMaths.Remap (_distanceToNextPoint, 0f, distanceBetweenPoints, 0f, 1f);
 					float speedFactor = Acceleration.Evaluate (remappedDistance);
 
-					transform.position = Vector3.MoveTowards (transform.position, _originalTransformPosition + _currentPoint.Current, Time.deltaTime * MovementSpeed * speedFactor);
+					transform.position = Vector3.MoveTowards (transform.position, PointPosition(_currentPoint.Current), Time.deltaTime * MovementSpeed * speedFactor);
 					break;
 			}
 		}
@@ -403,7 +396,7 @@ namespace MoreMountains.Tools
 		/// </summary>
 		public virtual void ChangeDirection()
 		{
-			_direction = - _direction;
+			_direction = -_direction;
 			_currentPoint.MoveNext();
 		}
 
@@ -413,56 +406,73 @@ namespace MoreMountains.Tools
 		protected virtual void OnDrawGizmos()
 		{	
 			#if UNITY_EDITOR
-			if (PathElements==null)
+			if (PathElements == null)
 			{
 				return;
 			}
 
-			if (PathElements.Count==0)
+			if (PathElements.Count == 0)
 			{
 				return;
 			}
 							
 			// if we haven't stored the object's original position yet, we do it
-			if (_originalTransformPositionStatus==false)
+			if (_originalTransformPositionStatus == false)
 			{
-				_originalTransformPosition=transform.position;
-				_originalTransformPositionStatus=true;
+				_originalTransformPosition = this.transform.position;
+				_originalTransformPositionStatus = true;
 			}
 			// if we're not in runtime mode and the transform has changed, we update our position
 			if (transform.hasChanged && _active==false)
 			{
-				_originalTransformPosition=transform.position;
+				_originalTransformPosition = this.transform.position;
 			}
 			// for each point in the path
 			for (int i=0;i<PathElements.Count;i++)
 			{
 				// we draw a green point 
-				MMDebug.DrawGizmoPoint(_originalTransformPosition+PathElements[i].PathElementPosition,0.2f,Color.green);
+				MMDebug.DrawGizmoPoint(PointPosition(i),0.2f,Color.green);
 
 				// we draw a line towards the next point in the path
 				if ((i+1)<PathElements.Count)
 				{
 					Gizmos.color=Color.white;
-					Gizmos.DrawLine(_originalTransformPosition+PathElements[i].PathElementPosition,_originalTransformPosition+PathElements[i+1].PathElementPosition);
+					Gizmos.DrawLine(PointPosition(i), PointPosition(i + 1));
 				}
 				// we draw a line from the first to the last point if we're looping
 				if ( (i == PathElements.Count-1) && (CycleOption == CycleOptions.Loop) )
 				{
 					Gizmos.color=Color.white;
-					Gizmos.DrawLine(_originalTransformPosition+PathElements[0].PathElementPosition,_originalTransformPosition+PathElements[i].PathElementPosition);
+					Gizmos.DrawLine(PointPosition(0), PointPosition(i));
 				}
 			}
 
 			// if the game is playing, we add a blue point to the destination, and a red point to the last visited point
 			if (Application.isPlaying)
 			{
-				MMDebug.DrawGizmoPoint(_originalTransformPosition + _currentPoint.Current,0.2f,Color.blue);
-				MMDebug.DrawGizmoPoint(_originalTransformPosition + _previousPoint,0.2f,Color.red);
+				MMDebug.DrawGizmoPoint(PointPosition(_currentPoint.Current), 0.2f, Color.blue);
+				MMDebug.DrawGizmoPoint(PointPosition(_previousPoint),0.2f,Color.red);
 			}
 			#endif
+		}
 
+		public virtual Vector3 PointPosition(int index)
+		{
+			return PointPosition(PathElements[index].PathElementPosition);
+		}
 
+		public virtual Vector3 PointPosition(Vector3 relativePointPosition)
+		{
+			switch (AlignmentMode)
+			{
+				case AlignmentModes.None:
+					return _originalTransformPosition + relativePointPosition;
+				case AlignmentModes.ThisRotation:
+					return _originalTransformPosition + this.transform.rotation *  relativePointPosition;
+				case AlignmentModes.ParentRotation:
+					return _originalTransformPosition + this.transform.parent.rotation *  relativePointPosition;
+			}
+			return Vector3.zero;
 		}
 
 		/// <summary>

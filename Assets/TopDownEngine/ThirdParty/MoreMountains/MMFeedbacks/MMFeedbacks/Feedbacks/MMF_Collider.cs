@@ -33,6 +33,8 @@ namespace MoreMountains.Feedbacks
 		/// the effect the feedback will have on the target collider's status 
 		public Modes Mode = Modes.Disable;
 
+		protected bool _initialState;
+
 		/// <summary>
 		/// On Play we change the state of our collider if needed
 		/// </summary>
@@ -59,25 +61,64 @@ namespace MoreMountains.Feedbacks
 			switch (mode)
 			{
 				case Modes.Enable:
+					_initialState = TargetCollider.enabled;
 					TargetCollider.enabled = true;
 					break;
 				case Modes.Disable:
+					_initialState = TargetCollider.enabled;
 					TargetCollider.enabled = false;
 					break;
 				case Modes.ToggleActive:
+					_initialState = TargetCollider.enabled;
 					TargetCollider.enabled = !TargetCollider.enabled;
 					break;
 				case Modes.Trigger:
+					_initialState = TargetCollider.isTrigger;
 					TargetCollider.isTrigger = true;
 					break;
 				case Modes.NonTrigger:
+					_initialState = TargetCollider.isTrigger;
 					TargetCollider.isTrigger = false;
 					break;
 				case Modes.ToggleTrigger:
+					_initialState = TargetCollider.isTrigger;
 					TargetCollider.isTrigger = !TargetCollider.isTrigger;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			switch (Mode)
+			{
+				case Modes.Enable:
+					TargetCollider.enabled = _initialState;
+					break;
+				case Modes.Disable:
+					TargetCollider.enabled = _initialState;
+					break;
+				case Modes.ToggleActive:
+					TargetCollider.enabled = _initialState;
+					break;
+				case Modes.Trigger:
+					TargetCollider.isTrigger = _initialState;
+					break;
+				case Modes.NonTrigger:
+					TargetCollider.isTrigger = _initialState;
+					break;
+				case Modes.ToggleTrigger:
+					TargetCollider.isTrigger = _initialState;
+					break;
 			}
 		}
 	}

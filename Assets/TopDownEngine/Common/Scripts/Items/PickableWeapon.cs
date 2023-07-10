@@ -33,9 +33,9 @@ namespace MoreMountains.TopDownEngine
 				return;
 			}
 			
-			if (_characterHandleWeapon  != null)
+			if (_characterHandleWeapon != null)
 			{
-				_characterHandleWeapon .ChangeWeapon(WeaponToGive, WeaponToGive.WeaponName);
+				_characterHandleWeapon.ChangeWeapon(WeaponToGive, WeaponToGive.WeaponName);
 			}
 		}
 

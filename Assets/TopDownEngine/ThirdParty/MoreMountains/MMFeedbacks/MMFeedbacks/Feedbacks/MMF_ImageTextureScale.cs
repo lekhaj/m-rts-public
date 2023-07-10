@@ -24,6 +24,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return TargetImage != null ? TargetImage.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetImage be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasRandomness => true;
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant }
@@ -114,7 +115,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
 			switch (Mode)
 			{

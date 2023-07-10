@@ -181,6 +181,8 @@ namespace MoreMountains.InventoryEngine
 		public InventoryDisplay ReturnInventory { get; protected set; }	
 		/// whether this inventory display is open or not
 		public bool IsOpen { get; protected set; }
+		
+		public bool InEquipSelection { get; set; }
 
 		/// the item currently being moved
 
@@ -255,6 +257,7 @@ namespace MoreMountains.InventoryEngine
 		{
 			// we create a spriteState to specify our various button states
 			_spriteState.disabledSprite = DisabledSlotImage;
+			_spriteState.selectedSprite = HighlightedSlotImage;
 			_spriteState.highlightedSprite = HighlightedSlotImage;
 			_spriteState.pressedSprite = PressedSlotImage;
 		}
@@ -760,15 +763,16 @@ namespace MoreMountains.InventoryEngine
 		/// </summary>
 		public virtual void ReturnInventoryFocus()
 		{
-			if (ReturnInventory==null)
+			if (ReturnInventory == null)
 			{
 				return;
 			}
 			else
 			{
+				InEquipSelection = false;
 				ResetDisabledStates();
 				ReturnInventory.Focus();
-				ReturnInventory=null;
+				ReturnInventory = null;
 			}
 		}
 
@@ -853,6 +857,7 @@ namespace MoreMountains.InventoryEngine
 						TargetChoiceInventory.DisableAllBut (this.ItemClass);
 						// we set the focus on the target inventory
 						TargetChoiceInventory.Focus ();
+						TargetChoiceInventory.InEquipSelection = true;
 						// we set the return focus inventory
 						TargetChoiceInventory.SetReturnInventory (this);
 					}

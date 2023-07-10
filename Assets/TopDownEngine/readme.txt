@@ -1,5 +1,5 @@
 TopDown Engine
-v3.0
+v3.1.1
 
 The TopDown Engine is a complete Unity 2D and 3D top down game engine.
 Basically it'll allow you to create your own top down game.
@@ -42,3 +42,8 @@ DOCUMENTATION
 
 A complete documentation is available for this asset, go to https://topdown-engine-docs.moremountains.com/API/ for a complete API documentation, or https://topdown-engine-docs.moremountains.com/ for a functional one
 
+2D EXTRAS
+---------
+
+Some of the demos in the engine use tilemaps and rely on Unity's 2D extras. If you want to enjoy these demos, make sure you install them.
+You can learn more about how to do that at https://topdown-engine-docs.moremountains.com/install.html#tilemaps-and-2d-extras

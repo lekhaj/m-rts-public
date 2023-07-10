@@ -20,6 +20,7 @@ namespace MoreMountains.Feedbacks
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.RendererColor; } }
 		public override string RequiredTargetText { get { return Mode.ToString();  } }
 		#endif
+		public override bool HasRandomness => true;
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant }
@@ -104,6 +105,10 @@ namespace MoreMountains.Feedbacks
 		public override float FeedbackDuration { get { return (Mode == Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { if (Mode != Modes.Instant) { Duration = value; } } }
         
 		protected Coroutine _coroutine;
+		protected Color _initialColor;
+		protected float _initialStartDistance;
+		protected float _initialEndDistance;
+		protected float _initialDensity;
 
 		/// <summary>
 		/// On Play we change the values of our fog
@@ -116,8 +121,13 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+			
+			_initialColor = RenderSettings.fogColor;
+			_initialStartDistance = RenderSettings.fogStartDistance;
+			_initialEndDistance = RenderSettings.fogEndDistance;
+			_initialDensity = RenderSettings.fogDensity;
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			switch (Mode)
 			{
 				case Modes.Instant:
@@ -216,6 +226,22 @@ namespace MoreMountains.Feedbacks
 			IsPlaying = false;
 			Owner.StopCoroutine(_coroutine);
 			_coroutine = null;
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			RenderSettings.fogColor = _initialColor;
+			RenderSettings.fogStartDistance = _initialStartDistance;
+			RenderSettings.fogEndDistance = _initialEndDistance;
+			RenderSettings.fogDensity = _initialDensity;
 		}
 	}
 }

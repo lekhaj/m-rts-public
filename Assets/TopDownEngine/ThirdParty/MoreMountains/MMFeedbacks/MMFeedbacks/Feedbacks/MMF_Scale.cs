@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -26,6 +27,7 @@ namespace MoreMountains.Feedbacks
 		public override bool EvaluateRequiresSetup() { return (AnimateScaleTarget == null); }
 		public override string RequiredTargetText { get { return AnimateScaleTarget != null ? AnimateScaleTarget.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that an AnimateScaleTarget be set to be able to work properly. You can set one below."; } }
+		public override bool HasCustomInspectors { get { return true; } }
 		#endif
 
 		[MMFInspectorGroup("Scale Mode", true, 12, true)]
@@ -62,21 +64,21 @@ namespace MoreMountains.Feedbacks
 		/// the x scale animation definition
 		[Tooltip("the x scale animation definition")]
 		[MMFCondition("AnimateX", true)]
-		public AnimationCurve AnimateScaleX = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0));
+		public MMTweenType AnimateScaleTweenX = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)));
 		/// if this is true, should animate the Y scale value
 		[Tooltip("if this is true, should animate the Y scale value")]
 		public bool AnimateY = true;
 		/// the y scale animation definition
 		[Tooltip("the y scale animation definition")]
 		[MMFCondition("AnimateY", true)]
-		public AnimationCurve AnimateScaleY = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0));
+		public MMTweenType AnimateScaleTweenY = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)));
 		/// if this is true, should animate the z scale value
 		[Tooltip("if this is true, should animate the z scale value")]
 		public bool AnimateZ = true;
 		/// the z scale animation definition
 		[Tooltip("the z scale animation definition")]
 		[MMFCondition("AnimateZ", true)]
-		public AnimationCurve AnimateScaleZ = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0));
+		public MMTweenType AnimateScaleTweenZ = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)));
 		/// if this is true, the AnimateX curve only will be used, and applied to all axis
 		[Tooltip("if this is true, the AnimateX curve only will be used, and applied to all axis")] 
 		public bool UniformScaling = false;
@@ -93,7 +95,15 @@ namespace MoreMountains.Feedbacks
 
 		/// the duration of this feedback is the duration of the scale animation
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(AnimateScaleDuration); } set { AnimateScaleDuration = value; } }
+		public override bool HasRandomness => true;
 
+		/// [DEPRECATED] the x scale animation definition
+		[HideInInspector] public AnimationCurve AnimateScaleX = null;
+		/// [DEPRECATED] the y scale animation definition
+		[HideInInspector] public AnimationCurve AnimateScaleY = null;
+		/// [DEPRECATED] the z scale animation definition
+		[HideInInspector] public AnimationCurve AnimateScaleZ = null;
+		
 		protected Vector3 _initialScale;
 		protected Vector3 _newScale;
 		protected Coroutine _coroutine;
@@ -136,7 +146,7 @@ namespace MoreMountains.Feedbacks
 				GetInitialScale();
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			if (Active || Owner.AutoPlayOnEnable)
 			{
 				if ((Mode == Modes.Absolute) || (Mode == Modes.Additive))
@@ -145,7 +155,7 @@ namespace MoreMountains.Feedbacks
 					{
 						return;
 					}
-					_coroutine = Owner.StartCoroutine(AnimateScale(AnimateScaleTarget, Vector3.zero, FeedbackDuration, AnimateScaleX, AnimateScaleY, AnimateScaleZ, RemapCurveZero * intensityMultiplier, RemapCurveOne * intensityMultiplier));
+					_coroutine = Owner.StartCoroutine(AnimateScale(AnimateScaleTarget, Vector3.zero, FeedbackDuration, AnimateScaleTweenX, AnimateScaleTweenY, AnimateScaleTweenZ, RemapCurveZero * intensityMultiplier, RemapCurveOne * intensityMultiplier));
 				}
 				if (Mode == Modes.ToDestination)
 				{
@@ -169,7 +179,7 @@ namespace MoreMountains.Feedbacks
 				yield break;
 			}
 
-			if ((AnimateScaleX == null) || (AnimateScaleY == null) || (AnimateScaleZ == null))
+			if ((AnimateScaleTweenX == null) || (AnimateScaleTweenY == null) || (AnimateScaleTweenZ == null))
 			{
 				yield break;
 			}
@@ -183,26 +193,26 @@ namespace MoreMountains.Feedbacks
 
 			_initialScale = AnimateScaleTarget.localScale;
 			_newScale = _initialScale;
-
+			IsPlaying = true;
 			while ((journey >= 0) && (journey <= FeedbackDuration) && (FeedbackDuration > 0))
 			{
 				float percent = Mathf.Clamp01(journey / FeedbackDuration);
 
 				if (AnimateX)
 				{
-					_newScale.x = Mathf.LerpUnclamped(_initialScale.x, DestinationScale.x, AnimateScaleX.Evaluate(percent) + Offset);
-					_newScale.x = MMFeedbacksHelpers.Remap(_newScale.x, 0f, 1f, RemapCurveZero, RemapCurveOne);    
+					_newScale.x = Mathf.LerpUnclamped(_initialScale.x, DestinationScale.x, AnimateScaleTweenX.Evaluate(percent) + Offset);
+					_newScale.x = MMFeedbacksHelpers.Remap(_newScale.x, 0f, 1f, RemapCurveZero, RemapCurveOne);
 				}
 
 				if (AnimateY)
 				{
-					_newScale.y = Mathf.LerpUnclamped(_initialScale.y, DestinationScale.y, AnimateScaleY.Evaluate(percent) + Offset);
+					_newScale.y = Mathf.LerpUnclamped(_initialScale.y, DestinationScale.y, AnimateScaleTweenY.Evaluate(percent) + Offset);
 					_newScale.y = MMFeedbacksHelpers.Remap(_newScale.y, 0f, 1f, RemapCurveZero, RemapCurveOne);    
 				}
 
 				if (AnimateZ)
 				{
-					_newScale.z = Mathf.LerpUnclamped(_initialScale.z, DestinationScale.z, AnimateScaleZ.Evaluate(percent) + Offset);
+					_newScale.z = Mathf.LerpUnclamped(_initialScale.z, DestinationScale.z, AnimateScaleTweenZ.Evaluate(percent) + Offset);
 					_newScale.z = MMFeedbacksHelpers.Remap(_newScale.z, 0f, 1f, RemapCurveZero, RemapCurveOne);    
 				}
 
@@ -221,6 +231,7 @@ namespace MoreMountains.Feedbacks
 
 			AnimateScaleTarget.localScale = NormalPlayDirection ? DestinationScale : _initialScale;
 			_coroutine = null;
+			IsPlaying = false;
 			yield return null;
 		}
 
@@ -235,7 +246,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="curveZ"></param>
 		/// <param name="multiplier"></param>
 		/// <returns></returns>
-		protected virtual IEnumerator AnimateScale(Transform targetTransform, Vector3 vector, float duration, AnimationCurve curveX, AnimationCurve curveY, AnimationCurve curveZ, float remapCurveZero = 0f, float remapCurveOne = 1f)
+		protected virtual IEnumerator AnimateScale(Transform targetTransform, Vector3 vector, float duration, MMTweenType curveX, MMTweenType curveY, MMTweenType curveZ, float remapCurveZero = 0f, float remapCurveOne = 1f)
 		{
 			if (targetTransform == null)
 			{
@@ -256,6 +267,8 @@ namespace MoreMountains.Feedbacks
             
 			_initialScale = targetTransform.localScale;
             
+			IsPlaying = true;
+			
 			while ((journey >= 0) && (journey <= duration) && (duration > 0))
 			{
 				vector = Vector3.zero;
@@ -367,6 +380,7 @@ namespace MoreMountains.Feedbacks
 			}
             
 			targetTransform.localScale = vector;
+			IsPlaying = false;
 			_coroutine = null;
 			yield return null;
 		}
@@ -382,7 +396,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-            
+			IsPlaying = false;
 			Owner.StopCoroutine(_coroutine);
 			_coroutine = null;
             
@@ -394,6 +408,29 @@ namespace MoreMountains.Feedbacks
 		public override void OnDisable()
 		{
 			_coroutine = null;
+		}
+		
+		/// <summary>
+		/// On Validate, we migrate our deprecated animation curves to our tween types if needed
+		/// </summary>
+		public override void OnValidate()
+		{
+			base.OnValidate();
+			MMFeedbacksHelpers.MigrateCurve(AnimateScaleX, AnimateScaleTweenX, Owner);
+			MMFeedbacksHelpers.MigrateCurve(AnimateScaleY, AnimateScaleTweenY, Owner);
+			MMFeedbacksHelpers.MigrateCurve(AnimateScaleZ, AnimateScaleTweenZ, Owner);
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			AnimateScaleTarget.localScale = _initialScale;
 		}
 	}
 }

@@ -443,6 +443,36 @@ namespace MoreMountains.TopDownEngine
 		{
 			StoredCharacter = null;
 		}
+		
+		/// <summary>
+		/// Sets a new persistent character
+		/// </summary>
+		/// <param name="newCharacter"></param>
+		public virtual void SetPersistentCharacter(Character newCharacter)
+		{
+			PersistentCharacter = newCharacter;
+		}
+		
+		/// <summary>
+		/// Destroys a persistent character if there's one
+		/// </summary>
+		public virtual void DestroyPersistentCharacter()
+		{
+			if (PersistentCharacter != null)
+			{
+				Destroy(PersistentCharacter.gameObject);
+				SetPersistentCharacter(null);
+			}
+			
+
+			if (LevelManager.Instance.Players[0] != null)
+			{
+				if (LevelManager.Instance.Players[0].gameObject.MMGetComponentNoAlloc<CharacterPersistence>() != null)
+				{
+					Destroy(LevelManager.Instance.Players[0].gameObject);	
+				}
+			}
+		}
 
 		/// <summary>
 		/// Catches MMGameEvents and acts on them, playing the corresponding sounds

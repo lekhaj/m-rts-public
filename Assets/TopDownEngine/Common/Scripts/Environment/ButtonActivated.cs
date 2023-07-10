@@ -4,7 +4,7 @@ using MoreMountains.Tools;
 using MoreMountains.Feedbacks;
 using System.Collections.Generic;
 using UnityEngine.Events;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -14,7 +14,7 @@ namespace MoreMountains.TopDownEngine
 	/// Extend this class to activate something when a button is pressed in a certain zone
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Environment/Button Activated")]
-	public class ButtonActivated : MonoBehaviour 
+	public class ButtonActivated : TopDownMonoBehaviour 
 	{
 		public enum ButtonActivatedRequirements { Character, ButtonActivator, Either, None }
 		public enum InputTypes { Default, Button, Key }
@@ -31,7 +31,6 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("if this is true, this zone can only be activated if the character has the required ability")]
 		public bool RequiresButtonActivationAbility = true;
         
-
 		[Header("Activation Conditions")]
 
 		[MMInformation("Here you can specific how that zone is interacted with. You can have it auto activate, activate only when grounded, or prevent its activation altogether.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
@@ -58,6 +57,9 @@ namespace MoreMountains.TopDownEngine
 		/// if this is true, enter won't be retriggered if another object enters, and exit will only be triggered when the last object exits
 		[Tooltip("if this is true, enter won't be retriggered if another object enters, and exit will only be triggered when the last object exits")]
 		public bool OnlyOneActivationAtOnce = true;
+		/// a layermask with all the layers that can interact with this specific button activated zone
+		[Tooltip("a layermask with all the layers that can interact with this specific button activated zone")]
+		public LayerMask TargetLayerMask = ~0;
 
 		[Header("Number of Activations")]
 
@@ -80,7 +82,7 @@ namespace MoreMountains.TopDownEngine
 		/// the selected input type (default, button or key)
 		[Tooltip("the selected input type (default, button or key)")]
 		public InputTypes InputType = InputTypes.Default;
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			/// the input action to use for this button activated object
 			public InputAction InputSystemAction;
 		#else
@@ -187,7 +189,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			get
 			{
-				#if ENABLE_INPUT_SYSTEM
+				#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 					return InputSystemAction.WasPerformedThisFrame();
 				#else
 					return false;
@@ -223,7 +225,7 @@ namespace MoreMountains.TopDownEngine
 				ShowPrompt();
 			}
 			
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				InputSystemAction.Enable();
 			#endif
 		}
@@ -231,9 +233,9 @@ namespace MoreMountains.TopDownEngine
 		/// <summary>
 		/// On disable we disable our input action if needed
 		/// </summary>
-		protected void OnDisable()
+		protected virtual void OnDisable()
 		{
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				InputSystemAction.Disable();
 			#endif
 		}
@@ -631,6 +633,11 @@ namespace MoreMountains.TopDownEngine
 		/// <param name="characterButtonActivation">Character button activation.</param>
 		protected virtual bool CheckConditions(GameObject collider)
 		{
+			if (!MMLayers.LayerInLayerMask(collider.layer, TargetLayerMask))
+			{
+				return false;
+			}
+			
 			Character character = collider.gameObject.MMGetComponentNoAlloc<Character>();
 
 			switch (ButtonActivatedRequirement)

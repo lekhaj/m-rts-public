@@ -77,17 +77,17 @@ namespace MoreMountains.Feedbacks
 			TargetWiggle.enabled = true;
 			if (WigglePosition)
 			{
-				TargetWiggle.PositionWiggleProperties.UseUnscaledTime = Timing.TimescaleMode == TimescaleModes.Unscaled;
+				TargetWiggle.PositionWiggleProperties.UseUnscaledTime = !InScaledTimescaleMode;
 				TargetWiggle.WigglePosition(ApplyTimeMultiplier(WigglePositionDuration));
 			}
 			if (WiggleRotation)
 			{
-				TargetWiggle.RotationWiggleProperties.UseUnscaledTime = Timing.TimescaleMode == TimescaleModes.Unscaled;
+				TargetWiggle.RotationWiggleProperties.UseUnscaledTime = !InScaledTimescaleMode;
 				TargetWiggle.WiggleRotation(ApplyTimeMultiplier(WiggleRotationDuration));
 			}
 			if (WiggleScale)
 			{
-				TargetWiggle.ScaleWiggleProperties.UseUnscaledTime = Timing.TimescaleMode == TimescaleModes.Unscaled;
+				TargetWiggle.ScaleWiggleProperties.UseUnscaledTime = !InScaledTimescaleMode;
 				TargetWiggle.WiggleScale(ApplyTimeMultiplier(WiggleScaleDuration));
 			}
 		}
@@ -106,6 +106,19 @@ namespace MoreMountains.Feedbacks
 			base.CustomStopFeedback(position, feedbacksIntensity);
 
 			TargetWiggle.enabled = false;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			TargetWiggle.RestoreInitialValues();
 		}
 	}
 }

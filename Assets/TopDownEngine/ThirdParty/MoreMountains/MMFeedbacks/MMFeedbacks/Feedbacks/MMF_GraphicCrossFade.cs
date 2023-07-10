@@ -58,6 +58,16 @@ namespace MoreMountains.Feedbacks
         
 		protected Coroutine _coroutine;
 		protected Color _initialColor;
+		
+		protected override void CustomInitialization(MMF_Player owner)
+		{
+			base.CustomInitialization(owner);
+
+			if (TargetGraphic != null)
+			{
+				_initialColor = TargetGraphic.color;	
+			}
+		}
         
 		/// <summary>
 		/// On Play we turn our Graphic on and start an over time coroutine if needed
@@ -72,20 +82,19 @@ namespace MoreMountains.Feedbacks
 			}
         
 			Turn(true);
-			bool ignoreTimeScale = Timing.TimescaleMode == TimescaleModes.Unscaled;
+			bool ignoreTimeScale = !InScaledTimescaleMode;
 			switch (Mode)
 			{
 				case Modes.Alpha:
 					// the following lines fix a bug with CrossFadeAlpha
-					_initialColor = TargetGraphic.color;
-					_initialColor.a = 1;
-					TargetGraphic.color = _initialColor;
-					TargetGraphic.CrossFadeAlpha(0f, 0f, true);
+					_initialColor.a = NormalPlayDirection ? 1 : 0;
+					TargetGraphic.color = NormalPlayDirection ? _initialColor : TargetColor;
+					TargetGraphic.CrossFadeAlpha(NormalPlayDirection ? 0f : 1f, 0f, true);
 	                
-					TargetGraphic.CrossFadeAlpha(TargetAlpha, Duration, ignoreTimeScale);
+					TargetGraphic.CrossFadeAlpha(NormalPlayDirection ? TargetAlpha : _initialColor.a, Duration, ignoreTimeScale);
 					break;
 				case Modes.Color:
-					TargetGraphic.CrossFadeColor(TargetColor, Duration, ignoreTimeScale, UseAlpha);
+					TargetGraphic.CrossFadeColor(NormalPlayDirection ? TargetColor : _initialColor, Duration, ignoreTimeScale, UseAlpha);
 					break;
 			}
 		}
@@ -117,6 +126,18 @@ namespace MoreMountains.Feedbacks
 		{
 			TargetGraphic.gameObject.SetActive(status);
 			TargetGraphic.enabled = status;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetGraphic.color = _initialColor;
 		}
 	}
 }

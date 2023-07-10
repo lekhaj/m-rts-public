@@ -7,7 +7,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// This class handles the startscreen of the Explodudes demo scene
 	/// </summary>
-	public class ExplodudesStartScreen : MonoBehaviour
+	public class ExplodudesStartScreen : TopDownMonoBehaviour
 	{
 		/// <summary>
 		/// On start, enables all its children

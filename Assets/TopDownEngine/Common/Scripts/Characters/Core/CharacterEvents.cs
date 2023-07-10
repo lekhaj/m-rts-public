@@ -67,7 +67,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	public struct MMDamageTakenEvent
 	{
-		public Character AffectedCharacter;
+		public Health AffectedHealth;
 		public GameObject Instigator;
 		public float CurrentHealth;
 		public float DamageCaused;
@@ -76,14 +76,14 @@ namespace MoreMountains.TopDownEngine
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MoreMountains.TopDownEngine.MMDamageTakenEvent"/> struct.
 		/// </summary>
-		/// <param name="affectedCharacter">Affected character.</param>
+		/// <param name="affectedHealth">Affected Health.</param>
 		/// <param name="instigator">Instigator.</param>
 		/// <param name="currentHealth">Current health.</param>
 		/// <param name="damageCaused">Damage caused.</param>
 		/// <param name="previousHealth">Previous health.</param>
-		public MMDamageTakenEvent(Character affectedCharacter, GameObject instigator, float currentHealth, float damageCaused, float previousHealth)
+		public MMDamageTakenEvent(Health affectedHealth, GameObject instigator, float currentHealth, float damageCaused, float previousHealth)
 		{
-			AffectedCharacter = affectedCharacter;
+			AffectedHealth = affectedHealth;
 			Instigator = instigator;
 			CurrentHealth = currentHealth;
 			DamageCaused = damageCaused;
@@ -91,9 +91,9 @@ namespace MoreMountains.TopDownEngine
 		}
 
 		static MMDamageTakenEvent e;
-		public static void Trigger(Character affectedCharacter, GameObject instigator, float currentHealth, float damageCaused, float previousHealth)
+		public static void Trigger(Health affectedHealth, GameObject instigator, float currentHealth, float damageCaused, float previousHealth)
 		{
-			e.AffectedCharacter = affectedCharacter;
+			e.AffectedHealth = affectedHealth;
 			e.Instigator = instigator;
 			e.CurrentHealth = currentHealth;
 			e.DamageCaused = damageCaused;

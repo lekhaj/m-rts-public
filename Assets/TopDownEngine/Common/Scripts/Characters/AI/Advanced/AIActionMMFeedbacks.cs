@@ -18,6 +18,9 @@ namespace MoreMountains.TopDownEngine
 		/// If this is false, the feedback will be played every PerformAction (by default every frame while in this state), otherwise it'll only play once, when entering the state
 		[Tooltip("If this is false, the feedback will be played every PerformAction (by default every frame while in this state), otherwise it'll only play once, when entering the state")]
 		public bool OnlyPlayWhenEnteringState = true;
+		/// If this is true, the target game object the TargetFeedbacks is on will be set active when performing this action
+		[Tooltip("If this is true, the target game object the TargetFeedbacks is on will be set active when performing this action")]
+		public bool SetTargetGameObjectActive = false;
 
 		protected bool _played = false;
 
@@ -41,6 +44,10 @@ namespace MoreMountains.TopDownEngine
 
 			if (TargetFeedbacks != null)
 			{
+				if (SetTargetGameObjectActive)
+				{
+					TargetFeedbacks.gameObject.SetActive(true);
+				}
 				TargetFeedbacks.PlayFeedbacks();
 				_played = true;
 			}

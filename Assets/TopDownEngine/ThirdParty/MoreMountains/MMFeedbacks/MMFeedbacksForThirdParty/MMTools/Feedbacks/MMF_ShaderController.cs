@@ -24,6 +24,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return TargetShaderController != null ? TargetShaderController.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetShaderController be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Shader Controller", true, 37, true)]
 		/// the mode this controller is in
@@ -125,7 +126,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
 			PerformPlay(TargetShaderController, intensityMultiplier);     
 
@@ -218,6 +219,23 @@ namespace MoreMountains.Feedbacks
 			shaderController.ToDestinationValue = _toDestinationValueStorage;
 			shaderController.RevertToInitialValueAfterEnd = _revertToInitialValueAfterEndStorage;
 		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			TargetShaderController.RestoreInitialValues();     
 
+			foreach (ShaderController shaderController in TargetShaderControllerList)
+			{
+				shaderController.RestoreInitialValues();     
+			}  
+		}
 	}
 }

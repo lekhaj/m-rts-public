@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace MoreMountains.TopDownEngine
 {
 	[AddComponentMenu("TopDown Engine/GUI/ButtonPrompt")]
-	public class ButtonPrompt : MonoBehaviour
+	public class ButtonPrompt : TopDownMonoBehaviour
 	{
 		[Header("Bindings")]
 		/// the image to use as the prompt's border

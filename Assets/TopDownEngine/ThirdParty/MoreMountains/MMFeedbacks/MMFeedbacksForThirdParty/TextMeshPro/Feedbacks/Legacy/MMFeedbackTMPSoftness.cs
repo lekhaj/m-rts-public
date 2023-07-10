@@ -15,6 +15,9 @@ namespace MoreMountains.Feedbacks
 	[FeedbackPath("TextMesh Pro/TMP Softness")]
 	public class MMFeedbackTMPSoftness : MMFeedback
 	{
+		/// a static bool used to disable all feedbacks of this type at once
+		public static bool FeedbackTypeAuthorized = true;
+		
 		/// the duration of this feedback is the duration of the transition, or 0 if instant
 		public override float FeedbackDuration { get { return (Mode == MMFeedbackBase.Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 
@@ -95,7 +98,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
-			if (Active)
+			if (Active && FeedbackTypeAuthorized)
 			{
 				switch (Mode)
 				{

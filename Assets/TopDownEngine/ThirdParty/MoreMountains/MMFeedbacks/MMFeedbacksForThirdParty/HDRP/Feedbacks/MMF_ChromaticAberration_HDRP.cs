@@ -27,6 +27,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// the duration of this feedback is the duration of the shake
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value;  } }
 		public override bool HasChannel => true;
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Chromatic Aberration", true, 10)]
 		/// the duration of the shake, in seconds
@@ -71,9 +72,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			MMChromaticAberrationShakeEvent_HDRP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, intensityMultiplier,
-				Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				ChannelData, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, ComputedTimescaleMode);
 		}
         
 		/// <summary>
@@ -89,7 +90,20 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
             
-			MMChromaticAberrationShakeEvent_HDRP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, channel:Channel, stop:true);
+			MMChromaticAberrationShakeEvent_HDRP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, channelData:ChannelData, stop:true);
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			MMChromaticAberrationShakeEvent_HDRP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, channelData:ChannelData, restore:true);
 		}
 	}
 }

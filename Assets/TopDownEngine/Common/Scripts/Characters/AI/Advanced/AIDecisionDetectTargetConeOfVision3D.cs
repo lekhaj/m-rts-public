@@ -11,7 +11,9 @@ namespace MoreMountains.TopDownEngine
 	[AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionDetectTargetConeOfVision3D")]
 	public class AIDecisionDetectTargetConeOfVision3D : AIDecision
 	{
-		public bool SetTargetToNullIfNotFound = true;
+		/// if this is true, this decision will set the AI Brain's Target to null if no target is found
+		[Tooltip("if this is true, this decision will set the AI Brain's Target to null if no target is found")]
+		public bool SetTargetToNullIfNoneIsFound = true;
 
 		public MMConeOfVision TargetConeOfVision;
 
@@ -44,10 +46,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			if (TargetConeOfVision.VisibleTargets.Count == 0)
 			{
-				if (SetTargetToNullIfNotFound)
-				{
-					_brain.Target = null;
-				}                
+				if (SetTargetToNullIfNoneIsFound) { _brain.Target = null; }               
 				return false;
 			}
 			else

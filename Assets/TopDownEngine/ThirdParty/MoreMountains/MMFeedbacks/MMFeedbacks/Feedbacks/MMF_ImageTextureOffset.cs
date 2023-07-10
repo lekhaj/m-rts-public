@@ -80,6 +80,7 @@ namespace MoreMountains.Feedbacks
 
 		/// the duration of this feedback is the duration of the transition
 		public override float FeedbackDuration { get { return (Mode == Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
+		public override bool HasRandomness => true;
 
 		/// <summary>
 		/// On init we store our initial texture offset
@@ -114,7 +115,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
 			switch (Mode)
 			{

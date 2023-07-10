@@ -116,10 +116,12 @@ MonoBehaviour:
   MaximumHealth: 30
   ResetHealthOnEnable: 1
   ImmuneToDamage: 0
-  ImmuneToKnockback: 0
   DamageMMFeedbacks: {fileID: 12999378308047149}
   FeedbackIsProportionalToDamage: 0
   PreventTakeSelfDamage: 0
+  ImmuneToKnockback: 0
+  ImmuneToKnockbackIfZeroDamage: 0
+  KnockbackForceMultiplier: 1
   DestroyOnDeath: 1
   DelayBeforeDestruction: 3
   PointsWhenDestroyed: 0
@@ -137,6 +139,7 @@ MonoBehaviour:
   ColorMaterialPropertyName: _Color
   UseMaterialPropertyBlocks: 0
   MasterHealth: {fileID: 0}
+  TargetDamageResistanceProcessor: {fileID: 0}
   TargetAnimator: {fileID: 0}
   DisableAnimatorLogs: 1
 --- !u!54 &1452049700041732537
@@ -205,10 +208,46 @@ MonoBehaviour:
   AutoChangeDirectionOnEnd: 0
   AutoPlayOnStart: 0
   AutoPlayOnEnable: 0
+  ForceTimescaleMode: 0
+  ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  RandomizeDuration: 0
+  RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
+  PlayerTimescaleMode: 1
+  OnlyPlayIfWithinRange: 0
+  RangeCenter: {fileID: 0}
+  RangeDistance: 5
+  UseRangeFalloff: 0
+  RangeFalloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RemapRangeFalloff: {x: 0, y: 1}
+  IgnoreRangeEvents: 0
   CooldownDuration: 0
   InitialDelay: 0
+  CanPlay: 1
   CanPlayWhileAlreadyPlaying: 1
   ChanceToPlay: 100
   FeedbacksIntensity: 1
@@ -235,6 +274,7 @@ MonoBehaviour:
   - id: 0
   KeepPlayModeChanges: 0
   PerformanceMode: 0
+  ForceStopFeedbacksOnDisable: 1
   references:
     version: 1
     00000000:
@@ -266,6 +306,10 @@ MonoBehaviour:
           TrackID: 0
           Quantized: 0
           TargetBPM: 120
+        RandomizeOutput: 0
+        RandomMultiplier: {x: 0.8, y: 1}
+        RandomizeDuration: 0
+        RandomDurationMultiplier: {x: 0.5, y: 2}
         Owner: {fileID: 12999378308047149}
         DebugActive: 0
         BoundRenderer: {fileID: 1452049700041732540}
@@ -273,9 +317,10 @@ MonoBehaviour:
         PropertyName: _EmissionColor
         FlickerDuration: 0.1
         FlickerOctave: 0.04
-        FlickerColor: {r: 8, g: 8, b: 8, a: 1}
+        FlickerColor: {r: 1.4980392, g: 1.4980392, b: 1.4980392, a: 1}
         MaterialIndexes: 
         UseMaterialPropertyBlocks: 0
+        SpriteRendererTextureProperty: _MainTex
 --- !u!1001 &1452049700157738715
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -287,6 +332,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LoftExplosionFeedback
+      objectReference: {fileID: 0}
+    - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
         type: 3}
@@ -305,6 +355,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -316,16 +371,6 @@ PrefabInstance:
     - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,
-        type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6414738329142316893, guid: 40442f24aef653141a9ad4dd236ce6f1,

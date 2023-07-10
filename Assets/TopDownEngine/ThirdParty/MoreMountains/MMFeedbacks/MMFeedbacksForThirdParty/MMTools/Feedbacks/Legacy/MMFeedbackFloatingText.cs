@@ -112,7 +112,7 @@ namespace MoreMountains.Feedbacks
 					break;
 			}
 			_value = UseIntensityAsValue ? feedbacksIntensity.ToString() : Value;
-			MMFloatingTextSpawnEvent.Trigger(Channel, _playPosition, _value, Direction, Intensity * intensityMultiplier, ForceLifetime, Lifetime, ForceColor, AnimateColorGradient, Timing.TimescaleMode == TimescaleModes.Unscaled);
+			MMFloatingTextSpawnEvent.Trigger(ChannelData(Channel), _playPosition, _value, Direction, Intensity * intensityMultiplier, ForceLifetime, Lifetime, ForceColor, AnimateColorGradient, Timing.TimescaleMode == TimescaleModes.Unscaled);
             
 		}
 	}

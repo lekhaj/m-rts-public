@@ -11,7 +11,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	[RequireComponent(typeof(MMConeOfVision))]
 	[AddComponentMenu("TopDown Engine/Character/Abilities/Character Cone of Vision")]
-	public class CharacterConeOfVision : MonoBehaviour
+	public class CharacterConeOfVision : TopDownMonoBehaviour
 	{
 		protected MMConeOfVision _coneOfVision;
 		protected CharacterOrientation3D _characterOrientation;

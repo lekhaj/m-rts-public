@@ -18,6 +18,8 @@ namespace MoreMountains.Tools
 		public int AnimationLayerID = 0;
 		/// whether or not to apply that offset on Start
 		public bool OffsetOnStart = true;
+		/// whether or not to offset animation on enable
+		public bool OffsetOnEnable = false;
 		/// whether or not to self disable after offsetting
 		public bool DisableAfterOffset = true;
 
@@ -37,6 +39,22 @@ namespace MoreMountains.Tools
 		/// </summary>
 		protected virtual void Start()
 		{
+			if (!OffsetOnStart)
+			{
+				return;
+			}
+			OffsetCurrentAnimation();
+		}
+
+		/// <summary>
+		/// On Enable we offset our animation if needed
+		/// </summary>
+		protected virtual void OnEnable()
+		{
+			if (!OffsetOnEnable)
+			{
+				return;
+			}
 			OffsetCurrentAnimation();
 		}
 
@@ -45,10 +63,6 @@ namespace MoreMountains.Tools
 		/// </summary>
 		public virtual void OffsetCurrentAnimation()
 		{
-			if (!OffsetOnStart)
-			{
-				return;
-			}
 			_stateInfo = _animator.GetCurrentAnimatorStateInfo(AnimationLayerID);
 			_animator.Play(_stateInfo.fullPathHash, -1, Random.Range(MinimumRandomRange, MaximumRandomRange));
 			if (DisableAfterOffset)

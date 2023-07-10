@@ -71,7 +71,7 @@ namespace MoreMountains.FeedbacksForThirdParty
             
 			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
 			MMVignetteShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, intensityMultiplier,
-				Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
             
 		}
         
@@ -88,7 +88,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 			{
 				return;
 			}
-			MMVignetteShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop: true, channel: Channel);
+			MMVignetteShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop: true, channelData:ChannelData(Channel));
             
 		}
 	}

@@ -71,6 +71,7 @@ namespace MoreMountains.Feedbacks
 		{
 			if (Active)
 			{
+				InInfiniteLoop = InfiniteLoop;
 				NumberOfLoopsLeft--;
 				Owner.StartCoroutine(PlayPause());
 			}

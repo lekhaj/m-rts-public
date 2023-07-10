@@ -30,7 +30,7 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		protected virtual void OnEnable()
 		{
-			if (LifeTime>0)
+			if (LifeTime > 0)
 			{
 				Invoke("Destroy", LifeTime);	
 			}

@@ -35,7 +35,7 @@ namespace MoreMountains.TopDownEngine
 				return;
 			}
 
-			if (LevelManager.HasInstance)
+			if (LevelManager.HasInstance && LevelManager.Instance.Players != null && LevelManager.Instance.Players[0] != null)
 			{
 				_brain.Target = LevelManager.Instance.Players[0].transform;
 			}

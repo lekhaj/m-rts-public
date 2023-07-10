@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using MoreMountains.Tools;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -61,7 +61,7 @@ namespace MoreMountains.TopDownEngine
 					case ButtonActivated.InputTypes.Default:
 						buttonPressed = (_inputManager.InteractButton.State.CurrentState == MMInput.ButtonStates.ButtonDown);
 						break;
-					#if ENABLE_INPUT_SYSTEM
+					#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 						case ButtonActivated.InputTypes.Button:
 						case ButtonActivated.InputTypes.Key:
 							buttonPressed = ButtonActivatedZone.InputActionPerformed;

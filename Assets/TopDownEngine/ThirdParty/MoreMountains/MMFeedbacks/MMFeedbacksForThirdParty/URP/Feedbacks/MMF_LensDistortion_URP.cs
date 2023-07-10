@@ -29,6 +29,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// the duration of this feedback is the duration of the shake
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 		public override bool HasChannel => true;
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Lens Distortion", true, 22)]
 		/// the duration of the shake in seconds
@@ -59,11 +60,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 			new Keyframe(1, 0));
 		/// the value to remap the curve's 0 to
 		[Tooltip("the value to remap the curve's 0 to")]
-		[Range(-100f, 100f)]
+		[Range(-1f, 1f)]
 		public float RemapIntensityZero = 0f;
 		/// the value to remap the curve's 1 to
 		[Tooltip("the value to remap the curve's 1 to")]
-		[Range(-100f, 100f)]
+		[Range(-1f, 1f)]
 		public float RemapIntensityOne = 0.5f;
 
 		/// <summary>
@@ -78,9 +79,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, intensityMultiplier,
-				Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				ChannelData, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, ComputedTimescaleMode);
             
 		}
         
@@ -96,9 +97,20 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-            
-			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop:true, channel: Channel);
-            
+			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop:true, channelData: ChannelData);
+		}
+
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			MMLensDistortionShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, restore:true, channelData: ChannelData);
 		}
 	}
 }

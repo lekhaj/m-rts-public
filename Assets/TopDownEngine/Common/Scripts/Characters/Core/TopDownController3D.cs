@@ -238,7 +238,6 @@ namespace MoreMountains.TopDownEngine
 			}
 
 			_newVelocity = Velocity;
-
 			_positionLastFrame = _transform.position;
 
 			AddInput();
@@ -452,6 +451,13 @@ namespace MoreMountains.TopDownEngine
 		public virtual void DetachFromGround()
 		{
 			_detached = true;
+		}
+
+		public virtual void DetachFromMovingPlatform()
+		{
+			_movingPlatformVelocity = Vector3.zero;
+			_movingPlatformCurrentHitCollider = null;
+			_movingPlatformHitCollider = null;
 		}
 
 		#endregion
@@ -675,12 +681,16 @@ namespace MoreMountains.TopDownEngine
 		/// Resizes the collider to the new size set in parameters
 		/// </summary>
 		/// <param name="newSize">New size.</param>
-		public override void ResizeColliderHeight(float newHeight)
+		public override void ResizeColliderHeight(float newHeight, bool translateCenter = false)
 		{
 			float newYOffset = _originalColliderCenter.y - (_originalColliderHeight - newHeight) / 2;
 			_characterController.height = newHeight;
 			_characterController.center = ((_originalColliderHeight - newHeight) / 2) * Vector3.up;
-			this.transform.Translate((newYOffset / 2f) * Vector3.up);
+
+			if (translateCenter)
+			{
+				this.transform.Translate((newYOffset / 2f) * Vector3.up);	
+			}
 		}
 
 		/// <summary>
@@ -865,6 +875,25 @@ namespace MoreMountains.TopDownEngine
 			{
 				this.transform.position = newPosition;
 			}
+		}
+
+		/// <summary>
+		/// On reset, we reset vectors and transforms
+		/// </summary>
+		public override void Reset()
+		{
+			base.Reset();
+			_idealDirection = Vector3.zero;
+			_idealVelocity = Vector3.zero;
+			_newVelocity = Vector3.zero;
+			_movingPlatformVelocity = Vector3.zero;
+			_movingPlatformCurrentHitCollider = null;
+			_movingPlatformHitCollider = null;
+			_lastGroundNormal = Vector3.zero;
+			_detached = false;
+			_frameVelocity = Vector3.zero;
+			_hitPoint = Vector3.zero;
+			_lastHitPoint = new Vector3(Mathf.Infinity, 0, 0);
 		}
 
 		#endregion

@@ -51,10 +51,10 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		public virtual void Stun()
 		{
-			if (_previousCondition != CharacterStates.CharacterConditions.Stunned)
+			if ((_previousCondition != CharacterStates.CharacterConditions.Stunned) && (_condition.CurrentState != CharacterStates.CharacterConditions.Stunned))
 			{
 				_previousCondition = _condition.CurrentState;
-			} 			
+			} 		
 			_condition.ChangeState(CharacterStates.CharacterConditions.Stunned);
 			_controller.SetMovement(Vector3.zero);
 			AbilityStartFeedbacks?.PlayFeedbacks();
@@ -67,6 +67,10 @@ namespace MoreMountains.TopDownEngine
 		/// <param name="duration"></param>
 		public virtual void StunFor(float duration)
 		{
+			if (_stunCoroutine != null)
+			{
+				StopCoroutine(_stunCoroutine);
+			}
 			_stunCoroutine = StartCoroutine(StunCoroutine(duration));
 		}
 

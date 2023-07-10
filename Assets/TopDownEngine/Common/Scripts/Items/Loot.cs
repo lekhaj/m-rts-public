@@ -13,7 +13,7 @@ namespace  MoreMountains.TopDownEngine
 	/// The spawn can be triggered by any script, at any time, and comes with automatic hooks
 	/// to trigger loot on damage or death
 	/// </summary>
-	public class Loot : MonoBehaviour
+	public class Loot : TopDownMonoBehaviour
 	{
 		/// the possible modes by which loot can be defined 
 		public enum LootModes { Unique, LootTable, LootTableScriptableObject }
@@ -148,7 +148,7 @@ namespace  MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void Awake()
 		{
-			_health = this.gameObject.GetComponent<Health>();
+			_health = this.gameObject.GetComponentInParent<Health>();
 			InitializeLootTable();
 			InitializePools();
 			ResetRemainingQuantity();

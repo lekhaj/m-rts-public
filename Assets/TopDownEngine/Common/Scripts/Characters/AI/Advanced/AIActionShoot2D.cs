@@ -30,6 +30,10 @@ namespace MoreMountains.TopDownEngine
 		/// if true the Character will aim at the target when shooting
 		[Tooltip("if true the Character will aim at the target when shooting")]
 		public bool AimAtTarget = false;
+		/// whether or not to only perform aim when in this state
+		[Tooltip("whether or not to only perform aim when in this state")]
+		[MMCondition("AimAtTarget")]
+		public bool OnlyAimWhenInState = false;
 
 		protected CharacterOrientation2D _orientation2D;
 		protected Character _character;
@@ -70,6 +74,11 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void Update()
 		{
+			if (OnlyAimWhenInState && !_shooting)
+			{
+				return;
+			}
+			
 			if (TargetHandleWeaponAbility.CurrentWeapon != null)
 			{
 				if (_weaponAim != null)
@@ -179,8 +188,11 @@ namespace MoreMountains.TopDownEngine
 			base.OnEnterState();
 			_numberOfShoots = 0;
 			_shooting = true;
-			_weaponAim = TargetHandleWeaponAbility.CurrentWeapon.gameObject.MMGetComponentNoAlloc<WeaponAim>();
-			_projectileWeapon = TargetHandleWeaponAbility.CurrentWeapon.gameObject.MMGetComponentNoAlloc<ProjectileWeapon>();
+			if (TargetHandleWeaponAbility.CurrentWeapon != null)
+			{
+				_weaponAim = TargetHandleWeaponAbility.CurrentWeapon.gameObject.MMGetComponentNoAlloc<WeaponAim>();
+				_projectileWeapon = TargetHandleWeaponAbility.CurrentWeapon.gameObject.MMGetComponentNoAlloc<ProjectileWeapon>();	
+			}
 		}
 
 		/// <summary>

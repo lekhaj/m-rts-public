@@ -6,7 +6,7 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
 {
-	public class CharacterDisableIKOnReload : MonoBehaviour
+	public class CharacterDisableIKOnReload : TopDownMonoBehaviour
 	{
 		[Header("IK")]
 		public WeaponIK BoundWeaponIK;

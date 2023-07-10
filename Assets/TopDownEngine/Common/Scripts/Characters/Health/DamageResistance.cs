@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// Used by the DamageResistanceProcessor, this class defines the resistance versus a certain type of damage. 
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Character/Health/Damage Resistance")]
-	public class DamageResistance : MonoBehaviour
+	public class DamageResistance : TopDownMonoBehaviour
 	{
 		public enum DamageModifierModes { Multiplier, Flat }
 
@@ -65,6 +65,9 @@ namespace MoreMountains.TopDownEngine
 		/// whether or not this feedback can be interrupted (stopped) when that type of damage is interrupted
 		[Tooltip("whether or not this feedback can be interrupted (stopped) when that type of damage is interrupted")]
 		public bool InterruptibleFeedback = false;
+		/// if this is true, the feedback will always be preventively stopped before playing
+		[Tooltip("if this is true, the feedback will always be preventively stopped before playing")]
+		public bool AlwaysInterruptFeedbackBeforePlay = false;
 		/// whether this feedback should play if damage received is zero
 		[Tooltip("whether this feedback should play if damage received is zero")]
 		public bool TriggerFeedbackIfDamageIsZero = false;
@@ -125,12 +128,16 @@ namespace MoreMountains.TopDownEngine
 
 			if (damageApplied)
 			{
-				if (TriggerFeedbackIfDamageIsZero && (damage == 0))
+				if (!TriggerFeedbackIfDamageIsZero && (damage == 0))
 				{
 					// do nothing
 				}
 				else
 				{
+					if (AlwaysInterruptFeedbackBeforePlay)
+					{
+						OnDamageReceived?.StopFeedbacks();
+					}
 					OnDamageReceived?.PlayFeedbacks(this.transform.position);	
 				}
 			}

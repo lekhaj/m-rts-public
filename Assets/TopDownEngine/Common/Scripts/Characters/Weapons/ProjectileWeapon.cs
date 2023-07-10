@@ -49,8 +49,10 @@ namespace MoreMountains.TopDownEngine
 		[MMReadOnly]
 		[Tooltip("the projectile's spawn position")]
 		public Vector3 SpawnPosition = Vector3.zero;
-		/// the object pooler used to spawn projectiles
-		public MMObjectPooler ObjectPooler { get; set; }
+
+		/// the object pooler used to spawn projectiles, if left empty, this component will try to find one on its game object
+		[Tooltip("the object pooler used to spawn projectiles, if left empty, this component will try to find one on its game object")]
+		public MMObjectPooler ObjectPooler;
         
 		[Header("Spawn Feedbacks")]
 		public List<MMFeedbacks> SpawnFeedbacks = new List<MMFeedbacks>();
@@ -90,13 +92,9 @@ namespace MoreMountains.TopDownEngine
 
 			if (!_poolInitialized)
 			{
-				if (GetComponent<MMMultipleObjectPooler>() != null)
+				if (ObjectPooler == null)
 				{
-					ObjectPooler = GetComponent<MMMultipleObjectPooler>();
-				}
-				if (GetComponent<MMSimpleObjectPooler>() != null)
-				{
-					ObjectPooler = GetComponent<MMSimpleObjectPooler>();
+					ObjectPooler = GetComponent<MMObjectPooler>();	
 				}
 				if (ObjectPooler == null)
 				{
@@ -192,20 +190,20 @@ namespace MoreMountains.TopDownEngine
 				}
 				else
 				{
-					if (Owner.CharacterDimension == Character.CharacterDimensions.Type3D)
+					if (Owner.CharacterDimension == Character.CharacterDimensions.Type3D) // if we're in 3D
 					{
 						projectile.SetDirection(spread * transform.forward, transform.rotation, true);
 					}
-					else
+					else // if we're in 2D
 					{
 						Vector3 newDirection = (spread * transform.right) * (Flipped ? -1 : 1);
 						if (Owner.Orientation2D != null)
 						{
-							projectile.SetDirection(newDirection, transform.rotation, Owner.Orientation2D.IsFacingRight);
+							projectile.SetDirection(newDirection, spread * transform.rotation, Owner.Orientation2D.IsFacingRight);
 						}
 						else
 						{
-							projectile.SetDirection(newDirection, transform.rotation, true);
+							projectile.SetDirection(newDirection, spread * transform.rotation, true);
 						}
 					}
 				}                

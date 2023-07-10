@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A class to handle the 3D doors in the Loft demo
 	/// </summary>
-	public class Door3D : MonoBehaviour
+	public class Door3D : TopDownMonoBehaviour
 	{
 		[Header("Angles")]
 

@@ -16,6 +16,9 @@ namespace MoreMountains.TopDownEngine
     /// </summary>
     public class InputSystemManagerEventsBased : InputManager
     {   
+        /// the position of the mouse
+        public override Vector2 MousePosition => Mouse.current.position.ReadValue();
+        
         public void OnJump(InputAction.CallbackContext context) { BindButton(context, JumpButton); }
         public void OnPrimaryMovement(InputAction.CallbackContext context) { _primaryMovement = ApplyCameraRotation(context.ReadValue<Vector2>());  }
         public void OnSecondaryMovement(InputAction.CallbackContext context) { _secondaryMovement = ApplyCameraRotation(context.ReadValue<Vector2>()); }

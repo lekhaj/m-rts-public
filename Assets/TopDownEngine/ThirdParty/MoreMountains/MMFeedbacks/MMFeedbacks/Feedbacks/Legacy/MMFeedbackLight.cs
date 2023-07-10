@@ -208,7 +208,7 @@ namespace MoreMountains.Feedbacks
 					MMLightShakeEvent.Trigger(FeedbackDuration, RelativeValues, ModifyColor, ColorOverTime, IntensityCurve,
 						RemapIntensityZero, RemapIntensityOne, RangeCurve, RemapRangeZero * intensityMultiplier, RemapRangeOne * intensityMultiplier,
 						ShadowStrengthCurve, RemapShadowStrengthZero, RemapShadowStrengthOne, feedbacksIntensity,
-						Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake,
+						ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake,
 						UseRange, EventRange, EventOriginTransform.position);
 					break;
 			}

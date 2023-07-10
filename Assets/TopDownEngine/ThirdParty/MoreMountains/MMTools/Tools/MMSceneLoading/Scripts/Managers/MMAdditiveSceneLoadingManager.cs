@@ -131,9 +131,6 @@ namespace MoreMountains.Tools
 		/// an event that will be invoked when the scene loader gets unloaded
 		[Tooltip("an event that will be invoked when the scene loader gets unloaded")]
 		public UnityEvent OnUnloadSceneLoader;
-		/// an event that will be invoked when the whole transition is complete
-		[Tooltip("an event that will be invoked when the whole transition is complete")]
-		public UnityEvent OnLoadTransitionComplete;
 
 		protected static bool _interpolateProgress;
 		protected static float _progressInterpolationSpeed;
@@ -263,7 +260,7 @@ namespace MoreMountains.Tools
 
 
 		/// <summary>
-		/// On Start(), we start loading the new level asynchronously
+		/// Starts loading the new level asynchronously
 		/// </summary>
 		protected virtual void Awake()
 		{
@@ -345,7 +342,6 @@ namespace MoreMountains.Tools
 			yield return DestinationSceneActivation();
 			yield return ExitFade();
 			yield return UnloadSceneLoader();
-			LoadTransitionComplete();
 		}
 
 		/// <summary>
@@ -573,19 +569,7 @@ namespace MoreMountains.Tools
 			while (_unloadLoadingAsyncOperation.progress < _asyncProgressLimit)
 			{
 				yield return null;
-			}	
-		}
-
-		/// <summary>
-		/// Completes the transition
-		/// </summary>
-		protected virtual void LoadTransitionComplete()
-		{
-			MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : load transition complete");
-			MMSceneLoadingManager.LoadingSceneEvent.Trigger(_sceneToLoadName, MMSceneLoadingManager.LoadingStatus.LoadTransitionComplete);
-			OnLoadTransitionComplete?.Invoke();
-			
-			_loadingInProgress = false;
+			}
 		}
 
 		/// <summary>

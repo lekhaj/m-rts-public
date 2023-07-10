@@ -317,7 +317,10 @@ namespace MoreMountains.TopDownEngine
 			if (TargetRoom != null)
 			{
 				TargetRoom.PlayerEntersRoom();
-				TargetRoom.VirtualCamera.Priority = 10;
+				if (TargetRoom.VirtualCamera != null)
+				{
+					TargetRoom.VirtualCamera.Priority = 10;	
+				}
 				MMSpriteMaskEvent.Trigger(MoveMaskMethod, (Vector2)TargetRoom.RoomColliderCenter, TargetRoom.RoomColliderSize, MoveMaskDuration, MoveMaskCurve);
 			}
 			#endif

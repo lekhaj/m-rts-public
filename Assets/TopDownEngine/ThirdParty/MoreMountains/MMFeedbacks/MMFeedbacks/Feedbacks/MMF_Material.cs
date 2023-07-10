@@ -62,13 +62,14 @@ namespace MoreMountains.Feedbacks
 		/// the animation curve to interpolate the transition on
 		public AnimationCurve TransitionCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
 
-		public virtual float GetTime() { return (Timing.TimescaleMode == TimescaleModes.Scaled) ? Time.time : Time.unscaledTime; }
-		public virtual float GetDeltaTime() { return (Timing.TimescaleMode == TimescaleModes.Scaled) ? Time.deltaTime : Time.unscaledDeltaTime; }
+		public virtual float GetTime() { return (ComputedTimescaleMode == TimescaleModes.Scaled) ? Time.time : Time.unscaledTime; }
+		public virtual float GetDeltaTime() { return (ComputedTimescaleMode == TimescaleModes.Scaled) ? Time.deltaTime : Time.unscaledDeltaTime; }
         
 		protected int _currentIndex;
 		protected float _startedAt;
 		protected Coroutine[] _coroutines;
 		protected Material[] _tempMaterials;
+		protected Material[] _initialMaterials;
 
 		/// <summary>
 		/// On init, grabs the current index
@@ -83,6 +84,8 @@ namespace MoreMountains.Feedbacks
 			}
 			_currentIndex = InitialIndex;
 			_tempMaterials = new Material[TargetRenderer.materials.Length];
+			_initialMaterials = new Material[TargetRenderer.materials.Length];
+			_initialMaterials = TargetRenderer.materials;
 			if (RendererMaterialIndexes == null)
 			{
 				RendererMaterialIndexes = new int[1];
@@ -239,6 +242,19 @@ namespace MoreMountains.Feedbacks
 					_coroutines[i] = null;    
 				}
 			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			TargetRenderer.materials = _initialMaterials;
 		}
 	}
 }

@@ -23,6 +23,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return BoundImage != null ? BoundImage.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a BoundImage be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasCustomInspectors => true;
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant, ToDestination }
@@ -73,6 +74,7 @@ namespace MoreMountains.Feedbacks
 
 		protected Coroutine _coroutine;
 		protected Color _imageColor;
+		protected Color _initialColor;
 		protected float _initialAlpha;
 
 		/// <summary>
@@ -86,7 +88,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-            
+			_initialColor = BoundImage.color;
 			Turn(true);
 			switch (Mode)
 			{
@@ -188,6 +190,18 @@ namespace MoreMountains.Feedbacks
 		{
 			BoundImage.gameObject.SetActive(status);
 			BoundImage.enabled = status;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			BoundImage.color = _initialColor;
 		}
 	}
 }

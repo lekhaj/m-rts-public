@@ -124,12 +124,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 22
   SlotEnabled: 1
-  _image: {fileID: 114439180898941804}
-  _canvasGroup: {fileID: 225348208885919234}
-  _rectTransform: {fileID: 224910057608935896}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225348208885919234
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -384,6 +384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TargetInventoryName: RogueMainInventory
+  PlayerID: Player1
   Global: 0
   HideOnEmptySlot: 1
   DefaultTitle: ????
@@ -664,12 +665,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 19
   SlotEnabled: 1
-  _image: {fileID: 114800184786826960}
-  _canvasGroup: {fileID: 225524950621661528}
-  _rectTransform: {fileID: 224868427591784908}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225524950621661528
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -858,12 +859,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 5
   SlotEnabled: 1
-  _image: {fileID: 114044701617150628}
-  _canvasGroup: {fileID: 225668698064254658}
-  _rectTransform: {fileID: 224263911224542954}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225668698064254658
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1080,12 +1081,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114479203475777052}
   Index: 0
   SlotEnabled: 1
-  _image: {fileID: 114950837643595370}
-  _canvasGroup: {fileID: 225675647782411698}
-  _rectTransform: {fileID: 224395427740495016}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225675647782411698
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1300,12 +1301,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 9
   SlotEnabled: 1
-  _image: {fileID: 114673440062451532}
-  _canvasGroup: {fileID: 225370680201210926}
-  _rectTransform: {fileID: 224722015964645154}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225370680201210926
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1750,12 +1751,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 7
   SlotEnabled: 1
-  _image: {fileID: 114445609244328924}
-  _canvasGroup: {fileID: 225956074187951032}
-  _rectTransform: {fileID: 224403469598568962}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225956074187951032
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1892,12 +1893,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 3
   SlotEnabled: 1
-  _image: {fileID: 114548615090088410}
-  _canvasGroup: {fileID: 225510752697205162}
-  _rectTransform: {fileID: 224348237715750122}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225510752697205162
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2112,12 +2113,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 12
   SlotEnabled: 1
-  _image: {fileID: 114286197185170626}
-  _canvasGroup: {fileID: 225286318541636392}
-  _rectTransform: {fileID: 224523487820277478}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225286318541636392
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2228,6 +2229,7 @@ MonoBehaviour:
   TargetChoiceInventory: {fileID: 114281103620327144}
   ItemClass: 1
   DrawEmptySlots: 1
+  AllowMovingObjectsToThisInventory: 0
   PaddingTop: 32
   PaddingRight: 32
   PaddingBottom: 32
@@ -2260,7 +2262,6 @@ MonoBehaviour:
   QtyAlignment: 8
   PreviousInventory: {fileID: 114281103620327144}
   NextInventory: {fileID: 114819180651603204}
-  CurrentlyBeingMovedItemIndex: -1
 --- !u!114 &114147583209298072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2503,12 +2504,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 20
   SlotEnabled: 1
-  _image: {fileID: 114141807325791364}
-  _canvasGroup: {fileID: 225391488007250716}
-  _rectTransform: {fileID: 224761359921708570}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225391488007250716
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2645,12 +2646,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 6
   SlotEnabled: 1
-  _image: {fileID: 114811272697104422}
-  _canvasGroup: {fileID: 225128115403420174}
-  _rectTransform: {fileID: 224997763306074346}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225128115403420174
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2787,12 +2788,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 14
   SlotEnabled: 1
-  _image: {fileID: 114034970890660344}
-  _canvasGroup: {fileID: 225882923831705016}
-  _rectTransform: {fileID: 224809798206229604}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225882923831705016
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3022,12 +3023,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 18
   SlotEnabled: 1
-  _image: {fileID: 114612811462638866}
-  _canvasGroup: {fileID: 225617589609684554}
-  _rectTransform: {fileID: 224945793892036016}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225617589609684554
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3164,12 +3165,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 10
   SlotEnabled: 1
-  _image: {fileID: 114041480000508356}
-  _canvasGroup: {fileID: 225650106485198516}
-  _rectTransform: {fileID: 224019413170012476}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225650106485198516
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3384,12 +3385,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 21
   SlotEnabled: 1
-  _image: {fileID: 114888121295610346}
-  _canvasGroup: {fileID: 225472494664658892}
-  _rectTransform: {fileID: 224331003257787998}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225472494664658892
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4018,12 +4019,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 1
   SlotEnabled: 1
-  _image: {fileID: 114986855801111052}
-  _canvasGroup: {fileID: 225343144650602570}
-  _rectTransform: {fileID: 224229437026297380}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225343144650602570
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4062,7 +4063,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1515502983337476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.6, y: 2.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224012917737618132}
@@ -4246,12 +4247,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 8
   SlotEnabled: 1
-  _image: {fileID: 114267641840901032}
-  _canvasGroup: {fileID: 225926669122757134}
-  _rectTransform: {fileID: 224231141469163542}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225926669122757134
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4388,12 +4389,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 17
   SlotEnabled: 1
-  _image: {fileID: 114538130962435126}
-  _canvasGroup: {fileID: 225990571526604212}
-  _rectTransform: {fileID: 224302727067411646}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225990571526604212
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4504,6 +4505,7 @@ MonoBehaviour:
   TargetChoiceInventory: {fileID: 114281103620327144}
   ItemClass: 2
   DrawEmptySlots: 1
+  AllowMovingObjectsToThisInventory: 0
   PaddingTop: 32
   PaddingRight: 32
   PaddingBottom: 32
@@ -4536,7 +4538,6 @@ MonoBehaviour:
   QtyAlignment: 8
   PreviousInventory: {fileID: 114479203475777052}
   NextInventory: {fileID: 114460800597838916}
-  CurrentlyBeingMovedItemIndex: -1
 --- !u!114 &114403240089154674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4779,12 +4780,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 15
   SlotEnabled: 1
-  _image: {fileID: 114595270349244226}
-  _canvasGroup: {fileID: 225033840358039500}
-  _rectTransform: {fileID: 224138055763416106}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225033840358039500
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4893,6 +4894,7 @@ MonoBehaviour:
   TargetChoiceInventory: {fileID: 0}
   ItemClass: 0
   DrawEmptySlots: 1
+  AllowMovingObjectsToThisInventory: 0
   PaddingTop: 32
   PaddingRight: 32
   PaddingBottom: 32
@@ -4925,7 +4927,6 @@ MonoBehaviour:
   QtyAlignment: 8
   PreviousInventory: {fileID: 114819180651603204}
   NextInventory: {fileID: 114281103620327144}
-  CurrentlyBeingMovedItemIndex: -1
   HotbarKey: k
   HotbarAltKey: joystick button 0
   ActionOnKey: 0
@@ -5053,12 +5054,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 2
   SlotEnabled: 1
-  _image: {fileID: 114017851133887492}
-  _canvasGroup: {fileID: 225439016904366762}
-  _rectTransform: {fileID: 224843985942629778}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225439016904366762
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -5195,12 +5196,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 4
   SlotEnabled: 1
-  _image: {fileID: 114281063701237388}
-  _canvasGroup: {fileID: 225916218200160156}
-  _rectTransform: {fileID: 224797582170613322}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225916218200160156
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -5643,12 +5644,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114819180651603204}
   Index: 0
   SlotEnabled: 1
-  _image: {fileID: 114090132702338136}
-  _canvasGroup: {fileID: 225717137051179002}
-  _rectTransform: {fileID: 224562254630729726}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225717137051179002
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -5787,6 +5788,7 @@ MonoBehaviour:
   ToggleInventoryKey: 105
   ToggleInventoryAltKey: 356
   CancelKey: 27
+  CancelKeyAlt: 357
   MoveKey: insert
   MoveAltKey: joystick button 2
   EquipKey: home
@@ -5947,12 +5949,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 23
   SlotEnabled: 1
-  _image: {fileID: 114256153393302248}
-  _canvasGroup: {fileID: 225390749052822092}
-  _rectTransform: {fileID: 224012538122005186}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225390749052822092
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6276,12 +6278,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114460800597838916}
   Index: 1
   SlotEnabled: 1
-  _image: {fileID: 114671710887796606}
-  _canvasGroup: {fileID: 225927771356716698}
-  _rectTransform: {fileID: 224996949489609912}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225927771356716698
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6418,12 +6420,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 11
   SlotEnabled: 1
-  _image: {fileID: 114814328438591804}
-  _canvasGroup: {fileID: 225167707880619678}
-  _rectTransform: {fileID: 224718354488553580}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225167707880619678
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6560,12 +6562,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 13
   SlotEnabled: 1
-  _image: {fileID: 114330111954915838}
-  _canvasGroup: {fileID: 225013795391493060}
-  _rectTransform: {fileID: 224560587242414164}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225013795391493060
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7227,12 +7229,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 0
   SlotEnabled: 1
-  _image: {fileID: 114501856897142192}
-  _canvasGroup: {fileID: 225107688371281320}
-  _rectTransform: {fileID: 224108949281540768}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225107688371281320
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7369,12 +7371,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114281103620327144}
   Index: 16
   SlotEnabled: 1
-  _image: {fileID: 114405523016322524}
-  _canvasGroup: {fileID: 225215839124317550}
-  _rectTransform: {fileID: 224016724148986738}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225215839124317550
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7720,6 +7722,7 @@ MonoBehaviour:
   TargetChoiceInventory: {fileID: 0}
   ItemClass: 0
   DrawEmptySlots: 1
+  AllowMovingObjectsToThisInventory: 0
   PaddingTop: 32
   PaddingRight: 32
   PaddingBottom: 32
@@ -7752,7 +7755,6 @@ MonoBehaviour:
   QtyAlignment: 8
   PreviousInventory: {fileID: 0}
   NextInventory: {fileID: 114819180651603204}
-  CurrentlyBeingMovedItemIndex: -1
 --- !u!114 &114365627341114840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8122,12 +8124,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114460800597838916}
   Index: 2
   SlotEnabled: 1
-  _image: {fileID: 114930205779216186}
-  _canvasGroup: {fileID: 225271356610605598}
-  _rectTransform: {fileID: 224036862403219982}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225271356610605598
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -8264,12 +8266,12 @@ MonoBehaviour:
   ParentInventoryDisplay: {fileID: 114460800597838916}
   Index: 0
   SlotEnabled: 1
-  _image: {fileID: 114749920428380762}
-  _canvasGroup: {fileID: 225440617533052474}
-  _rectTransform: {fileID: 224914236659790444}
-  _iconRectTransform: {fileID: 0}
-  _iconImage: {fileID: 0}
-  _quantityText: {fileID: 0}
+  TargetImage: {fileID: 0}
+  TargetCanvasGroup: {fileID: 0}
+  TargetRectTransform: {fileID: 0}
+  IconRectTransform: {fileID: 0}
+  IconImage: {fileID: 0}
+  QuantityText: {fileID: 0}
 --- !u!225 &225440617533052474
 CanvasGroup:
   m_ObjectHideFlags: 0

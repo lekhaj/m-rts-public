@@ -136,9 +136,10 @@ namespace MoreMountains.FeedbacksForThirdParty
 			AnimationCurve shakeGreen, float remapGreenZero, float remapGreenOne,
 			AnimationCurve shakeBlue, float remapBlueZero, float remapBlueOne,
 			float duration, bool relativeValues = false,
-			float attenuation = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true, bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false)
+			float attenuation = 1.0f, MMChannelData channelData = null, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true, 
+			bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false, bool restore = false)
 		{
-			if (!CheckEventAllowed(channel) || (!Interruptible && Shaking))
+			if (!CheckEventAllowed(channelData) || (!Interruptible && Shaking))
 			{
 				return;
 			}
@@ -146,6 +147,12 @@ namespace MoreMountains.FeedbacksForThirdParty
 			if (stop)
 			{
 				Stop();
+				return;
+			}
+
+			if (restore)
+			{
+				ResetTargetValues();
 				return;
 			}
 
@@ -239,35 +246,31 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// </summary>
 	public struct MMChannelMixerShakeEvent_URP
 	{
+		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
+
 		public delegate void Delegate(
 			AnimationCurve shakeRed, float remapRedZero, float remapRedOne,
 			AnimationCurve shakeGreen, float remapGreenZero, float remapGreenOne,
 			AnimationCurve shakeBlue, float remapBlueZero, float remapBlueOne,
 			float duration, bool relativeValues = false,
-			float attenuation = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true, bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false);
-		static private event Delegate OnEvent;
-
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
-
-		static public void Unregister(Delegate callback)
-		{
-			OnEvent -= callback;
-		}
+			float attenuation = 1.0f, MMChannelData channelData = null, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
+			bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false, bool restore = false);
 
 		static public void Trigger(
 			AnimationCurve shakeRed, float remapRedZero, float remapRedOne,
 			AnimationCurve shakeGreen, float remapGreenZero, float remapGreenOne,
 			AnimationCurve shakeBlue, float remapBlueZero, float remapBlueOne,
 			float duration, bool relativeValues = false,
-			float attenuation = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true, bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false)
+			float attenuation = 1.0f, MMChannelData channelData = null, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true,
+			bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false, bool restore = false)
 		{
 			OnEvent?.Invoke(shakeRed, remapRedZero, remapRedOne,
 				shakeGreen, remapGreenZero, remapGreenOne,
 				shakeBlue, remapBlueZero, remapBlueOne,
-				duration, relativeValues, attenuation, channel, resetShakerValuesAfterShake, resetTargetValuesAfterShake, forwardDirection, timescaleMode, stop);
+				duration, relativeValues, attenuation, channelData, resetShakerValuesAfterShake, resetTargetValuesAfterShake, forwardDirection, timescaleMode, stop, restore);
 		}
 	}
 }

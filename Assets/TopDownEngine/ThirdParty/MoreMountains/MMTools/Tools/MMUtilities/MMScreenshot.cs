@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -22,7 +22,7 @@ namespace MoreMountains.Tools
 		/// the selected method to take a screenshot with. 
 		public Methods Method = Methods.ScreenCapture;
         
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 	        /// the key to press to restart manually
 	        public Key ScreenshotKey = Key.K;
 		#else
@@ -63,7 +63,7 @@ namespace MoreMountains.Tools
 		protected virtual void DetectInput()
 		{
 			bool keyPressed = false;
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				keyPressed = Keyboard.current[ScreenshotKey].wasPressedThisFrame;
 			#else
 			keyPressed = Input.GetKeyDown(ScreenshotShortcut);

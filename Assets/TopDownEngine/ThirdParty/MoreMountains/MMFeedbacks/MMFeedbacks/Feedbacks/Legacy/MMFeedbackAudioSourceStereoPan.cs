@@ -66,7 +66,7 @@ namespace MoreMountains.Feedbacks
 			}
 			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
 			MMAudioSourceStereoPanShakeEvent.Trigger(ShakeStereoPan, FeedbackDuration, RemapStereoPanZero, RemapStereoPanOne, RelativeStereoPan,
-				intensityMultiplier, Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				intensityMultiplier, ChannelData(Channel), ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
 		}
         
 		/// <summary>

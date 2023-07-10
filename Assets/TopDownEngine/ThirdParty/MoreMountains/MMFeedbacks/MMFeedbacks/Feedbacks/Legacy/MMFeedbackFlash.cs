@@ -52,7 +52,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
-			MMFlashEvent.Trigger(FlashColor, FeedbackDuration * intensityMultiplier, FlashAlpha, FlashID, Channel, Timing.TimescaleMode);
+			MMFlashEvent.Trigger(FlashColor, FeedbackDuration * intensityMultiplier, FlashAlpha, FlashID, ChannelData(Channel), Timing.TimescaleMode);
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMFlashEvent.Trigger(FlashColor, FeedbackDuration, FlashAlpha, FlashID, Channel, Timing.TimescaleMode, stop:true);
+			MMFlashEvent.Trigger(FlashColor, FeedbackDuration, FlashAlpha, FlashID, ChannelData(Channel), Timing.TimescaleMode, stop:true);
 		}
 	}
 }

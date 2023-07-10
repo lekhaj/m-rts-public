@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 {	
 	[RequireComponent(typeof(Weapon))]
 	[AddComponentMenu("TopDown Engine/Weapons/Weapon Ammo")]
-	public class WeaponAmmo : MonoBehaviour, MMEventListener<MMStateChangeEvent<MoreMountains.TopDownEngine.Weapon.WeaponStates>>, MMEventListener<MMInventoryEvent>, MMEventListener<MMGameEvent>
+	public class WeaponAmmo : TopDownMonoBehaviour, MMEventListener<MMStateChangeEvent<MoreMountains.TopDownEngine.Weapon.WeaponStates>>, MMEventListener<MMInventoryEvent>, MMEventListener<MMGameEvent>
 	{
 		[Header("Ammo")]
 		
@@ -46,9 +46,19 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void Start()
 		{
-			GameObject ammoInventoryTmp = GameObject.Find (AmmoInventoryName);
-			if (ammoInventoryTmp != null) { AmmoInventory = ammoInventoryTmp.GetComponent<Inventory> (); }
 			_weapon = GetComponent<Weapon> ();
+			Inventory[] inventories = FindObjectsOfType<Inventory>();
+			foreach (Inventory inventory in inventories)
+			{
+				if (inventory.PlayerID != _weapon.Owner.PlayerID)
+				{
+					continue;
+				}
+				if ((AmmoInventory == null) && (inventory.name == AmmoInventoryName))
+				{
+					AmmoInventory = inventory;
+				}
+			}
 			if (ShouldLoadOnStart)
 			{
 				LoadOnStart ();	
@@ -252,10 +262,16 @@ namespace MoreMountains.TopDownEngine
 				case MMInventoryEventType.Pick:
 					if (inventoryEvent.EventItem.ItemClass == ItemClasses.Ammo)
 					{
-						RefreshCurrentAmmoAvailable ();
+						StartCoroutine(DelayedRefreshCurrentAmmoAvailable());
 					}
 					break;				
 			}
+		}
+
+		protected IEnumerator DelayedRefreshCurrentAmmoAvailable()
+		{
+			yield return null;
+			RefreshCurrentAmmoAvailable ();
 		}
 
 		/// <summary>

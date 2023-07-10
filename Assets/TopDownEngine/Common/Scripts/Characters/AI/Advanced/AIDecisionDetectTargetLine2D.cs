@@ -41,6 +41,9 @@ namespace MoreMountains.TopDownEngine
 		/// a transform to use as the rotation reference for detection raycasts. If you have a rotating model for example, you'll want to set it as your reference transform here.
 		[Tooltip("a transform to use as the rotation reference for detection raycasts. If you have a rotating model for example, you'll want to set it as your reference transform here.")]
 		public Transform ReferenceTransform;
+		/// if this is true, this decision will set the AI Brain's Target to null if no target is found
+		[Tooltip("if this is true, this decision will set the AI Brain's Target to null if no target is found")]
+		public bool SetTargetToNullIfNoneIsFound = true;
 
 		protected Vector2 _direction;
 		protected Vector2 _facingDirection;
@@ -180,7 +183,7 @@ namespace MoreMountains.TopDownEngine
                 
 				if (raycastObstacle && _distanceToTarget > raycastObstacle.distance)
 				{
-					_brain.Target = null;
+					if (SetTargetToNullIfNoneIsFound) { _brain.Target = null; }
 					return false;
 				}
 				else
@@ -190,7 +193,7 @@ namespace MoreMountains.TopDownEngine
 					return true;
 				}
 			}
-			_brain.Target = null;
+			if (SetTargetToNullIfNoneIsFound) { _brain.Target = null; }
 			return false;           
 		}
         

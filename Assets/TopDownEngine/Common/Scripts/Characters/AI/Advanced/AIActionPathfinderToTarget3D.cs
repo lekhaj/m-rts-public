@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
@@ -13,8 +14,11 @@ namespace MoreMountains.TopDownEngine
 	//[RequireComponent(typeof(CharacterPathfinder3D))]
 	public class AIActionPathfinderToTarget3D : AIAction
 	{
+		public float MinimumDelayBeforeUpdatingTarget = 0.3f;
+		
 		protected CharacterMovement _characterMovement;
 		protected CharacterPathfinder3D _characterPathfinder3D;
+		protected float _lastSetNewDestinationAt = -Single.MaxValue;
 
 		/// <summary>
 		/// On init we grab our CharacterMovement ability
@@ -44,6 +48,13 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void Move()
 		{
+			if (Time.time - _lastSetNewDestinationAt < MinimumDelayBeforeUpdatingTarget)
+			{
+				return;
+			}
+
+			_lastSetNewDestinationAt = Time.time;
+			
 			if (_brain.Target == null)
 			{
 				_characterPathfinder3D.SetNewDestination(null);

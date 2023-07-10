@@ -45,6 +45,14 @@ namespace MoreMountains.TopDownEngine
 			BasedOnScriptDirection
 		}
 
+		/// the possible ways to determine damage directions
+		public enum DamageDirections
+		{
+			BasedOnOwnerPosition,
+			BasedOnVelocity,
+			BasedOnScriptDirection
+		}
+
 		protected const TriggerAndCollisionMask AllowedTriggerCallbacks = TriggerAndCollisionMask.OnTriggerEnter
 		                                                                  | TriggerAndCollisionMask.OnTriggerStay
 		                                                                  | TriggerAndCollisionMask.OnTriggerEnter2D
@@ -77,6 +85,9 @@ namespace MoreMountains.TopDownEngine
 		/// a list of typed damage definitions that will be applied on top of the base damage
 		[Tooltip("a list of typed damage definitions that will be applied on top of the base damage")]
 		public List<TypedDamage> TypedDamages;
+		/// how to determine the damage direction passed to the Health damage method, usually you'll use velocity for moving damage areas (projectiles) and owner position for melee weapons
+		[Tooltip("how to determine the damage direction passed to the Health damage method, usually you'll use velocity for moving damage areas (projectiles) and owner position for melee weapons")]
+		public DamageDirections DamageDirectionMode = DamageDirections.BasedOnVelocity;
 		
 		[Header("Knockback")]
 		/// the type of knockback to apply when causing damage
@@ -116,8 +127,9 @@ namespace MoreMountains.TopDownEngine
 		public DamageType RepeatedDamageType;
 		
 		[MMInspectorGroup("Damage Taken", true, 69)]
-		[MMInformation(
-			"After having applied the damage to whatever it collided with, you can have this object hurt itself. A bullet will explode after hitting a wall for example. Here you can define how much damage it'll take every time it hits something, or only when hitting something that's damageable, or non damageable. Note that this object will need a Health component too for this to be useful.",
+		[MMInformation("After having applied the damage to whatever it collided with, you can have this object hurt itself. " +
+		               "A bullet will explode after hitting a wall for example. Here you can define how much damage it'll take every time it hits something, " +
+		               "or only when hitting something that's damageable, or non damageable. Note that this object will need a Health component too for this to be useful.",
 			MMInformationAttribute.InformationType.Info, false)]
 		/// The amount of damage taken every time, whether what we collide with is damageable or not
 		[Tooltip("The amount of damage taken every time, whether what we collide with is damageable or not")]
@@ -177,6 +189,9 @@ namespace MoreMountains.TopDownEngine
 		protected bool _initializedFeedbacks = false;
 		protected Vector3 _positionLastFrame;
 		protected Vector3 _knockbackScriptDirection;
+		protected Vector3 _relativePosition;
+		protected Vector3 _damageScriptDirection;
+		protected Health _collidingHealth;
 
 		#region Initialization
 		
@@ -337,25 +352,27 @@ namespace MoreMountains.TopDownEngine
 			if (_boxCollider2D != null)
 			{
 				if (_boxCollider2D.enabled)
-					MMDebug.DrawGizmoCube(transform,
-						_gizmoOffset,
-						_boxCollider2D.size,
-						false);
+				{
+					MMDebug.DrawGizmoCube(transform, _gizmoOffset, _boxCollider2D.size, false);
+				}
 				else
-					MMDebug.DrawGizmoCube(transform,
-						_gizmoOffset,
-						_boxCollider2D.size,
-						true);
+				{
+					MMDebug.DrawGizmoCube(transform, _gizmoOffset, _boxCollider2D.size, true);
+				}
 			}
 
 			if (_circleCollider2D != null)
 			{
+				Matrix4x4 rotationMatrix = transform.localToWorldMatrix;
+				Gizmos.matrix = rotationMatrix;
 				if (_circleCollider2D.enabled)
-					Gizmos.DrawSphere((Vector2)transform.position + _circleCollider2D.offset,
-						_circleCollider2D.radius);
+				{
+					Gizmos.DrawSphere( (Vector2)_gizmoOffset, _circleCollider2D.radius);
+				}
 				else
-					Gizmos.DrawWireSphere((Vector2)transform.position + _circleCollider2D.offset,
-						_circleCollider2D.radius);
+				{
+					Gizmos.DrawWireSphere((Vector2)_gizmoOffset, _circleCollider2D.radius);
+				}
 			}
 
 			if (_boxCollider != null)
@@ -389,9 +406,18 @@ namespace MoreMountains.TopDownEngine
 		/// When knockback is in script direction mode, lets you specify the direction of the knockback
 		/// </summary>
 		/// <param name="newDirection"></param>
-		public virtual void SetScriptDirection(Vector3 newDirection)
+		public virtual void SetKnockbackScriptDirection(Vector3 newDirection)
 		{
 			_knockbackScriptDirection = newDirection;
+		}
+
+		/// <summary>
+		/// When damage direction is in script mode, lets you specify the direction of damage
+		/// </summary>
+		/// <param name="newDirection"></param>
+		public virtual void SetDamageScriptDirection(Vector3 newDirection)
+		{
+			_damageDirection = newDirection;
 		}
 
 		/// <summary>
@@ -453,12 +479,44 @@ namespace MoreMountains.TopDownEngine
 
 				if (Vector3.Distance(_lastDamagePosition, transform.position) > 0.5f)
 				{
-					_damageDirection = transform.position - _lastDamagePosition;
 					_lastDamagePosition = transform.position;
 				}
 
 				_lastPosition = transform.position;
 			}
+		}
+
+		/// <summary>
+		/// Determine the damage direction to pass to the Health Damage method
+		/// </summary>
+		protected virtual void DetermineDamageDirection()
+		{
+			switch (DamageDirectionMode)
+			{
+				case DamageDirections.BasedOnOwnerPosition:
+					if (Owner == null)
+					{
+						Owner = gameObject;
+					}
+					if (_twoD)
+					{
+						_damageDirection = _collidingHealth.transform.position - Owner.transform.position;
+						_damageDirection.z = 0;
+					}
+					else
+					{
+						_damageDirection = _collidingHealth.transform.position - Owner.transform.position;
+					}
+					break;
+				case DamageDirections.BasedOnVelocity:
+					_damageDirection = transform.position - _lastDamagePosition;
+					break;
+				case DamageDirections.BasedOnScriptDirection:
+					_damageDirection = _damageScriptDirection;
+					break;
+			}
+
+			_damageDirection = _damageDirection.normalized;
 		}
 
 		#endregion
@@ -570,28 +628,34 @@ namespace MoreMountains.TopDownEngine
 		/// <param name="health">Health.</param>
 		protected virtual void OnCollideWithDamageable(Health health)
 		{
-			if (!health.CanTakeDamageThisFrame())
-			{
-				return;
-			}
-			
-			// if what we're colliding with is a TopDownController, we apply a knockback force
-			_colliderTopDownController = health.gameObject.MMGetComponentNoAlloc<TopDownController>();
+			_collidingHealth = health;
 
-			HitDamageableFeedback?.PlayFeedbacks(this.transform.position);
-
-			// we apply the damage to the thing we've collided with
-			float randomDamage = UnityEngine.Random.Range(MinDamageCaused, Mathf.Max(MaxDamageCaused, MinDamageCaused));
-			
-			ApplyKnockback(randomDamage, TypedDamages);
-
-			if (RepeatDamageOverTime)
+			if (health.CanTakeDamageThisFrame())
 			{
-				_colliderHealth.DamageOverTime(randomDamage, gameObject, InvincibilityDuration, InvincibilityDuration, _damageDirection, TypedDamages, AmountOfRepeats, DurationBetweenRepeats, DamageOverTimeInterruptible, RepeatedDamageType);	
-			}
-			else
-			{
-				_colliderHealth.Damage(randomDamage, gameObject, InvincibilityDuration, InvincibilityDuration, _damageDirection, TypedDamages);	
+				// if what we're colliding with is a TopDownController, we apply a knockback force
+				_colliderTopDownController = health.gameObject.MMGetComponentNoAlloc<TopDownController>();
+
+				HitDamageableFeedback?.PlayFeedbacks(this.transform.position);
+
+				// we apply the damage to the thing we've collided with
+				float randomDamage =
+					UnityEngine.Random.Range(MinDamageCaused, Mathf.Max(MaxDamageCaused, MinDamageCaused));
+
+				ApplyKnockback(randomDamage, TypedDamages);
+
+				DetermineDamageDirection();
+
+				if (RepeatDamageOverTime)
+				{
+					_colliderHealth.DamageOverTime(randomDamage, gameObject, InvincibilityDuration,
+						InvincibilityDuration, _damageDirection, TypedDamages, AmountOfRepeats, DurationBetweenRepeats,
+						DamageOverTimeInterruptible, RepeatedDamageType);
+				}
+				else
+				{
+					_colliderHealth.Damage(randomDamage, gameObject, InvincibilityDuration, InvincibilityDuration,
+						_damageDirection, TypedDamages);
+				}
 			}
 
 			// we apply self damage
@@ -665,8 +729,8 @@ namespace MoreMountains.TopDownEngine
 					{
 						Owner = gameObject;
 					}
-					var relativePosition = _colliderTopDownController.transform.position - Owner.transform.position;
-					_knockbackForce = Vector3.RotateTowards(_knockbackForce, relativePosition.normalized, 10f, 0f);
+					_relativePosition = _colliderTopDownController.transform.position - Owner.transform.position;
+					_knockbackForce = Vector3.RotateTowards(_knockbackForce, _relativePosition.normalized, 10f, 0f);
 					break;
 				case KnockbackDirections.BasedOnDirection:
 					var direction = transform.position - _positionLastFrame;
@@ -694,9 +758,9 @@ namespace MoreMountains.TopDownEngine
 					{
 						Owner = gameObject;
 					}
-					var relativePosition = _colliderTopDownController.transform.position - Owner.transform.position;
-					_knockbackForce.x = relativePosition.normalized.x * _knockbackForce.x;
-					_knockbackForce.z = relativePosition.normalized.z * _knockbackForce.z;
+					_relativePosition = _colliderTopDownController.transform.position - Owner.transform.position;
+					_knockbackForce.x = _relativePosition.normalized.x * _knockbackForce.x;
+					_knockbackForce.z = _relativePosition.normalized.z * _knockbackForce.z;
 					break;
 				case KnockbackDirections.BasedOnDirection:
 					var direction = transform.position - _positionLastFrame;

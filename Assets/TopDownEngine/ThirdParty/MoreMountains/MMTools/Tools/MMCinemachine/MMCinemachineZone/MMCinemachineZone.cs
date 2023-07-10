@@ -110,7 +110,10 @@ namespace MoreMountains.Tools
 				Debug.LogWarning("[MMCinemachineZone2D] " + this.name + " : no virtual camera is attached to this zone. Set one in its inspector.");
 			}
 
-			SetupConfinerGameObject();
+			if (SetupConfinerOnStart)
+			{
+				SetupConfinerGameObject();	
+			}
 		}
 
 		/// <summary>
@@ -122,7 +125,12 @@ namespace MoreMountains.Tools
 			{
 				return;
 			}
-			SetupConfiner();
+
+			if (SetupConfinerOnStart)
+			{
+				SetupConfiner();	
+			}
+			
 			StartCoroutine(EnableCamera(CameraStartsActive, 1));
 		}
 

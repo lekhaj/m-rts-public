@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// Add this class to a collider (2D or 3D) and it'll let you trigger things after a duration, like a mine would.
 	/// It also comes with options to interrupt or reset the timer on exit. 
 	/// </summary>
-	public class ProximityMine : MonoBehaviour
+	public class ProximityMine : TopDownMonoBehaviour
 	{
 		[Header("Proximity Mine")]
 		/// the layers that will trigger this mine

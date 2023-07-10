@@ -4,35 +4,43 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using System;
+using MoreMountains.Tools;
 
 namespace MoreMountains.Feedbacks
 {
 	public struct MMFlashEvent
 	{
-		public delegate void Delegate(Color flashColor, float duration, float alpha, int flashID, int channel, TimescaleModes timescaleMode, bool stop = false);
 		static private event Delegate OnEvent;
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
+		static public void Register(Delegate callback) { OnEvent += callback; }
+		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
-		static public void Register(Delegate callback)
-		{
-			OnEvent += callback;
-		}
+		public delegate void Delegate(Color flashColor, float duration, float alpha, int flashID, MMChannelData channelData, TimescaleModes timescaleMode, bool stop = false);
 
-		static public void Unregister(Delegate callback)
+		static public void Trigger(Color flashColor, float duration, float alpha, int flashID, MMChannelData channelData, TimescaleModes timescaleMode, bool stop = false)
 		{
-			OnEvent -= callback;
-		}
-
-		static public void Trigger(Color flashColor, float duration, float alpha, int flashID, int channel, TimescaleModes timescaleMode, bool stop = false)
-		{
-			OnEvent?.Invoke(flashColor, duration, alpha, flashID, channel, timescaleMode, stop);
+			OnEvent?.Invoke(flashColor, duration, alpha, flashID, channelData, timescaleMode, stop);
 		}
 	}
 
 	[Serializable]
 	public class MMFlashDebugSettings
 	{
-		/// the channel to broadcast that flash event on
+		/// whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what.
+		/// MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable
+		[Tooltip("whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what. " +
+		         "MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable")]
+		public MMChannelModes ChannelMode = MMChannelModes.Int;
+		/// the channel to listen to - has to match the one on the feedback
+		[Tooltip("the channel to listen to - has to match the one on the feedback")]
+		[MMFEnumCondition("ChannelMode", (int)MMChannelModes.Int)]
 		public int Channel = 0;
+		/// the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel,
+		/// right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name
+		[Tooltip("the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel, " +
+		         "right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name")]
+		[MMFEnumCondition("ChannelMode", (int)MMChannelModes.MMChannel)]
+		public MMChannel MMChannelDefinition = null;
 		/// the color of the flash
 		public Color FlashColor = Color.white;
 		/// the flash duration (in seconds)
@@ -52,13 +60,36 @@ namespace MoreMountains.Feedbacks
 	public class MMFlash : MonoBehaviour
 	{
 		[Header("Flash")]
-		/// the channel to receive flash events on
-		[Tooltip("the channel to receive flash events on")]
+		/// whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what.
+		/// MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable
+		[Tooltip("whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what. " +
+		         "MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable")]
+		public MMChannelModes ChannelMode = MMChannelModes.Int;
+		/// the channel to listen to - has to match the one on the feedback
+		[Tooltip("the channel to listen to - has to match the one on the feedback")]
+		[MMFEnumCondition("ChannelMode", (int)MMChannelModes.Int)]
 		public int Channel = 0;
+		/// the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel,
+		/// right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name
+		[Tooltip("the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel, " +
+		         "right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name")]
+		[MMFEnumCondition("ChannelMode", (int)MMChannelModes.MMChannel)]
+		public MMChannel MMChannelDefinition = null;
 		/// the ID of this MMFlash object. When triggering a MMFlashEvent you can specify an ID, and only MMFlash objects with this ID will answer the call and flash, allowing you to have more than one flash object in a scene
 		[Tooltip("the ID of this MMFlash object. When triggering a MMFlashEvent you can specify an ID, and only MMFlash objects with this ID will answer the call and flash, allowing you to have more than one flash object in a scene")]
 		public int FlashID = 0;
-        
+		/// if this is true, the MMFlash will stop before playing on every new event received
+		[Tooltip("if this is true, the MMFlash will stop before playing on every new event received")]
+		public bool Interruptable = false;
+		
+		[Header("Interpolation")]
+		/// the animation curve to use when flashing in
+		[Tooltip("the animation curve to use when flashing in")]
+		public MMTweenType FlashInTween = new MMTweenType(MMTween.MMTweenCurve.LinearTween);
+		/// the animation curve to use when flashing out
+		[Tooltip("the animation curve to use when flashing out")]
+		public MMTweenType FlashOutTween = new MMTweenType(MMTween.MMTweenCurve.LinearTween);
+
 		[Header("Debug")]
 		/// the set of test settings to use when pressing the DebugTest button
 		[Tooltip("the set of test settings to use when pressing the DebugTest button")]
@@ -81,6 +112,7 @@ namespace MoreMountains.Feedbacks
 		protected int _direction = 1;
 		protected float _duration;
 		protected TimescaleModes _timescaleMode;
+		protected MMTweenType _currentTween;
 
 		/// <summary>
 		/// On start we grab our image component
@@ -101,11 +133,13 @@ namespace MoreMountains.Feedbacks
 			{
 				_image.enabled = true;
 
+				_currentTween = FlashInTween;
 				if (GetTime() - _flashStartedTimestamp > _duration / 2f)
 				{
 					_direction = -1;
+					_currentTween = FlashOutTween;
 				}
-
+				
 				if (_direction == 1)
 				{
 					_delta += GetDeltaTime() / (_duration / 2f);
@@ -119,8 +153,11 @@ namespace MoreMountains.Feedbacks
 				{
 					_flashing = false;
 				}
+				
+				float percent = MMMaths.Remap(_delta, 0f, _duration/2f, 0f, 1f);
+				float tweenValue = _currentTween.Evaluate(percent);
 
-				_canvasGroup.alpha = Mathf.Lerp(0f, _targetAlpha, _delta);
+				_canvasGroup.alpha = Mathf.Lerp(0f, _targetAlpha, tweenValue);
 			}
 			else
 			{
@@ -130,13 +167,13 @@ namespace MoreMountains.Feedbacks
 
 		public virtual void DebugTest()
 		{
-			MMFlashEvent.Trigger(DebugSettings.FlashColor, DebugSettings.FlashDuration, DebugSettings.FlashAlpha, DebugSettings.FlashID, DebugSettings.Channel, TimescaleModes.Unscaled);
+			MMFlashEvent.Trigger(DebugSettings.FlashColor, DebugSettings.FlashDuration, DebugSettings.FlashAlpha, DebugSettings.FlashID, new MMChannelData(DebugSettings.ChannelMode, DebugSettings.Channel, DebugSettings.MMChannelDefinition), TimescaleModes.Unscaled);
 		}
 
 		/// <summary>
 		/// When getting a flash event, we turn our image on
 		/// </summary>
-		public virtual void OnMMFlashEvent(Color flashColor, float duration, float alpha, int flashID, int channel, TimescaleModes timescaleMode, bool stop = false)
+		public virtual void OnMMFlashEvent(Color flashColor, float duration, float alpha, int flashID, MMChannelData channelData, TimescaleModes timescaleMode, bool stop = false)
 		{
 			if (flashID != FlashID) 
 			{
@@ -149,9 +186,14 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
-			if ((channel != Channel) && (channel != -1) && (Channel != -1))
+			if (!MMChannel.Match(channelData, ChannelMode, Channel, MMChannelDefinition))
 			{
 				return;
+			}
+
+			if (_flashing && Interruptable)
+			{
+				_flashing = false;
 			}
 
 			if (!_flashing)

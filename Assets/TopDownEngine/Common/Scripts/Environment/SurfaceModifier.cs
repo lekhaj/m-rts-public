@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// TODO, still work in progress
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Environment/Surface Modifier")]
-	public class SurfaceModifier : MonoBehaviour 
+	public class SurfaceModifier : TopDownMonoBehaviour 
 	{
 		[Header("Friction")]
 		[MMInformation("Set a friction between 0.01 and 0.99 to get a slippery surface (close to 0 is very slippery, close to 1 is less slippery).\nOr set it above 1 to get a sticky surface. The higher the value, the stickier the surface.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]

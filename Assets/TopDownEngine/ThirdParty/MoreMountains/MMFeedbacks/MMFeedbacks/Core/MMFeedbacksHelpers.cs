@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
+using MoreMountains.Tools;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -25,6 +26,27 @@ namespace MoreMountains.Feedbacks
 		{
 			float remappedValue = C + (x - A) / (B - A) * (D - C);
 			return remappedValue;
+		}
+
+		/// <summary>
+		/// A helper used to migrate values from an AnimationCurve field to a MMTweenType, useful when updating
+		/// old feedbacks to use them without losing legacy values 
+		/// </summary>
+		/// <param name="oldCurve"></param>
+		/// <param name="newTweenType"></param>
+		/// <param name="owner"></param>
+		public static void MigrateCurve(AnimationCurve oldCurve, MMTweenType newTweenType, MMF_Player owner)
+		{
+			if ((oldCurve.keys.Length > 0) && (!newTweenType.Initialized))
+			{
+				newTweenType.Curve = oldCurve;
+				newTweenType.MMTweenDefinitionType = MMTweenDefinitionTypes.AnimationCurve;
+				oldCurve = null;
+				newTweenType.Initialized = true;
+				#if UNITY_EDITOR
+				UnityEditor.Undo.RecordObject(owner, "Ports animation curve to tween system");
+				#endif
+			}
 		}
 	}
 
@@ -134,19 +156,131 @@ namespace MoreMountains.Feedbacks
 	{
 		public string ConditionBoolean = "";
 		public bool Hidden = false;
+		public bool Negative = false;
 
 		public MMFConditionAttribute(string conditionBoolean)
 		{
 			this.ConditionBoolean = conditionBoolean;
 			this.Hidden = false;
+			this.Negative = false;
 		}
 
 		public MMFConditionAttribute(string conditionBoolean, bool hideInInspector)
 		{
 			this.ConditionBoolean = conditionBoolean;
 			this.Hidden = hideInInspector;
+			this.Negative = false;
+		}
+
+		public MMFConditionAttribute(string conditionBoolean, bool hideInInspector, bool negative)
+		{
+			this.ConditionBoolean = conditionBoolean;
+			this.Hidden = hideInInspector;
+			this.Negative = negative;
 		}
 	}
+
+	public class MMFVectorAttribute : PropertyAttribute
+	{
+		public readonly string[] Labels;
+
+		public MMFVectorAttribute(params string[] labels)
+		{
+			Labels = labels;
+		}
+	}
+	
+	#if UNITY_EDITOR
+	[CustomPropertyDrawer(typeof(MMFVectorAttribute))]
+	public class MMVectorLabelsAttributeDrawer : PropertyDrawer
+	{
+		protected static readonly GUIContent[] originalLabels = new GUIContent[] { new GUIContent("X"), new GUIContent("Y"), new GUIContent("Z"), new GUIContent("W") };
+		protected const int padding = 375;
+
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent guiContent)
+		{
+			int ratio = (padding > Screen.width) ? 2 : 1;
+			return ratio * base.GetPropertyHeight(property, guiContent);
+		}
+        
+		public override void OnGUI(Rect rect, SerializedProperty property, GUIContent guiContent)
+		{
+			MMFVectorAttribute vector = (MMFVectorAttribute)attribute;
+            
+			if (property.propertyType == SerializedPropertyType.Vector2)
+			{
+				float[] fieldArray = new float[] { property.vector2Value.x, property.vector2Value.y };
+				fieldArray = DrawFields(rect, fieldArray, ObjectNames.NicifyVariableName(property.name), EditorGUI.FloatField, vector);
+				property.vector2Value = new Vector2(fieldArray[0], fieldArray[1]);
+			}
+			else if (property.propertyType == SerializedPropertyType.Vector3)
+			{
+				float[] fieldArray = new float[] { property.vector3Value.x, property.vector3Value.y, property.vector3Value.z };
+				fieldArray = DrawFields(rect, fieldArray, ObjectNames.NicifyVariableName(property.name), EditorGUI.FloatField, vector);
+				property.vector3Value = new Vector3(fieldArray[0], fieldArray[1], fieldArray[2]);
+			}
+			else if (property.propertyType == SerializedPropertyType.Vector4)
+			{
+				float[] fieldArray = new float[] { property.vector4Value.x, property.vector4Value.y, property.vector4Value.z, property.vector4Value.w };
+				fieldArray = DrawFields(rect, fieldArray, ObjectNames.NicifyVariableName(property.name), EditorGUI.FloatField, vector);
+				property.vector4Value = new Vector4(fieldArray[0], fieldArray[1], fieldArray[2]);
+			}
+			else if (property.propertyType == SerializedPropertyType.Vector2Int)
+			{
+				int[] fieldArray = new int[] { property.vector2IntValue.x, property.vector2IntValue.y };
+				fieldArray = DrawFields(rect, fieldArray, ObjectNames.NicifyVariableName(property.name), EditorGUI.IntField, vector);
+				property.vector2IntValue = new Vector2Int(fieldArray[0], fieldArray[1]);
+			}
+			else if (property.propertyType == SerializedPropertyType.Vector3Int)
+			{
+				int[] array = new int[] { property.vector3IntValue.x, property.vector3IntValue.y, property.vector3IntValue.z };
+				array = DrawFields(rect, array, ObjectNames.NicifyVariableName(property.name), EditorGUI.IntField, vector);
+				property.vector3IntValue = new Vector3Int(array[0], array[1], array[2]);
+			}
+		}
+
+		protected T[] DrawFields<T>(Rect rect, T[] vector, string mainLabel, System.Func<Rect, GUIContent, T, T> fieldDrawer, MMFVectorAttribute vectors)
+		{
+			T[] result = vector;
+
+			bool shortSpace = (Screen.width < padding);
+
+			Rect mainLabelRect = rect;
+			mainLabelRect.width = EditorGUIUtility.labelWidth;
+			if (shortSpace)
+			{
+				mainLabelRect.height *= 0.5f;
+			}                
+
+			Rect fieldRect = rect;
+			if (shortSpace)
+			{
+				fieldRect.height *= 0.5f;
+				fieldRect.y += fieldRect.height;
+				fieldRect.width = rect.width / vector.Length;
+			}
+			else
+			{
+				fieldRect.x += mainLabelRect.width;
+				fieldRect.width = (rect.width - mainLabelRect.width) / vector.Length;
+			}
+
+			EditorGUI.LabelField(mainLabelRect, mainLabel);
+
+			for (int i = 0; i < vector.Length; i++)
+			{
+				GUIContent label = vectors.Labels.Length > i ? new GUIContent(vectors.Labels[i]) : originalLabels[i];
+				Vector2 labelSize = EditorStyles.label.CalcSize(label);
+				EditorGUIUtility.labelWidth = Mathf.Max(labelSize.x + 5, 0.3f * fieldRect.width);
+				result[i] = fieldDrawer(fieldRect, label, vector[i]);
+				fieldRect.x += fieldRect.width;
+			}
+
+			EditorGUIUtility.labelWidth = 0;
+			return result;
+		}
+	}
+	#endif
     
 	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 	public class MMFHiddenPropertiesAttribute : Attribute

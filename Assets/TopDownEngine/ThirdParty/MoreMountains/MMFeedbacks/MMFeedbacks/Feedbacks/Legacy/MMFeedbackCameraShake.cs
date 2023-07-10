@@ -49,7 +49,7 @@ namespace MoreMountains.Feedbacks
 			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
 			MMCameraShakeEvent.Trigger(FeedbackDuration, CameraShakeProperties.Amplitude * intensityMultiplier, CameraShakeProperties.Frequency, 
 				CameraShakeProperties.AmplitudeX * intensityMultiplier, CameraShakeProperties.AmplitudeY * intensityMultiplier, CameraShakeProperties.AmplitudeZ * intensityMultiplier,
-				RepeatUntilStopped, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled);
+				RepeatUntilStopped, ChannelData(Channel), Timing.TimescaleMode == TimescaleModes.Unscaled);
 		}
 
 		protected override void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1)
@@ -59,7 +59,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMCameraShakeStopEvent.Trigger(Channel);
+			MMCameraShakeStopEvent.Trigger(ChannelData(Channel));
 		}
 	}
 }

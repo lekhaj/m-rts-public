@@ -24,6 +24,13 @@ MonoBehaviour:
   Droppable: 0
   CanMoveObject: 1
   CanSwapObject: 1
+  DisplayProperties:
+    DisplayEquipUseButton: 0
+    DisplayMoveButton: 0
+    DisplayDropButton: 0
+    DisplayEquipButton: 0
+    DisplayUseButton: 0
+    DisplayUnequipButton: 0
   Quantity: 1
   ItemName: Shotgun
   ShortDescription: Pistol grip pump

@@ -10,7 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you change the speed of a target animator, either once, or instantly and then reset it, or interpolate it over time")]
-	[FeedbackPath("GameObject/Animator Speed")]
+	[FeedbackPath("Animation/Animator Speed")]
 	public class MMF_AnimatorSpeed : MMF_Feedback 
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -18,11 +18,12 @@ namespace MoreMountains.Feedbacks
         
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
-		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.GameObjectColor; } }
+		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.AnimationColor; } }
 		public override bool EvaluateRequiresSetup() { return (BoundAnimator == null); }
 		public override string RequiredTargetText { get { return BoundAnimator != null ? BoundAnimator.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a BoundAnimator be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasRandomness => true;
 
 		public enum SpeedModes { Once, InstantThenReset, OverTime }
 		
@@ -79,7 +80,7 @@ namespace MoreMountains.Feedbacks
 
 			if (Mode == SpeedModes.Once)
 			{
-				BoundAnimator.speed = DetermineNewSpeed();
+				BoundAnimator.speed = ComputeIntensity(DetermineNewSpeed(), position);
 			}
 			else
 			{
@@ -142,6 +143,19 @@ namespace MoreMountains.Feedbacks
 			if (_coroutine != null)
 			{
 				Owner.StopCoroutine(_coroutine);	
+			}
+
+			BoundAnimator.speed = _initialSpeed;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
 			}
 
 			BoundAnimator.speed = _initialSpeed;

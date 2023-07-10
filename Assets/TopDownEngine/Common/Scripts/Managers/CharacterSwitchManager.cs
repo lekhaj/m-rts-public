@@ -11,7 +11,7 @@ namespace MoreMountains.TopDownEngine
 	/// If you want to swap characters between a bunch of characters within a scene, look at the CharacterSwap ability and CharacterSwapManager
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Managers/CharacterSwitchManager")]
-	public class CharacterSwitchManager : MonoBehaviour
+	public class CharacterSwitchManager : TopDownMonoBehaviour
 	{
 		/// the possible orders the next character can be selected from
 		public enum NextCharacterChoices { Sequential, Random }
@@ -152,6 +152,7 @@ namespace MoreMountains.TopDownEngine
 
 			// we trigger a switch event (for the camera to know, mostly)
 			MMEventManager.TriggerEvent(_switchEvent);
+			MMCameraEvent.Trigger(MMCameraEventTypes.RefreshAutoFocus, LevelManager.Instance.Players[0], null);
 		}
 	}
 }

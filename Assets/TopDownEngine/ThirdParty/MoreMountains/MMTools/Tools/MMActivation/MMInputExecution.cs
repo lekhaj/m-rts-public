@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -14,7 +14,7 @@ namespace MoreMountains.Tools
 	[System.Serializable]
 	public class MMInputExecutionBinding
 	{
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 			public Key TargetInputKey = Key.Space;
 		#else
 		/// the key the user needs to press to trigger events
@@ -37,7 +37,7 @@ namespace MoreMountains.Tools
 			bool keyDown = false;
 			bool keyUp = false;
 	        
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 		        key = Keyboard.current[TargetInputKey].isPressed;
 		        keyDown = Keyboard.current[TargetInputKey].wasPressedThisFrame;
 		        keyUp = Keyboard.current[TargetInputKey].wasReleasedThisFrame;

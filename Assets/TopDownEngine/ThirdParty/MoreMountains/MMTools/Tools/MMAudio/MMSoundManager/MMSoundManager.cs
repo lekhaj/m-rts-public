@@ -119,7 +119,9 @@ namespace MoreMountains.Tools
 				options.BypassEffects, options.BypassListenerEffects, options.BypassReverbZones, options.Priority,
 				options.ReverbZoneMix,
 				options.DopplerLevel, options.Spread, options.RolloffMode, options.MinDistance, options.MaxDistance, 
-				options.DoNotAutoRecycleIfNotDonePlaying, options.PlaybackTime
+				options.DoNotAutoRecycleIfNotDonePlaying, options.PlaybackTime, options.AttachToTransform,
+				options.UseSpreadCurve, options.SpreadCurve, options.UseCustomRolloffCurve, options.CustomRolloffCurve,
+				options.UseSpatialBlendCurve, options.SpatialBlendCurve, options.UseReverbZoneMixCurve, options.ReverbZoneMixCurve
 			);
 		}
 
@@ -165,7 +167,9 @@ namespace MoreMountains.Tools
 			bool soloSingleTrack = false, bool soloAllTracks = false, bool autoUnSoloOnEnd = false,  
 			bool bypassEffects = false, bool bypassListenerEffects = false, bool bypassReverbZones = false, int priority = 128, float reverbZoneMix = 1f,
 			float dopplerLevel = 1f, int spread = 0, AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic, float minDistance = 1f, float maxDistance = 500f,
-			bool doNotAutoRecycleIfNotDonePlaying = false, float playbackTime = 0f
+			bool doNotAutoRecycleIfNotDonePlaying = false, float playbackTime = 0f, Transform attachToTransform = null,
+			bool useSpreadCurve = false, AnimationCurve spreadCurve = null, bool useCustomRolloffCurve = false, AnimationCurve customRolloffCurve = null,
+			bool useSpatialBlendCurve = false, AnimationCurve spatialBlendCurve = null, bool useReverbZoneMixCurve = false, AnimationCurve reverbZoneMixCurve = null
 		)
 		{
 			if (this == null) { return null; }
@@ -215,6 +219,25 @@ namespace MoreMountains.Tools
 			audioSource.minDistance = minDistance;
 			audioSource.maxDistance = maxDistance;
 			audioSource.time = playbackTime; 
+			
+			// curves
+			if (useSpreadCurve) { audioSource.SetCustomCurve(AudioSourceCurveType.Spread, spreadCurve); }
+			if (useCustomRolloffCurve) { audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, customRolloffCurve); }
+			if (useSpatialBlendCurve) { audioSource.SetCustomCurve(AudioSourceCurveType.SpatialBlend, spatialBlendCurve); }
+			if (useReverbZoneMixCurve) { audioSource.SetCustomCurve(AudioSourceCurveType.ReverbZoneMix, reverbZoneMixCurve); }
+			
+			// attaching to target
+			if (attachToTransform != null)
+			{
+				MMFollowTarget followTarget = audioSource.gameObject.MMGetComponentNoAlloc<MMFollowTarget>();
+				followTarget.Target = attachToTransform;
+				followTarget.InterpolatePosition = false;
+				followTarget.InterpolateRotation = false;
+				followTarget.InterpolateScale = false;
+				followTarget.FollowRotation = false;
+				followTarget.FollowScale = false;
+				followTarget.enabled = true;
+			}
             
 			// track and volume ---------------------------------------------------------------------------------
             
@@ -841,7 +864,7 @@ namespace MoreMountains.Tools
 		}
 
 		/// <summary>
-		/// Pauses all sounds playing on the MMSoundManager
+		/// Plays all sounds playing on the MMSoundManager
 		/// </summary>
 		public virtual void PlayAllSounds()
 		{
@@ -1057,13 +1080,17 @@ namespace MoreMountains.Tools
 			}
 		}
 
-		public virtual void OnMMSfxEvent(AudioClip clipToPlay, AudioMixerGroup audioGroup = null, float volume = 1f, float pitch = 1f)
+		public virtual void OnMMSfxEvent(AudioClip clipToPlay, AudioMixerGroup audioGroup = null, float volume = 1f, float pitch = 1f, int priority = 128)
 		{
 			MMSoundManagerPlayOptions options = MMSoundManagerPlayOptions.Default;
 			options.Location = this.transform.position;
 			options.AudioGroup = audioGroup;
 			options.Volume = volume;
 			options.Pitch = pitch;
+			if (priority >= 0)
+			{
+				options.Priority = Mathf.Min(priority, 256);
+			}
 			options.MmSoundManagerTrack = MMSoundManagerTracks.Sfx;
 			options.Loop = false;
             

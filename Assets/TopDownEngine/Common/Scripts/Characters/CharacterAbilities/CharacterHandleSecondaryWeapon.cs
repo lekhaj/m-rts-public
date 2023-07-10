@@ -23,25 +23,30 @@ namespace MoreMountains.TopDownEngine
 		protected override void HandleInput()
 		{
 			if (!AbilityAuthorized
-			    || (_condition.CurrentState != CharacterStates.CharacterConditions.Normal))
+			    || (_condition.CurrentState != CharacterStates.CharacterConditions.Normal)
+			    || (CurrentWeapon == null))
 			{
 				return;
 			}
-			if ((_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonDown) || (_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonDown))
+
+			bool inputAuthorized = true;
+			if (CurrentWeapon != null)
+			{
+				inputAuthorized = CurrentWeapon.InputAuthorized;
+			}
+			
+			if (inputAuthorized && ((_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonDown) || (_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonDown)))
 			{
 				ShootStart();
 			}
-
-			if (CurrentWeapon != null)
+			
+			bool buttonPressed =
+				(_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonPressed) ||
+				(_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonPressed); 
+            
+			if (inputAuthorized && ContinuousPress && (CurrentWeapon.TriggerMode == Weapon.TriggerModes.Auto) && buttonPressed)
 			{
-				bool buttonPressed =
-					(_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonPressed) ||
-					(_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonPressed); 
-                
-				if (ContinuousPress && (CurrentWeapon.TriggerMode == Weapon.TriggerModes.Auto) && buttonPressed)
-				{
-					ShootStart();
-				}
+				ShootStart();
 			}
 
 			if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
@@ -49,22 +54,19 @@ namespace MoreMountains.TopDownEngine
 				Reload();
 			}
 
-			if ((_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonUp) || (_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonUp))
+			if (inputAuthorized && ((_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonUp) || (_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonUp)))
 			{
 				ShootStop();
 			}
-
-			if (CurrentWeapon != null)
+			
+			if ((CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses)
+			    && ((_inputManager.SecondaryShootAxis == MMInput.ButtonStates.Off) && (_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.Off))
+			    && !(UseSecondaryAxisThresholdToShoot && (_inputManager.SecondaryMovement.magnitude > _inputManager.Threshold.magnitude)))
 			{
-				if ((CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses)
-				    && ((_inputManager.SecondaryShootAxis == MMInput.ButtonStates.Off) && (_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.Off))
-				    && !(UseSecondaryAxisThresholdToShoot && (_inputManager.SecondaryMovement.magnitude > _inputManager.Threshold.magnitude)))
-				{
-					CurrentWeapon.WeaponInputStop();
-				}
+				CurrentWeapon.WeaponInputStop();
 			}
 
-			if (UseSecondaryAxisThresholdToShoot && (_inputManager.SecondaryMovement.magnitude > _inputManager.Threshold.magnitude))
+			if (inputAuthorized && UseSecondaryAxisThresholdToShoot && (_inputManager.SecondaryMovement.magnitude > _inputManager.Threshold.magnitude))
 			{
 				ShootStart();
 			}

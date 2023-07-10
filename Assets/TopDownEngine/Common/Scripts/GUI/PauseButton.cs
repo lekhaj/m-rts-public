@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// A simple component meant to be added to the pause button
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/GUI/PauseButton")]
-	public class PauseButton : MonoBehaviour
+	public class PauseButton : TopDownMonoBehaviour
 	{
 		/// <summary>
 		/// Triggers a pause event

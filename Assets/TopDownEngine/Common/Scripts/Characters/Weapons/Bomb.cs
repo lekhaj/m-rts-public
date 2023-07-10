@@ -8,7 +8,7 @@ namespace MoreMountains.TopDownEngine
 	/// A basic melee weapon class, that will activate a "hurt zone" when the weapon is used
 	/// </summary>
 	[AddComponentMenu("TopDown Engine/Weapons/Bomb")]
-	public class Bomb : MonoBehaviour 
+	public class Bomb : TopDownMonoBehaviour 
 	{
 		/// the shape of the bomb's damage area
 		public enum DamageAreaShapes { Rectangle, Circle }

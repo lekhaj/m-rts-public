@@ -9,7 +9,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// Dialogue box class. Don't add this directly to your game, look at DialogueZone instead.
 	/// </summary>
-	public class DialogueBox : MonoBehaviour
+	public class DialogueBox : TopDownMonoBehaviour
 	{
 		[Header("Dialogue Box")]
 		/// the text panel background

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace MoreMountains.TopDownEngine
 {
 	[RequireComponent(typeof(Weapon))]
-	public abstract class WeaponAim : MonoBehaviour, MMEventListener<TopDownEngineEvent>
+	public abstract class WeaponAim : TopDownMonoBehaviour, MMEventListener<TopDownEngineEvent>
 	{
 		/// the list of possible control modes
 		public enum AimControls { Off, PrimaryMovement, SecondaryMovement, Mouse, Script, SecondaryThenPrimaryMovement, PrimaryThenSecondaryMovement, CharacterRotateCameraDirection }

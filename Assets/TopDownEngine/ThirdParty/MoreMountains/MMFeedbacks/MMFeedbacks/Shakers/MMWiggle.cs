@@ -654,5 +654,12 @@ namespace MoreMountains.Feedbacks
 			randomizedVector.z = UnityEngine.Random.Range(vectorMin.z, vectorMax.z);
 			return randomizedVector;
 		}
+		
+		public virtual void RestoreInitialValues()
+		{
+			transform.localPosition = _positionInternalProperties.initialValue;
+			transform.localEulerAngles = _rotationInternalProperties.initialValue;
+			transform.localScale = _scaleInternalProperties.initialValue;
+		}
 	}
 }

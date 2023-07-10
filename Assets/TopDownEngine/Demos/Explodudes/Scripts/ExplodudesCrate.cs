@@ -7,7 +7,7 @@ namespace MoreMountains.TopDownEngine
 	/// <summary>
 	/// A class that modifies the y scale of crates in the Explodudes demo scene
 	/// </summary>
-	public class ExplodudesCrate : MonoBehaviour
+	public class ExplodudesCrate : TopDownMonoBehaviour
 	{
 		protected const float MinHeight = 0.8f;
 		protected const float MaxHeight = 1.1f;

@@ -3,7 +3,7 @@ using MoreMountains.Feedbacks;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -29,7 +29,7 @@ namespace MoreMountains.Tools
 		public float RotationSpeed = 40f;
 
 		[Header("Controls")]
-		#if ENABLE_INPUT_SYSTEM
+		#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 	        public InputAction HorizontalAction;
 	        public InputAction VerticalAction;
 	        public InputAction MousePositionAction;
@@ -121,7 +121,7 @@ namespace MoreMountains.Tools
 				ToggleFreeCamera();
 			}
             
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
             HorizontalAction.Enable();
             VerticalAction.Enable();
             MousePositionAction.Enable();
@@ -141,7 +141,7 @@ namespace MoreMountains.Tools
 		{
 			bool activateButtonInput = false;
 	        
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				activateButtonInput = Keyboard.current[ActivateKey].wasPressedThisFrame;
 			#else
 			activateButtonInput = Input.GetKeyDown(ActivateButton);
@@ -172,7 +172,7 @@ namespace MoreMountains.Tools
 		{
 			if (!UseMobileControls || (LeftStick == null))
 			{
-				#if !ENABLE_INPUT_SYSTEM
+				#if !ENABLE_INPUT_SYSTEM || ENABLE_LEGACY_INPUT_MANAGER
 				_currentInput.x = Input.GetAxis("Horizontal");
 				_currentInput.y = 0f;
 				_currentInput.z = Input.GetAxis("Vertical");
@@ -193,7 +193,7 @@ namespace MoreMountains.Tools
 			bool runButton = false;
 			bool timeScaleButton = false;
             
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				upButton = Keyboard.current[UpKey].isPressed;
 				downButton = Keyboard.current[DownKey].isPressed;
 				runButton = Keyboard.current[RunKey].isPressed;
@@ -231,7 +231,7 @@ namespace MoreMountains.Tools
 		protected virtual void HandleMobileControls()
 		{
 			bool mobileSwitch = false;
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				mobileSwitch = Keyboard.current[ControlsModeSwitchKey].wasPressedThisFrame;
 			#else
 			mobileSwitch = Input.GetKeyDown(ControlsModeSwitch);

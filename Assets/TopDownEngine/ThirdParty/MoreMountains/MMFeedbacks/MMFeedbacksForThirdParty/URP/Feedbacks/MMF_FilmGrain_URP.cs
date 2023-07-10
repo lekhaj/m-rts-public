@@ -29,6 +29,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// the duration of this feedback is the duration of the shake
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 		public override bool HasChannel => true;
+		public override bool HasRandomness => true;
 
 		[MMFInspectorGroup("Film Grain", true, 21)]
 		/// the duration of the shake, in seconds
@@ -69,9 +70,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 			MMFilmGrainShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, intensityMultiplier,
-				Channel, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, Timing.TimescaleMode);
+				ChannelData, ResetShakerValuesAfterShake, ResetTargetValuesAfterShake, NormalPlayDirection, ComputedTimescaleMode);
             
 		}
         
@@ -88,8 +89,20 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
             
-			MMFilmGrainShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop:true, channel: Channel);
-            
+			MMFilmGrainShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, stop:true, channelData: ChannelData);
+		}
+
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			
+			MMFilmGrainShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, restore:true, channelData: ChannelData);
 		}
 	}
 }

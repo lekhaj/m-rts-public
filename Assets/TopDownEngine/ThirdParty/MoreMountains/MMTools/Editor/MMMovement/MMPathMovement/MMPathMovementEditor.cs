@@ -42,7 +42,7 @@ namespace MoreMountains.Tools
 		/// </summary>
 		protected virtual void OnSceneGUI()
 		{
-			Handles.color=Color.green;
+			Handles.color = Color.green;
 			MMPathMovement t = (target as MMPathMovement);
 
 			if (t.GetOriginalTransformPositionStatus() == false)
@@ -54,12 +54,12 @@ namespace MoreMountains.Tools
 			{
 				EditorGUI.BeginChangeCheck();
 
-				Vector3 oldPoint = t.GetOriginalTransformPosition()+t.PathElements[i].PathElementPosition;
+				Vector3 oldPoint = t.PointPosition(i);
 				GUIStyle style = new GUIStyle();
 
 				// draws the path item number
 				style.normal.textColor = Color.yellow;	 
-				Handles.Label(t.GetOriginalTransformPosition()+t.PathElements[i].PathElementPosition+(Vector3.down*0.4f)+(Vector3.right*0.4f), ""+i,style);
+				Handles.Label(t.PointPosition(i) + (Vector3.down*0.4f) + (Vector3.right*0.4f), ""+i,style);
 
 				// draws a movable handle
 				Vector3 newPoint = Handles.FreeMoveHandle(oldPoint, Quaternion.identity,.5f,new Vector3(.25f,.25f,.25f),Handles.CircleHandleCap);

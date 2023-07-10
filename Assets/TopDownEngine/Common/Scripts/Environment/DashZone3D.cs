@@ -10,7 +10,7 @@ namespace MoreMountains.TopDownEngine
 	/// </summary>
 	[RequireComponent(typeof(Collider))]
 	[AddComponentMenu("TopDown Engine/Environment/Dash Zone 3D")]
-	public class DashZone3D : MonoBehaviour
+	public class DashZone3D : TopDownMonoBehaviour
 	{
 		[Header("Bindings")]
 

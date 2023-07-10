@@ -60,7 +60,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			MMFeedbacksShakeEvent.Trigger(Channel, UseRange, EventRange, EventOriginTransform.position);
+			MMFeedbacksShakeEvent.Trigger(ChannelData(Channel), UseRange, EventRange, EventOriginTransform.position);
 		}
 	}
 }

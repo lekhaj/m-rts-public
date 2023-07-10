@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 using UnityEngine.UI;
@@ -479,7 +479,7 @@ namespace MoreMountains.Tools
 		{
 			bool input = false;
 			
-			#if ENABLE_INPUT_SYSTEM
+			#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 				input = Keyboard.current[Data.ToggleKey].wasPressedThisFrame;
 			#else
 			input = Input.GetKeyDown(Data.ToggleShortcut);

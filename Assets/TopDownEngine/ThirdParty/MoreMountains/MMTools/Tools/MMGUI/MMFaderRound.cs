@@ -276,6 +276,10 @@ namespace MoreMountains.Tools
 			if (fadeStopEvent.ID == ID)
 			{
 				_fading = false;
+				if (fadeStopEvent.Restore)
+				{
+					FaderMask.transform.localScale = _initialScale * Vector3.one;
+				}
 			}
 		}
 

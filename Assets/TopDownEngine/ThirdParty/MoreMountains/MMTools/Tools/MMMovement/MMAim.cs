@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 #endif
 
@@ -21,10 +21,6 @@ namespace MoreMountains.Tools
 		public AimControls AimControl = AimControls.SecondaryMovement;
 		/// the rotation mode
 		public RotationModes RotationMode = RotationModes.Free;
-        
-		#if ENABLE_INPUT_SYSTEM
-			public InputAction MousePositionAction;
-		#endif
 
 		[Header("Limits")]
 		[Range(-180, 180)]
@@ -79,12 +75,6 @@ namespace MoreMountains.Tools
 			}
 
 			_mainCamera = Camera.main;
-            
-			#if ENABLE_INPUT_SYSTEM
-				MousePositionAction.Enable();
-				MousePositionAction.performed += context => _inputSystemMousePosition = context.ReadValue<Vector2>();
-				MousePositionAction.canceled += context => _inputSystemMousePosition = Vector2.zero;
-			#endif
 		}
 
 		/// <summary>
@@ -111,8 +101,8 @@ namespace MoreMountains.Tools
 					break;
 
 				case AimControls.Mouse:
-					#if ENABLE_INPUT_SYSTEM
-						_mousePosition = _inputSystemMousePosition;
+					#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+					_mousePosition = Mouse.current.position.ReadValue();
 					#else
 					_mousePosition = Input.mousePosition;
 					#endif
