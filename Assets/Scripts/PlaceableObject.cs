@@ -16,7 +16,6 @@ public class PlaceableObject : MonoBehaviour
         Vector3Int positionInt = BuildingSystem.instance.GridLayout.LocalToCell(transform.position);
         BoundsInt areaTemp = area;
         areaTemp.position = positionInt;
-
         if (BuildingSystem.instance.CanBePlaced(areaTemp))
         {
             return true;
@@ -31,10 +30,6 @@ public class PlaceableObject : MonoBehaviour
         areaTemp.position = positionInt;
         Placed = true;
         BuildingSystem.instance.TakeArea(areaTemp);
-
-        // Assign the updated position and area values to the object
-        transform.position = BuildingSystem.instance.GridLayout.CellToLocal(positionInt);
-        area = areaTemp;
     }
 
     private void GetColliderVertexPositionsLocal()

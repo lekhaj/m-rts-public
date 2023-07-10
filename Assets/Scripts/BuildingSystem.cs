@@ -222,18 +222,20 @@ public class BuildingSystem : MonoBehaviour
         int size = baseArray.Length;
         TileBase[] tileArray = new TileBase[size];
 
-        for (int i = 0; i < baseArray.Length; i++)
+
+        if (mainTileMap != null && tileBases.ContainsKey(TileType.white) && tileBases[TileType.white] != null)
         {
-            Debug.Log("baseArray[" + i + "]: " + baseArray[i].name.Trim());
-            Debug.Log("tileBases[TileType.white]: " + tileBases[TileType.white].name.Trim());
-            if (baseArray[i].name.Trim() == tileBases[TileType.white].name.Trim())
+            for (int i = 0; i < baseArray.Length; i++)
             {
-                tileArray[i] = tileBases[TileType.green];
-            }
-            else
-            {
-                FillTiles(tileArray, TileType.red);
-                break;
+                if (baseArray[i] != null && baseArray[i].name.Trim() == tileBases[TileType.white].name.Trim())
+                {
+                    tileArray[i] = tileBases[TileType.green];
+                }
+                else
+                {
+                    FillTiles(tileArray, TileType.red);
+                    break;
+                }
             }
         }
 
