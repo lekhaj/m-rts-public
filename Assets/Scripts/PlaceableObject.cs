@@ -9,6 +9,34 @@ public class PlaceableObject : MonoBehaviour
 
     public Vector3[] Vertices;
 
+    public BoundsInt area;
+
+    public bool CanBePlaced()
+    {
+        Vector3Int positionInt = BuildingSystem.instance.GridLayout.LocalToCell(transform.position);
+        BoundsInt areaTemp = area;
+        areaTemp.position = positionInt;
+
+        if (BuildingSystem.instance.CanBePlaced(areaTemp))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void Place()
+    {
+        Vector3Int positionInt = BuildingSystem.instance.GridLayout.LocalToCell(transform.position);
+        BoundsInt areaTemp = area;
+        areaTemp.position = positionInt;
+        Placed = true;
+        BuildingSystem.instance.TakeArea(areaTemp);
+
+        // Assign the updated position and area values to the object
+        transform.position = BuildingSystem.instance.GridLayout.CellToLocal(positionInt);
+        area = areaTemp;
+    }
+
     private void GetColliderVertexPositionsLocal()
     {
         BoxCollider boxCollider = gameObject.GetComponent<BoxCollider>();
@@ -45,13 +73,13 @@ public class PlaceableObject : MonoBehaviour
         CalculateSizeInCells();
     }
 
-    public virtual void Place()
-    {
-        ObjectDrag drag = gameObject.GetComponent<ObjectDrag>();
-        Destroy(drag);
+    //public virtual void Place()
+    //{
+    //    ObjectDrag drag = gameObject.GetComponent<ObjectDrag>();
+    //    Destroy(drag);
 
-        Placed = true;
-    }
+    //    Placed = true;
+    //}
 
     public void Rotate()
     {

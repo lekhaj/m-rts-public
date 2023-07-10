@@ -59,6 +59,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6886471ba42ca8941a9af35f081cdf65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Vertices: []
+  area:
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Size: {x: 2, y: 2, z: 1}
 --- !u!1001 &7792283404138846435
 PrefabInstance:
   m_ObjectHideFlags: 0
