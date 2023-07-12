@@ -26,6 +26,9 @@ public class BuildingSystem : MonoBehaviour
     private Vector3 prevPos;
     private BoundsInt prevArea;
 
+    private GameObject _prevBuilding;
+    public bool _prevBuildingAvailable;
+
     public enum TileType
     {
         empty,
@@ -49,14 +52,13 @@ public class BuildingSystem : MonoBehaviour
         tileBases.Add(TileType.white, Resources.Load<TileBase>(tilePath + "white"));
         tileBases.Add(TileType.green, Resources.Load<TileBase>(tilePath + "green"));
         tileBases.Add(TileType.red, Resources.Load<TileBase>(tilePath + "red"));
+
+        _prevBuildingAvailable = false;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            InitializeWithObject(CastleTomb);
-        }
+       
 
         if (!objectToPlace)
         {
@@ -85,6 +87,15 @@ public class BuildingSystem : MonoBehaviour
         {
             ClearArea();
             Destroy(objectToPlace.gameObject);
+        }
+
+        if (_prevBuildingAvailable)
+        {
+            if (_prevBuilding.GetComponent<PlaceableObject>().Placed)
+            {
+                _prevBuildingAvailable = false;
+                return;
+            }
         }
     }
 
@@ -154,6 +165,8 @@ public class BuildingSystem : MonoBehaviour
 
         GameObject obj = Instantiate(prefab, position, Quaternion.identity);
         objectToPlace = obj.gameObject.GetComponent<PlaceableObject>();
+        _prevBuilding = obj;
+        _prevBuildingAvailable = true;
         FollowBuilding();
         objectToPlace = obj.GetComponent<PlaceableObject>();
         obj.AddComponent<ObjectDrag>();
@@ -241,6 +254,19 @@ public class BuildingSystem : MonoBehaviour
 
         tempTileMap.SetTilesBlock(buildArea, tileArray);
         prevArea = buildArea;
+    }
+
+    #endregion
+
+
+    #region Buttons
+
+    public void Spawn()
+    {
+        if (!_prevBuildingAvailable)
+        {
+            InitializeWithObject(CastleTomb);
+        }
     }
 
     #endregion
