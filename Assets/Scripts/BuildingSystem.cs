@@ -55,6 +55,11 @@ public class BuildingSystem : MonoBehaviour
         tileBases.Add(TileType.green, Resources.Load<TileBase>(tilePath + "green"));
         tileBases.Add(TileType.red, Resources.Load<TileBase>(tilePath + "red"));
 
+        foreach (var item in tileBases)
+        {
+            Debug.Log("Namee" + item.Value);
+        }
+
         _prevBuildingAvailable = false;
     }
 
@@ -71,7 +76,7 @@ public class BuildingSystem : MonoBehaviour
         {
             objectToPlace.Rotate();
         }
-        else if (Input.GetKeyDown(KeyCode.Space))
+        else if (Input.GetMouseButtonDown(0))
         {
             Debug.Log("Can be placed" + objectToPlace.CanBePlaced());
             if (objectToPlace.CanBePlaced())
@@ -79,10 +84,6 @@ public class BuildingSystem : MonoBehaviour
                 objectToPlace.Place();
                 //Vector3Int start = GridLayout.WorldToCell(objectToPlace.GetStartPosition());
                 //TakeArea(start, objectToPlace.Size);
-            }
-            else
-            {
-                Destroy(objectToPlace.gameObject);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
@@ -190,12 +191,11 @@ public class BuildingSystem : MonoBehaviour
         //    }
         //}
         //return true;
-
+        Debug.Log("area" + area);
         TileBase[] baseArray = GetTileBlocks(area, mainTileMap);
         foreach (var b in baseArray)
         {
-            Debug.Log("bb" + b + " tile " + tileBases[TileType.white]);
-            if(b.name.Trim() != tileBases[TileType.white].name.Trim())
+            if (b.name.Trim() != tileBases[TileType.white].name.Trim())
             {
                 Debug.Log("cannot be placed here");
                 return false;

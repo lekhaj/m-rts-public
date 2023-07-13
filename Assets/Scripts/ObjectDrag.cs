@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class ObjectDrag : MonoBehaviour
 {
-    private Vector3 offSet;
     private Vector3 targetPosition;
 
     private PlaceableObject placeObj;
 
-    public float lerpSpeed = 8f;
+    public float lerpSpeed = 5f;
 
     private void Start()
     {
@@ -20,21 +19,12 @@ public class ObjectDrag : MonoBehaviour
     {
         if (!placeObj.Placed)
         {
-            Vector3 pos = BuildingSystem.GetMouseWorldPosition() + offSet;
+            Vector3 pos = BuildingSystem.GetMouseWorldPosition();
             targetPosition = BuildingSystem.instance.SnapCoordinateToGrid(pos);
             BuildingSystem.instance.FollowBuilding();
         }
 
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * lerpSpeed);
+        transform.position = targetPosition;
     }
 
-    private void OnMouseDown()
-    {
-        offSet = transform.position - BuildingSystem.GetMouseWorldPosition();
-    }
-
-    private void OnMouseDrag()
-    {
-
-    }
 }
