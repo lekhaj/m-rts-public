@@ -18,6 +18,13 @@ public class ObjectDrag : MonoBehaviour
 
     private void Update()
     {
+        if (!placeObj.Placed)
+        {
+            Vector3 pos = BuildingSystem.GetMouseWorldPosition() + offSet;
+            targetPosition = BuildingSystem.instance.SnapCoordinateToGrid(pos);
+            BuildingSystem.instance.FollowBuilding();
+        }
+
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * lerpSpeed);
     }
 
@@ -28,11 +35,6 @@ public class ObjectDrag : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (!placeObj.Placed)
-        {
-            Vector3 pos = BuildingSystem.GetMouseWorldPosition() + offSet;
-            targetPosition = BuildingSystem.instance.SnapCoordinateToGrid(pos);
-            BuildingSystem.instance.FollowBuilding();
-        }
+
     }
 }

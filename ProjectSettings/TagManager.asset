@@ -9,6 +9,12 @@ TagManager:
   - Enemy
   - World
   - NoMask
+  - Tree
+  - Knight
+  - Enemy Castle
+  - Player Castle
+  - Mobile units button
+  - SpawnArea
   layers:
   - Default
   - TransparentFX

@@ -16,9 +16,6 @@ public class BuildingSystem : MonoBehaviour
     [SerializeField]
     private TileBase whiteTile;
 
-    public GameObject CastleTomb;
-
-
     private PlaceableObject objectToPlace;
 
     private static Dictionary<TileType, TileBase> tileBases = new Dictionary<TileType, TileBase>();
@@ -28,6 +25,11 @@ public class BuildingSystem : MonoBehaviour
 
     private GameObject _prevBuilding;
     public bool _prevBuildingAvailable;
+
+    [SerializeField]
+    private Buildings _building;
+
+    public static BuildingPlacement Instance;
 
     public enum TileType
     {
@@ -159,18 +161,18 @@ public class BuildingSystem : MonoBehaviour
 
     #region BuildingPlacement
 
-    public void InitializeWithObject(GameObject prefab)
-    {
-        Vector3 position = SnapCoordinateToGrid(Vector3.zero);
+    //public void InitializeWithObject(GameObject prefab)
+    //{
+    //    Vector3 position = SnapCoordinateToGrid(Vector3.zero);
 
-        GameObject obj = Instantiate(prefab, position, Quaternion.identity);
-        objectToPlace = obj.gameObject.GetComponent<PlaceableObject>();
-        _prevBuilding = obj;
-        _prevBuildingAvailable = true;
-        FollowBuilding();
-        objectToPlace = obj.GetComponent<PlaceableObject>();
-        obj.AddComponent<ObjectDrag>();
-    }
+    //    GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+    //    objectToPlace = obj.gameObject.GetComponent<PlaceableObject>();
+    //    _prevBuilding = obj;
+    //    _prevBuildingAvailable = true;
+    //    FollowBuilding();
+    //    objectToPlace = obj.GetComponent<PlaceableObject>();
+    //    obj.AddComponent<ObjectDrag>();
+    //}
 
     public bool CanBePlaced(BoundsInt area)
     {
@@ -261,12 +263,16 @@ public class BuildingSystem : MonoBehaviour
 
     #region Buttons
 
-    public void Spawn()
+    public void ChangeSpawnBuilding(Buildings obj)
     {
-        if (!_prevBuildingAvailable)
-        {
-            InitializeWithObject(CastleTomb);
-        }
+        _building = obj;
+        GameObject spawnedBuilding = Instantiate(_building.BuildingPrefab);
+        objectToPlace = spawnedBuilding.gameObject.GetComponent<PlaceableObject>();
+        _prevBuilding = spawnedBuilding;
+        _prevBuildingAvailable = true;
+        FollowBuilding();
+        //objectToPlace = spawnedBuilding.GetComponent<PlaceableObject>();
+        spawnedBuilding.AddComponent<ObjectDrag>();
     }
 
     #endregion
