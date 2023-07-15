@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BuildingPlacement : MonoBehaviour
 {
-    [SerializeField]
-    private Buildings _building;
+    //[SerializeField]
+    //private Buildings _building;
 
     public static BuildingPlacement Instance;
 
@@ -68,10 +68,10 @@ public class BuildingPlacement : MonoBehaviour
 
 
 
-    public void ChangeSpawnBuilding(Buildings obj)
-    {
-        _building = obj;
-        GameObject spawnedBuilding = Instantiate(_building.BuildingPrefab);
-        spawnedBuilding.AddComponent<ObjectDrag>();
-    }
+    //public void ChangeSpawnBuilding(Buildings obj)
+    //{
+    //    _building = obj;
+    //    GameObject spawnedBuilding = Instantiate(_building.BuildingPrefab);
+    //    spawnedBuilding.AddComponent<ObjectDrag>();
+    //}
 }

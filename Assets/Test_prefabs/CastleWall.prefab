@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 220670460632310272}
-  - component: {fileID: 4753259072231434488}
-  - component: {fileID: 4927652157435057922}
   m_Layer: 0
   m_Name: CastleWall
   m_TagString: Untagged
@@ -27,42 +25,13 @@ Transform:
   m_GameObject: {fileID: 220670460632310275}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 216682274945271121}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4753259072231434488
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220670460632310275}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 8, y: 7.52, z: 5.04}
-  m_Center: {x: 0, y: 3.14, z: 0}
---- !u!114 &4927652157435057922
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220670460632310275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6886471ba42ca8941a9af35f081cdf65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Vertices: []
-  area:
-    m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 3, y: 1, z: 1}
 --- !u!1001 &220670460686260969
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -79,8 +48,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3
+      value: 5.3
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_LocalPosition.y
@@ -88,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 5.6
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_LocalRotation.w
@@ -118,6 +99,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
 --- !u!4 &216682274945271121 stripped
@@ -126,3 +111,22 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 220670460686260969}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &219681446671301665 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1000013429106376, guid: a839da49f8baacb46ad36348a6ef9243,
+    type: 3}
+  m_PrefabInstance: {fileID: 220670460686260969}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &9169166727206823398
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219681446671301665}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 3.6345716, y: 6.558141, z: 7.400869}
+  m_Center: {x: -0.31941867, y: 0.00000023841858, z: 3.36218}

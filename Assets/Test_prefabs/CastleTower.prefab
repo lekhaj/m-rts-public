@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 993390218923548499}
-  - component: {fileID: 2346498886791451272}
-  - component: {fileID: -6969331564369803889}
   m_Layer: 0
   m_Name: CastleTower
   m_TagString: Untagged
@@ -28,41 +26,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 992778568621815135}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2346498886791451272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 993390218923548498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6886471ba42ca8941a9af35f081cdf65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Vertices: []
-  area:
-    m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 2, y: 2, z: 1}
---- !u!65 &-6969331564369803889
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 993390218923548498}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 6.2, y: 13, z: 5.96}
-  m_Center: {x: 0, y: 5.7, z: 0}
 --- !u!1001 &993390220229951303
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -79,8 +48,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -88,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -118,6 +99,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
 --- !u!4 &992778568621815135 stripped
@@ -126,3 +111,22 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 993390220229951303}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &993807489742560815 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1000013897228648, guid: aba2700cd3e6b5b4ebc4227eadec160f,
+    type: 3}
+  m_PrefabInstance: {fileID: 993390220229951303}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &181888002491212193
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993807489742560815}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 5.05605, y: 5.0560513, z: 12.3367405}
+  m_Center: {x: 0, y: 0, z: 5.8083706}

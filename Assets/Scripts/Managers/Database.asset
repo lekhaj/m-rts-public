@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ea6ecb11ed97f64eb15e56ee6c33e05, type: 3}
+  m_Name: Database
+  m_EditorClassIdentifier: 
+  ObjectData:
+  - <Name>k__BackingField: Towe
+    <ID>k__BackingField: 0
+    <Size>k__BackingField: {x: 2, y: 2}
+    <Prefab>k__BackingField: {fileID: 993390218923548498, guid: 9ef4016aeeb8ee14b86d51ac3aa8306c,
+      type: 3}
+  - <Name>k__BackingField: Tomb
+    <ID>k__BackingField: 1
+    <Size>k__BackingField: {x: 2, y: 2}
+    <Prefab>k__BackingField: {fileID: 2998457383796984927, guid: ce6056f2a290c9540b7392d11057ea41,
+      type: 3}
+  - <Name>k__BackingField: Wall
+    <ID>k__BackingField: 2
+    <Size>k__BackingField: {x: 3, y: 1}
+    <Prefab>k__BackingField: {fileID: 220670460632310275, guid: 442289b12dd45ab4ab02d1245b8b7078,
+      type: 3}
