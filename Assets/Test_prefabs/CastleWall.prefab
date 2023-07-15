@@ -62,7 +62,7 @@ MonoBehaviour:
   Vertices: []
   area:
     m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 2, y: 2, z: 1}
+    m_Size: {x: 3, y: 1, z: 1}
 --- !u!1001 &220670460686260969
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -80,7 +80,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_LocalPosition.y

@@ -10,6 +10,8 @@ public class ObjectDrag : MonoBehaviour
 
     public float lerpSpeed = 5f;
 
+    private Vector3 _offset;
+
     private void Start()
     {
         placeObj = gameObject.GetComponent<PlaceableObject>();
@@ -19,6 +21,7 @@ public class ObjectDrag : MonoBehaviour
     {
         if (!placeObj.Placed)
         {
+            //_offset = transform.position - BuildingSystem.GetMouseWorldPosition();
             Vector3 pos = BuildingSystem.GetMouseWorldPosition();
             targetPosition = BuildingSystem.instance.SnapCoordinateToGrid(pos);
             BuildingSystem.instance.FollowBuilding();
