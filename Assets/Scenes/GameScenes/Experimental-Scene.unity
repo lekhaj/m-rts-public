@@ -3283,7 +3283,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!224 &322289246
 RectTransform:
@@ -4411,19 +4411,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d880e1981a8b35144bb7b8af1188e22d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridLayout: {fileID: 826885630}
-  grid: {fileID: 0}
-  mainTileMap: {fileID: 180382858}
-  tempTileMap: {fileID: 0}
-  whiteTile: {fileID: 11400000, guid: 3d50c53743e32944d965239a867f29dd, type: 2}
-  objectToPlace: {fileID: 0}
-  prevPos: {x: 0, y: 0, z: 0}
-  prevArea:
-    m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 0, y: 0, z: 0}
-  _prevBuilding: {fileID: 0}
-  _prevBuildingAvailable: 0
-  _building: {fileID: 0}
 --- !u!1 &887071585
 GameObject:
   m_ObjectHideFlags: 0
@@ -6299,7 +6286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73e8d86a4f1406a44a25f9bc213ec418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _showBuildingPlacementUI: {fileID: 506383254}
 --- !u!4 &1836152703
 Transform:
   m_ObjectHideFlags: 0

@@ -60,6 +60,17 @@ public class InputManager : MonoBehaviour
             //Debug.Log("last pos " + _lastPosition);
         }
         return _lastPosition;
+    }    
+    public bool GetMapPosition(Vector3 objPos)
+    {
+        Ray ray = _camera.ScreenPointToRay(objPos);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, float.MaxValue, _placementLayerMask))
+        {
+            return true;
+            //Debug.Log("last pos " + _lastPosition);
+        }
+        return false;
     }
 
 }
