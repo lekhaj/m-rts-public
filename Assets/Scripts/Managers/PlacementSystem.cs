@@ -23,8 +23,6 @@ public class PlacementSystem : MonoBehaviour
 
     private Vector3 _buildingToBePlaced;
 
-    private static bool _canBePlaced = true;
-
     private Renderer _previewRenderer;
 
     private GridData gridData;
@@ -43,6 +41,7 @@ public class PlacementSystem : MonoBehaviour
     private void OnEnable()
     {
         InputManager.Touch += GetClickedPosition;
+        BuildingObject.RemoveData += RemoveObject;
         //InputManager.Exit += HideUI;
     }
 
@@ -65,6 +64,8 @@ public class PlacementSystem : MonoBehaviour
     {
         Debug.Log("Building To be place 11" + _buildingToBePlaced);
         _selectedObjectIndex = _databaseSO.ObjectData.FindIndex(data => data.ID == ID);
+
+
         if (_selectedObjectIndex < 0)
         {
             Debug.LogError("No Objects to be placed");
@@ -80,11 +81,13 @@ public class PlacementSystem : MonoBehaviour
 
         GameObject newObject = Instantiate(_databaseSO.ObjectData[_selectedObjectIndex].Prefab);
         Vector3 worldPos = _grid.CellToWorld(gridPosition);
-        //Debug.Log("Building To be place New obj" + gridPosition + "pos" + worldPos);
+
         newObject.transform.position = worldPos;
 
+        BuildingObject building = newObject.transform.GetChild(0).GetComponent<BuildingObject>();
+        building.GridPosition = gridPosition;
+
         _placedGameObjects.Add(newObject);
-        Debug.Log("Sizeee" + _databaseSO.ObjectData[_selectedObjectIndex].Size);
         gridData.AddObjectAt(gridPosition, _databaseSO.ObjectData[_selectedObjectIndex].Size, _databaseSO.ObjectData[_selectedObjectIndex].ID, _placedGameObjects.Count - 1);
 
         foreach (KeyValuePair<Vector3Int, PlacementData> kvp in gridData.placedObjects)
@@ -93,12 +96,12 @@ public class PlacementSystem : MonoBehaviour
         }
 
         StopPlacement();
+
     }
+
 
     private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
     {
-        //GridData selectedData = _databaseSO.ObjectData[selectedObjectIndex].ID == 0 ? _buildingsData : _troopsData;
-
         return gridData.CanPlaceObjectAt(gridPosition, _databaseSO.ObjectData[selectedObjectIndex].Size);
     }
 
@@ -120,9 +123,6 @@ public class PlacementSystem : MonoBehaviour
         _showBuildingPlacementUI.SetActive(false);
         _cellIndicator.SetActive(true);
         PlacingTime = false;
-        //_cellIndicator.SetActive(false);
-        //InputManager.Touch -= PlaceStructure;
-        //InputManager.Exit -= StopPlacement;
     }
 
     private void Update()
@@ -133,7 +133,7 @@ public class PlacementSystem : MonoBehaviour
         bool canBePlaced = gridData.CanPlaceObjectAt(gridPosition);
         _previewRenderer.material.color = canBePlaced ? Color.green : Color.red;
 
-        if (!canBePlaced)
+        if (!canBePlaced && !PlacingTime)
         {
             _showBuildingPlacementUI.SetActive(false);
         }
@@ -144,8 +144,19 @@ public class PlacementSystem : MonoBehaviour
         
     }
 
+    private void RemoveObject(GameObject objToRemove, Vector3Int gridPositions, Vector2Int size, int iD)
+    {
+        gridData.RemoveObjectAt(gridPositions, size, iD);
+
+        foreach (KeyValuePair<Vector3Int, PlacementData> kvp in gridData.placedObjects)
+        {
+            Debug.Log("Key: " + kvp.Key + ", Value: " + kvp.Value);
+        }
+    }
+
     private void OnDisable()
     {
         InputManager.Touch -= GetClickedPosition;
+        BuildingObject.RemoveData -= RemoveObject;   
     }
 }

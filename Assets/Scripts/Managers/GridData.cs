@@ -16,7 +16,26 @@ public class GridData
             if (placedObjects.ContainsKey(pos))
                 throw new Exception($"Dictionary alreay contains this cell po {pos}");
             placedObjects[pos] = data;
-            
+           
+        }
+
+    }  
+    public void RemoveObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int ID)
+    {
+        List<Vector3Int> positionToRemove = CalculatePositions(gridPosition, objectSize);
+        //PlacementData data = new PlacementData(positionToRemove, ID, placedObjectIndex);
+
+        foreach (var item in positionToRemove)
+        {
+            Debug.Log("Remove" + item);
+        }
+
+        foreach (var pos in positionToRemove)
+        {
+            if (placedObjects.ContainsKey(pos))
+                placedObjects.Remove(pos);
+
+
         }
     }
 
@@ -45,7 +64,7 @@ public class GridData
     
     public bool CanPlaceObjectAt(Vector3Int gridPosition)
     {
-        Debug.Log("Grid Pos" + gridPosition);
+        //Debug.Log("Grid Pos" + gridPosition);
         if (placedObjects.ContainsKey(gridPosition))
             return false;
 

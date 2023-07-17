@@ -33,7 +33,6 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(IsPointerOverUI());
         if (Input.GetMouseButtonDown(0) && !IsPointerOverUI())
         {
             Vector3 clickedPosition = GetMapPosition();
@@ -61,16 +60,5 @@ public class InputManager : MonoBehaviour
         }
         return _lastPosition;
     }    
-    public bool GetMapPosition(Vector3 objPos)
-    {
-        Ray ray = _camera.ScreenPointToRay(objPos);
-        RaycastHit hit;
-        if(Physics.Raycast(ray, out hit, float.MaxValue, _placementLayerMask))
-        {
-            return true;
-            //Debug.Log("last pos " + _lastPosition);
-        }
-        return false;
-    }
 
 }

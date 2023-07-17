@@ -43,6 +43,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Castle tower round roof
       objectReference: {fileID: 0}
+    - target: {fileID: 1000010676038844, guid: e165e9a18a6342943a0f3b73c6a42034, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4000011672566230, guid: e165e9a18a6342943a0f3b73c6a42034, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -65,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011672566230, guid: e165e9a18a6342943a0f3b73c6a42034, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: 4000011672566230, guid: e165e9a18a6342943a0f3b73c6a42034, type: 3}
       propertyPath: m_LocalPosition.z
@@ -111,6 +115,22 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 7792283404138846435}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &3576850550020307571
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791313089974236255}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!65 &9020927773091670666
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -120,10 +140,25 @@ BoxCollider:
   m_GameObject: {fileID: 7791313089974236255}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2.4492009, y: 2.4492013, z: 6.8895383}
   m_Center: {x: 0, y: 0, z: 3.1447694}
+--- !u!114 &5481863216478870968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791313089974236255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddfc8be753cf2c48996ab8076658b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 1
+  Size: {x: 2, y: 2}
+  CanBePlaced: 0
 --- !u!4 &7795156485084356917 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4000011672566230, guid: e165e9a18a6342943a0f3b73c6a42034,

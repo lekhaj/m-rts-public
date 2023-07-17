@@ -43,6 +43,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Castle wall 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1000013429106376, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -117,6 +121,22 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 220670460686260969}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &490485453292885630
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219681446671301665}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!65 &9169166727206823398
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -126,7 +146,22 @@ BoxCollider:
   m_GameObject: {fileID: 219681446671301665}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 3.6345716, y: 6.558141, z: 7.400869}
   m_Center: {x: -0.31941867, y: 0.00000023841858, z: 3.36218}
+--- !u!114 &6419611721337730566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219681446671301665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddfc8be753cf2c48996ab8076658b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 2
+  Size: {x: 1, y: 1}
+  CanBePlaced: 0
