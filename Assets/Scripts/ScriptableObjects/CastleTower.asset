@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e32dc94a8a7465349a073937cbdf066f, type: 3}
+  m_Name: CastleTower
+  m_EditorClassIdentifier: 
+  BuildingPrefab: {fileID: 993390218923548498, guid: 9ef4016aeeb8ee14b86d51ac3aa8306c,
+    type: 3}
