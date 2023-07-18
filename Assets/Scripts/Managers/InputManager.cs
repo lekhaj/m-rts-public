@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
     private LayerMask _placementLayerMask;
 
     public static event Action<Vector3> Touch;
+    public static event Action<GameObject> BuildingHit;
     public static event Action Exit;
 
     private void Awake()
@@ -33,11 +34,21 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !IsPointerOverUI())
+
+        Debug.Log("Is buuiling ht" + IsBuildingHit());
+
+        if (Input.GetMouseButtonDown(0) && !IsPointerOverUI() && !IsBuildingHit())
         {
             Vector3 clickedPosition = GetMapPosition();
             Touch?.Invoke(clickedPosition);
         }
+        else if(Input.GetMouseButtonDown(0) && IsBuildingHit())
+        {
+            Debug.Log("Bilding hit" + GetBuildingGameObject());
+
+            BuildingHit?.Invoke(GetBuildingGameObject());
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Exit?.Invoke();
@@ -60,5 +71,36 @@ public class InputManager : MonoBehaviour
         }
         return _lastPosition;
     }    
+    public GameObject GetBuildingGameObject()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = _camera.nearClipPlane;
+        Ray ray = _camera.ScreenPointToRay(mousePos);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, float.MaxValue))
+        {
+            if(hit.collider.gameObject.CompareTag("Ally Buildings"))
+            {
+                return hit.collider.gameObject;
+            }
+        }
+        return null;
+    }        
+    public bool IsBuildingHit()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = _camera.nearClipPlane;
+        Ray ray = _camera.ScreenPointToRay(mousePos);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, float.MaxValue))
+        {
+            if(hit.collider.gameObject.CompareTag("Ally Buildings"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }    
+
 
 }

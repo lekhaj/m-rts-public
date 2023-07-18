@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 220670460632310272}
   m_Layer: 0
   m_Name: CastleWall
-  m_TagString: Untagged
+  m_TagString: Ally Buildings
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,6 +46,10 @@ PrefabInstance:
     - target: {fileID: 1000013429106376, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000013429106376, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
+      propertyPath: m_TagString
+      value: Ally Buildings
       objectReference: {fileID: 0}
     - target: {fileID: 4000010125238200, guid: a839da49f8baacb46ad36348a6ef9243, type: 3}
       propertyPath: m_RootOrder
@@ -165,3 +169,4 @@ MonoBehaviour:
   ID: 2
   Size: {x: 1, y: 1}
   CanBePlaced: 0
+  GridPosition: {x: 0, y: 0, z: 0}

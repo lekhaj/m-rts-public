@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 993390218923548499}
   m_Layer: 0
   m_Name: CastleTower
-  m_TagString: Untagged
+  m_TagString: Ally Buildings
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,6 +46,10 @@ PrefabInstance:
     - target: {fileID: 1000013897228648, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000013897228648, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
+      propertyPath: m_TagString
+      value: Ally Buildings
       objectReference: {fileID: 0}
     - target: {fileID: 4000011548740120, guid: aba2700cd3e6b5b4ebc4227eadec160f, type: 3}
       propertyPath: m_RootOrder
@@ -165,3 +169,4 @@ MonoBehaviour:
   ID: 0
   Size: {x: 2, y: 2}
   CanBePlaced: 0
+  GridPosition: {x: 0, y: 0, z: 0}

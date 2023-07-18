@@ -19,7 +19,11 @@ public class PlacementSystem : MonoBehaviour
     //[SerializeField]
     //private GameObject _gridVisulalization;
     [SerializeField]
-    private GameObject _showBuildingPlacementUI;
+    private GameObject _showBuildingPlacementUI;    
+    [SerializeField]
+    private GameObject _showBuildingRemovalOrUpgradeUI;
+    [SerializeField]
+    private RectTransform _buildingRectTransform;
 
     private Vector3 _buildingToBePlaced;
 
@@ -31,17 +35,21 @@ public class PlacementSystem : MonoBehaviour
 
     private List<GameObject> _placedGameObjects = new();
 
+    private GameObject _invokedBulding;
+
     private void Start()
     {
         StopPlacement();
         _previewRenderer = _cellIndicator.GetComponentInChildren<Renderer>();
         gridData = new GridData();
+
     }
 
     private void OnEnable()
     {
         InputManager.Touch += GetClickedPosition;
         BuildingObject.RemoveData += RemoveObject;
+        InputManager.BuildingHit += InvokeBuildingHit;
         //InputManager.Exit += HideUI;
     }
 
@@ -133,15 +141,14 @@ public class PlacementSystem : MonoBehaviour
         bool canBePlaced = gridData.CanPlaceObjectAt(gridPosition);
         _previewRenderer.material.color = canBePlaced ? Color.green : Color.red;
 
-        if (!canBePlaced && !PlacingTime)
+
+        if ((!canBePlaced && !PlacingTime) || _previewRenderer.material.color == Color.red)
         {
             _showBuildingPlacementUI.SetActive(false);
         }
 
         mouseIndicator.transform.position = mousePosition;
         _cellIndicator.transform.position = _grid.CellToWorld(gridPosition);
-
-        
     }
 
     private void RemoveObject(GameObject objToRemove, Vector3Int gridPositions, Vector2Int size, int iD)
@@ -154,9 +161,33 @@ public class PlacementSystem : MonoBehaviour
         }
     }
 
+    private void InvokeBuildingHit(GameObject objToBeremoved)
+    {
+        _invokedBulding = objToBeremoved;
+        Debug.Log("anamee" + _invokedBulding.transform.name + _buildingRectTransform.anchoredPosition3D.z);
+        _showBuildingRemovalOrUpgradeUI.transform.position = new Vector3(objToBeremoved.transform.position.x, objToBeremoved.transform.position.y + 8f, objToBeremoved.transform.position.z);
+        Vector3 rectVal = _buildingRectTransform.anchoredPosition3D;
+        rectVal.z -= 150f;
+        _buildingRectTransform.anchoredPosition3D = rectVal;
+
+        //Vector3 newPosition = rectTransform.position;
+        //newPosition.z = -900;
+        //rectTransform.position = newPosition;
+        _showBuildingRemovalOrUpgradeUI.SetActive(true);
+        //obj.
+    }
+
+    //Remove Building
+    public void RemoveBuilding()
+    {
+        Destroy(_invokedBulding);
+        _showBuildingRemovalOrUpgradeUI.SetActive(false);
+    }
+
     private void OnDisable()
     {
         InputManager.Touch -= GetClickedPosition;
-        BuildingObject.RemoveData -= RemoveObject;   
+        BuildingObject.RemoveData -= RemoveObject;
+        InputManager.BuildingHit -= InvokeBuildingHit;
     }
 }
